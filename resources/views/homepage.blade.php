@@ -35,8 +35,26 @@
     }
 
     /* ══════════════════════════════════════════════════════════════════
+       MODAL - DATA PRIVACY NOTICE
+    ══════════════════════════════════════════════════════════════════ */
+    .floatingPopup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      font-family: 'DM Sans', sans-serif;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 25px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      border-radius: 10px;
+      z-index: 9999;
+    }
+    /* ══════════════════════════════════════════════════════════════════
        HEADER
     ══════════════════════════════════════════════════════════════════ */
+
+
+    
     header {
       position: fixed;
       top: 0;
@@ -388,6 +406,14 @@
       line-height: 1.6;
       text-decoration: none;
       color: white;
+
+    }
+
+     .city-hall:hover {
+      width: 50%;
+      border: 1px solid var(--soft-blue); 
+      background: var(--soft-blue);
+      color: var(--green);
 
     }
     a {
@@ -944,10 +970,12 @@
 </head>
 <body>
 
+
+
   <!-- ══════════════════════════════════════════════════════════════════
        HEADER
   ══════════════════════════════════════════════════════════════════ -->
-  
+
   <header>
     
     <div class="header-inner">
@@ -967,7 +995,7 @@
         <a href="#about">
           <span>About</span>
         </a>
-        <a href="#contact">
+        <a href="#city-banner">
           <span>Contact</span>
         </a>
         <!-- <a href="#services">
@@ -981,6 +1009,7 @@
     </div>
   </header>
 
+
   <!-- ══════════════════════════════════════════════════════════════════
        HERO SECTION
   ══════════════════════════════════════════════════════════════════ -->
@@ -991,8 +1020,8 @@
       <h1 class="hero-title">PROJECT CONNECT</h1>
       <p class="hero-subtitle">Serving the Community of General Trias with Excellence</p>
       <p class="hero-description">
-        A modern and transparent barangay management platform providing efficient public services, 
-        real-time updates, and seamless access to government documents for every resident.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, 
+        sunt in culpa qui officia deserunt mollit anim id est laborum.
       </p>
 
       <div class="hero-ctas">
@@ -1020,6 +1049,19 @@
     </div>
   </section>
 
+    <!-- ══════════════════════════════════════════════════════════════════
+       MODAL - DATA PRIVACY NOTICE
+  ══════════════════════════════════════════════════════════════════ -->
+<div id="floatingPopup" class="floatingPopup">
+  <h4>Data Privacy Consent Form</h4> <br>
+  <p>
+    I hereby give my consent and acknowledge the authority of Barangay San Juan I to process my personal
+    information in accordance with the Data Privacy Act of 2012.
+  </p> <br>
+  <button class="btn btn-primary" onclick="closePopup()" style="float:right;">Close</button>
+</div>
+</div>
+
 
   <!-- ══════════════════════════════════════════════════════════════════
        ABOUT SECTION
@@ -1028,7 +1070,7 @@
     <div class="about-inner">
 
       <div class="about-grid">
-        <div class="about-card">
+        <div class="about-card" >
           <div class="about-icon">📝</div>
           <h3>REGISTER </h3>
           <p>Enter your personal information</p>
@@ -1047,7 +1089,7 @@
         </div>
       </div>
 
-      <div class="city-banner">
+      <div class="city-banner" id="city-banner">
         <div class="about-icon" style="font-size: 4rem; margin-bottom: 16px; text-align:center;">🏛️</div>
         <h3 style="text-align: center; margin-bottom: 50px;">San Juan I Barangay Hall</h3>
 
@@ -1096,64 +1138,7 @@
     </div> -->
   </section>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       SERVICES SECTION
-  ══════════════════════════════════════════════════════════════════ -->
-  <!-- <section class="services" id="services">
-    <div class="services-inner">
-      <div class="section-header">
-        <span class="section-label">Our Services</span>
-        <h2 class="section-title">What We Offer</h2>
-        <p class="section-description">
-          Comprehensive digital services tailored to meet the needs of our community
-        </p>
-      </div>
-
-      <div class="services-grid">
-        <div class="service-card">
-          <span class="service-icon">📋</span>
-          <h3>Document Services</h3>
-          <p>Request and track important documents such as barangay clearance, residency, and business permits online.</p>
-          <a href="{{ route('login') }}" class="service-link">Get Started ›</a>
-        </div>
-
-        <div class="service-card">
-          <span class="service-icon">🗳️</span>
-          <h3>Government Programs</h3>
-          <p>Explore and apply for various government programs and benefits available to residents.</p>
-          <a href="{{ route('login') }}" class="service-link">Learn More ›</a>
-        </div>
-
-        <div class="service-card">
-          <span class="service-icon">💬</span>
-          <h3>Online Assistance</h3>
-          <p>Connect with government officials through our chat system for inquiries and assistance.</p>
-          <a href="#contact" class="service-link">Contact Us ›</a>
-        </div>
-
-        <div class="service-card">
-          <span class="service-icon">📱</span>
-          <h3>Online ID Services</h3>
-          <p>Generate and manage your online ID for quick verification and access to services.</p>
-          <a href="{{ route('login') }}" class="service-link">Apply Now ›</a>
-        </div>
-
-        <div class="service-card">
-          <span class="service-icon">📢</span>
-          <h3>Announcements</h3>
-          <p>Stay updated with latest news, advisories, and community announcements.</p>
-          <a href="#announcements" class="service-link">View News ›</a>
-        </div>
-
-        <div class="service-card">
-          <span class="service-icon">🔔</span>
-          <h3>Notifications</h3>
-          <p>Receive real-time notifications about important updates and events.</p>
-          <a href="{{ route('login') }}" class="service-link">Enable Alerts ›</a>
-        </div>
-      </div>
-    </div>
-  </section> -->
+ 
 
   <!-- ══════════════════════════════════════════════════════════════════
        ANNOUNCEMENTS SECTION
@@ -1232,148 +1217,6 @@
     </div>
   </section> -->
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       QUICK LINKS SECTION
-  ══════════════════════════════════════════════════════════════════ -->
-  <!-- <section class="quick-links">
-    <div class="quick-links-inner">
-      <h2>Quick Links</h2>
-      <p style="text-align: center; margin-bottom: 40px; opacity: 0.9;">Frequently accessed portals</p>
-
-      <div class="links-grid">
-        <a href="{{ route('login') }}" class="quick-link-card">
-          <span class="quick-link-icon">🖥️</span>
-          <span>Resident Portal</span>
-        </a>
-
-        <a href="{{ route('login') }}" class="quick-link-card">
-          <span class="quick-link-icon">📋</span>
-          <span>Track Documents</span>
-        </a>
-
-        <a href="#contact" class="quick-link-card">
-          <span class="quick-link-icon">🗺️</span>
-          <span>Contact Info</span>
-        </a>
-
-        <a href="#contact" class="quick-link-card">
-          <span class="quick-link-icon">📞</span>
-          <span>Help & Support</span>
-        </a>
-
-        <a href="{{ route('login') }}" class="quick-link-card">
-          <span class="quick-link-icon">💬</span>
-          <span>Chat with Officials</span>
-        </a>
-
-        <a href="#announcements" class="quick-link-card">
-          <span class="quick-link-icon">📰</span>
-          <span>Latest News</span>
-        </a>
-
-        <a href="{{ route('register') }}" class="quick-link-card">
-          <span class="quick-link-icon">✍️</span>
-          <span>Register Now</span>
-        </a>
-      </div>
-    </div>
-  </section> -->
-
-  <!-- ══════════════════════════════════════════════════════════════════
-       CONTACT SECTION
-  ══════════════════════════════════════════════════════════════════ -->
-  <!-- <section class="contact" id="contact">
-    <div class="contact-inner">
-      <div class="contact-info">
-        <h2>Get in Touch</h2>
-        <p style="font-size: 1.1rem; color: var(--text); font-weight: 600; margin-bottom: 12px;">Contact Us</p>
-        <p>
-          Reach out to your barangay officials. We're here to help and listen to your concerns.
-        </p>
-        <p style="margin-top: 20px;">
-          Our offices are open Monday through Friday. For urgent matters, please use the emergency 
-          hotlines or visit your nearest barangay hall during office hours.
-        </p>
-
-        <div class="contact-details">
-          <div class="contact-item">
-            <div class="contact-item-icon">📍</div>
-            <div>
-              <h4>City Hall Address</h4>
-              <p>Gen. Trias Drive, General Trias City,<br>Cavite 4116, Philippines</p>
-            </div>
-          </div>
-
-          <div class="contact-item">
-            <div class="contact-item-icon">📞</div>
-            <div>
-              <h4>Office Hotline</h4>
-              <p>(046) 437-0000 · (046) 437-0001</p>
-            </div>
-          </div>
-
-          <div class="contact-item">
-            <div class="contact-item-icon">✉️</div>
-            <div>
-              <h4>Email Address</h4>
-              <p>bms@generaltrias.gov.ph</p>
-            </div>
-          </div>
-
-          <div class="contact-item">
-            <div class="contact-item-icon">🕐</div>
-            <div>
-              <h4>Office Hours</h4>
-              <p>Monday – Friday: 8:00 AM – 5:00 PM<br>Closed on weekends and holidays</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="contact-form">
-        <h3>Send a Message</h3>
-        <form action="#" method="POST">
-          @csrf
-          <div class="form-row">
-            <div class="form-group">
-              <label for="first_name">First Name</label>
-              <input type="text" id="first_name" name="first_name" placeholder="Juan" required>
-            </div>
-            <div class="form-group">
-              <label for="last_name">Last Name</label>
-              <input type="text" id="last_name" name="last_name" placeholder="Dela Cruz" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" placeholder="juan@email.com" required>
-          </div>
-
-          <div class="form-group">
-            <label for="concern_type">Concern Type</label>
-            <select id="concern_type" name="concern_type" required>
-              <option value="">Select a concern</option>
-              <option value="document">Document Request</option>
-              <option value="assistance">General Assistance</option>
-              <option value="complaint">Complaint</option>
-              <option value="inquiry">Inquiry</option>
-              <option value="feedback">Feedback</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" placeholder="Describe your concern or inquiry..." required></textarea>
-          </div>
-
-          <button type="submit" class="btn-submit">
-            📨 Submit Message
-          </button>
-        </form>
-      </div>
-    </div>
-  </section> -->
 
   <!-- ══════════════════════════════════════════════════════════════════
        FOOTER
@@ -1448,6 +1291,18 @@
         }
       });
     });
+
+    function closePopup() {
+    document.getElementById('floatingPopup').style.display = 'none';
+}
+
+// Show popup on page load
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('floatingPopup').style.display = 'block';
+});
   </script>
+
+
 </body>
 </html>
+

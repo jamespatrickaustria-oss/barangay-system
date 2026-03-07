@@ -34,8 +34,8 @@ class AuthController extends Controller
         }
 
         if ($user->role === 'resident' && $user->status === 'pending') {
-            Auth::logout();
-            return redirect('/pending');
+            // Keep the user logged in so they can still access the pending status page.
+            return redirect('/pending')->with('info', 'Your registration is still pending approval.');
         }
 
         if ($user->role === 'resident' && $user->status === 'rejected') {
