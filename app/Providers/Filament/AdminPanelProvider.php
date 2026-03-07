@@ -23,25 +23,20 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $brandLogo = file_exists(public_path('images/city_of_general_trias_seal.png'))
-            ? asset('images/city_of_general_trias_seal.png')
-            : (file_exists(public_path('images/city_of_general trias.png'))
-                ? asset('images/city_of_general trias.png')
-                : asset('images/city_of_general_trias.png'));
-
         return $panel
+            ->default()
             ->id('admin')
             ->path('admin')
-            ->brandLogo($brandLogo)
-            ->darkModeBrandLogo($brandLogo)
-            ->brandLogoHeight('2.5rem')
-            ->favicon($brandLogo)
+            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,
             ])
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
@@ -59,7 +54,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])
-            ->authGuard('web');
+            ]);
     }
 }

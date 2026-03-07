@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Official Government System – Barangay Management System</title>
+  <title>PROJECT CONNECT - Brgy. San Juan I</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/city_of_general_trias_seal.png') }}">
   <style>
     :root {
       --blue:       #1a6ec7;
@@ -13,7 +14,7 @@
       --sky-mid:    #a8dff5;
       --green:      #3a7d44;
       --green-dark: #2c5f35;
-      --white:      #ffffff;
+      --soft-blue:  #d4f4ff;
       --off-white:  #f4f8fb;
       --text:       #1a2433;
       --text-light: #4b5e72;
@@ -21,19 +22,39 @@
       --gold:       #e8b84b;
     }
 
+   
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: 'DM Sans', sans-serif;
       color: var(--text);
-      background: var(--white);
+      background: var(--soft-blue);
       overflow-x: hidden;
       line-height: 1.6;
     }
 
     /* ══════════════════════════════════════════════════════════════════
+       MODAL - DATA PRIVACY NOTICE
+    ══════════════════════════════════════════════════════════════════ */
+    .floatingPopup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      font-family: 'DM Sans', sans-serif;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 25px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      border-radius: 10px;
+      z-index: 9999;
+    }
+    /* ══════════════════════════════════════════════════════════════════
        HEADER
     ══════════════════════════════════════════════════════════════════ */
+
+
+    
     header {
       position: fixed;
       top: 0;
@@ -87,7 +108,7 @@
 
     .logo-text strong {
       display: block;
-      font-family: 'Playfair Display', serif;
+      font-family: 'DM Sans', sans-serif;
       font-size: 1rem;
       color: var(--blue-dark);
       letter-spacing: 0.01em;
@@ -95,6 +116,7 @@
     }
 
     .logo-text span {
+      display: block;
       font-size: 0.72rem;
       color: var(--green);
       font-weight: 500;
@@ -138,7 +160,7 @@
       gap: 8px;
       padding: 10px 22px;
       background: var(--blue);
-      color: var(--white);
+      color: var(--soft-blue);
       border: none;
       border-radius: 10px;
       font-family: 'DM Sans', sans-serif;
@@ -160,12 +182,13 @@
        HERO SECTION
     ══════════════════════════════════════════════════════════════════ */
     .hero {
-      margin-top: 110px;
+      margin-top: 50px;
       background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 45%, #1a8fc7 100%);
       color: white;
       padding: 80px 32px;
       position: relative;
       overflow: hidden;
+      
     }
 
     .hero::before {
@@ -188,7 +211,7 @@
     }
 
     .hero-title {
-      font-family: 'Playfair Display', serif;
+      font-family: ''DM Sans', sans-serif';
       font-size: clamp(2rem, 5vw, 3.5rem);
       font-weight: 700;
       line-height: 1.2;
@@ -246,13 +269,15 @@
       border: 2px solid rgba(255, 255, 255, 0.5);
       border-radius: 8px;
       font-size: 1rem;
-      font-weight: 600;
+      line-height: 1.6;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.3s;
       display: inline-flex;
       align-items: center;
       gap: 8px;
+     
+    
     }
 
     .btn-outline:hover {
@@ -281,6 +306,7 @@
       font-weight: 700;
       display: block;
       margin-bottom: 8px;
+      /* color: var(--green); */
     }
 
     .stat-label {
@@ -299,51 +325,14 @@
        ABOUT SECTION
     ══════════════════════════════════════════════════════════════════ */
     .about {
-      padding: 100px 32px;
-      background: var(--white);
+      margin-top: 0px;
+      padding: 10px 32px;
+      background: var(--soft-blue);
     }
 
     .about-inner {
       max-width: 1200px;
       margin: 0 auto;
-    }
-
-    .section-header {
-      text-align: center;
-      margin-bottom: 60px;
-    }
-
-    .section-label {
-      display: inline-block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--blue);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 12px;
-    }
-
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 4vw, 2.8rem);
-      color: var(--text);
-      margin-bottom: 16px;
-      line-height: 1.3;
-    }
-
-    .section-description {
-      font-size: 1.1rem;
-      color: var(--text-light);
-      max-width: 700px;
-      margin: 0 auto;
-      line-height: 1.8;
-    }
-
-    .about-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 32px;
-      margin-top: 60px;
     }
 
     .about-card {
@@ -363,6 +352,7 @@
 
     .about-icon {
       font-size: 3rem;
+
       margin-bottom: 20px;
     }
 
@@ -380,12 +370,15 @@
     }
 
     .city-banner {
-      margin-top: 60px;
-      padding: 40px;
-      background: linear-gradient(135deg, var(--green-dark), var(--green));
+      margin-top: 50px;
+      margin-bottom: 50px;
+      padding: 30px;
+      background: linear-gradient(135deg, var(--green), var(--green));
       border-radius: 16px;
       text-align: center;
       color: white;
+      align-content: center;
+    
     }
 
     .city-banner h3 {
@@ -394,9 +387,81 @@
     }
 
     .city-banner p {
+      text-align: left;
       font-size: 1.1rem;
-      opacity: 0.95;
+      display: inline-block;
+      text-decoration: none;
+      margin-top: 12px; 
+      color:white;
     }
+
+    .city-hall {
+      width: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.5); 
+      padding: 12px 28px; 
+      border-radius: 8px; 
+      margin: 0 auto;
+      margin-bottom: 10px; 
+      text-align: left; 
+      line-height: 1.6;
+      text-decoration: none;
+      color: white;
+
+    }
+
+     .city-hall:hover {
+      width: 50%;
+      border: 1px solid var(--soft-blue); 
+      background: var(--soft-blue);
+      color: var(--green);
+
+    }
+    a {
+      text-decoration: none;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0px;
+    }
+
+    .section-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(2rem, 2vw, .5rem);
+      color: var(--green);
+      margin-bottom: 5px;
+      line-height: 1.3;
+
+    }
+
+    .section-description {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      margin-top: 60px;
+    }
+
+    
+
+
 
     /* ══════════════════════════════════════════════════════════════════
        SERVICES SECTION
@@ -815,6 +880,7 @@
     }
 
     .footer-section ul {
+      
       list-style: none;
     }
 
@@ -858,7 +924,14 @@
 
       .hero {
         padding: 60px 20px;
+      
       }
+      .city-hall {
+      width: 95%;
+      padding: 12px 28px; 
+
+
+    }
 
       .stats {
         grid-template-columns: 1fr;
@@ -868,7 +941,7 @@
       .services,
       .announcements,
       .contact {
-        padding: 60px 20px;
+        padding: 20px 20px;
       }
 
       .contact-inner {
@@ -897,97 +970,158 @@
 </head>
 <body>
 
+
+
   <!-- ══════════════════════════════════════════════════════════════════
        HEADER
   ══════════════════════════════════════════════════════════════════ -->
+
   <header>
-    <div class="top-banner">
-      Official Government System  ·  © 2026
-    </div>
+    
     <div class="header-inner">
       <a href="/" class="logo-group">
         <img src="{{ asset('images/city_of_general_trias_seal.png') }}" alt="General Trias Seal" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2248%22 height=%2248%22%3E%3Ccircle cx=%2224%22 cy=%2224%22 r=%2220%22 fill=%22%231a6ec7%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22 font-size=%2216%22 font-weight=%22bold%22%3EGT%3C/text%3E%3C/svg%3E'"/>
         <div class="logo-text">
-          <strong>Barangay Management System</strong>
-          <span>City of General Trias</span>
+          <strong>PROJECT CONNECT</strong>
+          
+            <span style="display: block;">Brgy. San Juan I</span>
+          
         </div>
       </a>
       <nav>
         <a href="/">
-          <span class="nav-icon">🏠</span>
           <span>Home</span>
         </a>
         <a href="#about">
-          <span class="nav-icon">ℹ️</span>
           <span>About</span>
         </a>
-        <a href="#services">
-          <span class="nav-icon">📋</span>
-          <span>Services</span>
-        </a>
-        <a href="#announcements">
-          <span class="nav-icon">📢</span>
-          <span>Announcements</span>
-        </a>
-        <a href="#contact">
-          <span class="nav-icon">📞</span>
+        <a href="#city-banner">
           <span>Contact</span>
         </a>
-        <a href="{{ route('login') }}" class="btn-primary">Login</a>
+        <!-- <a href="#services">
+          <span>Services</span>
+        </a> -->
+        <!-- <a href="#announcements">
+          <span>Announcements</span>
+        </a> -->
+        
       </nav>
     </div>
   </header>
 
+
   <!-- ══════════════════════════════════════════════════════════════════
        HERO SECTION
   ══════════════════════════════════════════════════════════════════ -->
+
+  
   <section class="hero">
     <div class="hero-inner">
-      <h1 class="hero-title">Official Government System</h1>
+      <h1 class="hero-title">PROJECT CONNECT</h1>
       <p class="hero-subtitle">Serving the Community of General Trias with Excellence</p>
       <p class="hero-description">
-        A modern and transparent barangay management platform providing efficient public services, 
-        real-time updates, and seamless access to government documents for every resident.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, 
+        sunt in culpa qui officia deserunt mollit anim id est laborum.
       </p>
 
       <div class="hero-ctas">
+
         <a href="#services" class="btn-white">
-          🗂 Explore Services
+          Register
         </a>
-        <a href="#contact" class="btn-outline">
-          📞 Contact Us
+
+        
+        <a href="{{ route('login') }}" class="btn-outline">
+          Log In
         </a>
       </div>
 
       <div class="stats">
         <div class="stat-card">
-          <span class="stat-value">145+</span>
-          <span class="stat-label">Barangays Served</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-value">400K</span>
-          <span class="stat-label">Residents</span>
+          <span class="stat-value">100K</span>
+          <span class="stat-label">Registered Residents</span>
         </div>
         <div class="stat-card">
           <span class="stat-value">24/7</span>
-          <span class="stat-label">Online Access</span>
+          <span class="stat-label">Free Wi-Fi Access</span>
         </div>
       </div>
     </div>
   </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+       MODAL - DATA PRIVACY NOTICE
+  ══════════════════════════════════════════════════════════════════ -->
+<div id="floatingPopup" class="floatingPopup">
+  <h4>Data Privacy Consent Form</h4> <br>
+  <p>
+    I hereby give my consent and acknowledge the authority of Barangay San Juan I to process my personal
+    information in accordance with the Data Privacy Act of 2012.
+  </p> <br>
+  <button class="btn btn-primary" onclick="closePopup()" style="float:right;">Close</button>
+</div>
+</div>
+
 
   <!-- ══════════════════════════════════════════════════════════════════
        ABOUT SECTION
   ══════════════════════════════════════════════════════════════════ -->
   <section class="about" id="about">
     <div class="about-inner">
-      <div class="section-header">
-        <span class="section-label">Who We Are</span>
-        <h2 class="section-title">About Barangay Management System</h2>
-        <p class="section-description">
-          Empowering communities through transparent governance and digital accessibility.
-        </p>
+
+      <div class="about-grid">
+        <div class="about-card" >
+          <div class="about-icon">📝</div>
+          <h3>REGISTER </h3>
+          <p>Enter your personal information</p>
+        </div>
+
+        <div class="about-card">
+          <div class="about-icon">✅</div>
+          <h3>VERIFICATION</h3>
+          <p>Wait for approval</p>
+        </div>
+
+        <div class="about-card">
+          <div class="about-icon">🆓</div>
+          <h3>FREE WI-FI ACCESS</h3>
+          <p>Get 1-day free wi-fi access</p>
+        </div>
       </div>
+
+      <div class="city-banner" id="city-banner">
+        <div class="about-icon" style="font-size: 4rem; margin-bottom: 16px; text-align:center;">🏛️</div>
+        <h3 style="text-align: center; margin-bottom: 50px;">San Juan I Barangay Hall</h3>
+
+        
+      
+        <a href="https://www.facebook.com/profile.php?id=61577772153879" >
+        <div class="city-hall" title="Redirect to Facebook">
+          Facebook<br> 
+          Barangay San Juan I - City of General Trias Cavite
+        </div>
+        </a>
+        <br>
+
+        <a href="https://maps.app.goo.gl/jb8Hb745vhcvAAjD9" >
+        <div class="city-hall" title="Redirect to Google Maps">
+          Google Maps<br> 
+          Block 6 Lot 4, Pennsylvania Executive Village, City of General Trias, Cavite, 4107
+        </div>
+        </a>
+
+     
+      
+        <!-- <p style="margin-top: 12px; font-size: 1rem; opacity: 0.9;">System Online</p> -->
+      </div>
+
+      <!-- <div class="section-header"> -->
+        <!-- <span class="section-label">Who We Are</span> -->
+        <!-- <h2 class="section-title">Register now access Free Wi-Fi!</h2> -->
+        <!-- <p class="section-description">
+          Empowering communities through transparent governance and digital accessibility.
+        </p> -->
+      <!-- </div>
 
       <p style="text-align: center; max-width: 800px; margin: 0 auto 60px; font-size: 1.05rem; color: var(--text-light); line-height: 1.8;">
         The Barangay Management System (BMS) is a modern government portal designed to streamline administrative 
@@ -1000,104 +1134,16 @@
         and communicate with officials seamlessly—anytime, anywhere.
       </p>
 
-      <div class="about-grid">
-        <div class="about-card">
-          <div class="about-icon">🎯</div>
-          <h3>Mission</h3>
-          <p>Deliver outstanding public services through technology and innovation</p>
-        </div>
-
-        <div class="about-card">
-          <div class="about-icon">👁️</div>
-          <h3>Vision</h3>
-          <p>A connected community with transparent and responsive governance</p>
-        </div>
-
-        <div class="about-card">
-          <div class="about-icon">📢</div>
-          <h3>Communication</h3>
-          <p>Open channels between residents and government officials</p>
-        </div>
-
-        <div class="about-card">
-          <div class="about-icon">⚡</div>
-          <h3>Excellence</h3>
-          <p>Continuous improvement in service delivery and efficiency</p>
-        </div>
-      </div>
-
-      <div class="city-banner">
-        <div class="about-icon" style="font-size: 4rem; margin-bottom: 16px;">🏛️</div>
-        <h3>City Hall</h3>
-        <p>General Trias</p>
-        <p style="margin-top: 12px; font-size: 1rem; opacity: 0.9;">System Online</p>
-      </div>
-    </div>
+    
+    </div> -->
   </section>
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       SERVICES SECTION
-  ══════════════════════════════════════════════════════════════════ -->
-  <section class="services" id="services">
-    <div class="services-inner">
-      <div class="section-header">
-        <span class="section-label">Our Services</span>
-        <h2 class="section-title">What We Offer</h2>
-        <p class="section-description">
-          Comprehensive digital services tailored to meet the needs of our community
-        </p>
-      </div>
-
-      <div class="services-grid">
-        <div class="service-card">
-          <span class="service-icon">📋</span>
-          <h3>Document Services</h3>
-          <p>Request and track important documents such as barangay clearance, residency, and business permits online.</p>
-          <a href="{{ route('login') }}" class="service-link">Get Started ›</a>
-        </div>
-
-        <div class="service-card">
-          <span class="service-icon">🗳️</span>
-          <h3>Government Programs</h3>
-          <p>Explore and apply for various government programs and benefits available to residents.</p>
-          <a href="{{ route('login') }}" class="service-link">Learn More ›</a>
-        </div>
-
-        <div class="service-card">
-          <span class="service-icon">💬</span>
-          <h3>Online Assistance</h3>
-          <p>Connect with government officials through our chat system for inquiries and assistance.</p>
-          <a href="#contact" class="service-link">Contact Us ›</a>
-        </div>
-
-        <div class="service-card">
-          <span class="service-icon">📱</span>
-          <h3>Online ID Services</h3>
-          <p>Generate and manage your online ID for quick verification and access to services.</p>
-          <a href="{{ route('login') }}" class="service-link">Apply Now ›</a>
-        </div>
-
-        <div class="service-card">
-          <span class="service-icon">📢</span>
-          <h3>Announcements</h3>
-          <p>Stay updated with latest news, advisories, and community announcements.</p>
-          <a href="#announcements" class="service-link">View News ›</a>
-        </div>
-
-        <div class="service-card">
-          <span class="service-icon">🔔</span>
-          <h3>Notifications</h3>
-          <p>Receive real-time notifications about important updates and events.</p>
-          <a href="{{ route('login') }}" class="service-link">Enable Alerts ›</a>
-        </div>
-      </div>
-    </div>
-  </section>
+ 
 
   <!-- ══════════════════════════════════════════════════════════════════
        ANNOUNCEMENTS SECTION
   ══════════════════════════════════════════════════════════════════ -->
-  <section class="announcements" id="announcements">
+  <!-- <section class="announcements" id="announcements">
     <div class="announcements-inner">
       <div class="section-header">
         <span class="section-label">Latest Updates</span>
@@ -1169,150 +1215,8 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
 
-  <!-- ══════════════════════════════════════════════════════════════════
-       QUICK LINKS SECTION
-  ══════════════════════════════════════════════════════════════════ -->
-  <section class="quick-links">
-    <div class="quick-links-inner">
-      <h2>Quick Links</h2>
-      <p style="text-align: center; margin-bottom: 40px; opacity: 0.9;">Frequently accessed portals</p>
-
-      <div class="links-grid">
-        <a href="{{ route('login') }}" class="quick-link-card">
-          <span class="quick-link-icon">🖥️</span>
-          <span>Resident Portal</span>
-        </a>
-
-        <a href="{{ route('login') }}" class="quick-link-card">
-          <span class="quick-link-icon">📋</span>
-          <span>Track Documents</span>
-        </a>
-
-        <a href="#contact" class="quick-link-card">
-          <span class="quick-link-icon">🗺️</span>
-          <span>Contact Info</span>
-        </a>
-
-        <a href="#contact" class="quick-link-card">
-          <span class="quick-link-icon">📞</span>
-          <span>Help & Support</span>
-        </a>
-
-        <a href="{{ route('login') }}" class="quick-link-card">
-          <span class="quick-link-icon">💬</span>
-          <span>Chat with Officials</span>
-        </a>
-
-        <a href="#announcements" class="quick-link-card">
-          <span class="quick-link-icon">📰</span>
-          <span>Latest News</span>
-        </a>
-
-        <a href="{{ route('register') }}" class="quick-link-card">
-          <span class="quick-link-icon">✍️</span>
-          <span>Register Now</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════════════════════════════
-       CONTACT SECTION
-  ══════════════════════════════════════════════════════════════════ -->
-  <section class="contact" id="contact">
-    <div class="contact-inner">
-      <div class="contact-info">
-        <h2>Get in Touch</h2>
-        <p style="font-size: 1.1rem; color: var(--text); font-weight: 600; margin-bottom: 12px;">Contact Us</p>
-        <p>
-          Reach out to your barangay officials. We're here to help and listen to your concerns.
-        </p>
-        <p style="margin-top: 20px;">
-          Our offices are open Monday through Friday. For urgent matters, please use the emergency 
-          hotlines or visit your nearest barangay hall during office hours.
-        </p>
-
-        <div class="contact-details">
-          <div class="contact-item">
-            <div class="contact-item-icon">📍</div>
-            <div>
-              <h4>City Hall Address</h4>
-              <p>Gen. Trias Drive, General Trias City,<br>Cavite 4116, Philippines</p>
-            </div>
-          </div>
-
-          <div class="contact-item">
-            <div class="contact-item-icon">📞</div>
-            <div>
-              <h4>Office Hotline</h4>
-              <p>(046) 437-0000 · (046) 437-0001</p>
-            </div>
-          </div>
-
-          <div class="contact-item">
-            <div class="contact-item-icon">✉️</div>
-            <div>
-              <h4>Email Address</h4>
-              <p>bms@generaltrias.gov.ph</p>
-            </div>
-          </div>
-
-          <div class="contact-item">
-            <div class="contact-item-icon">🕐</div>
-            <div>
-              <h4>Office Hours</h4>
-              <p>Monday – Friday: 8:00 AM – 5:00 PM<br>Closed on weekends and holidays</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="contact-form">
-        <h3>Send a Message</h3>
-        <form action="#" method="POST">
-          @csrf
-          <div class="form-row">
-            <div class="form-group">
-              <label for="first_name">First Name</label>
-              <input type="text" id="first_name" name="first_name" placeholder="Juan" required>
-            </div>
-            <div class="form-group">
-              <label for="last_name">Last Name</label>
-              <input type="text" id="last_name" name="last_name" placeholder="Dela Cruz" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" placeholder="juan@email.com" required>
-          </div>
-
-          <div class="form-group">
-            <label for="concern_type">Concern Type</label>
-            <select id="concern_type" name="concern_type" required>
-              <option value="">Select a concern</option>
-              <option value="document">Document Request</option>
-              <option value="assistance">General Assistance</option>
-              <option value="complaint">Complaint</option>
-              <option value="inquiry">Inquiry</option>
-              <option value="feedback">Feedback</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" placeholder="Describe your concern or inquiry..." required></textarea>
-          </div>
-
-          <button type="submit" class="btn-submit">
-            📨 Submit Message
-          </button>
-        </form>
-      </div>
-    </div>
-  </section>
 
   <!-- ══════════════════════════════════════════════════════════════════
        FOOTER
@@ -1320,50 +1224,37 @@
   <footer>
     <div class="footer-inner">
       <div class="footer-brand">
-        <h3>Barangay Management System</h3>
+        <h3>PROJECT CONNECT</h3>
         <p>
           Providing transparent, efficient, and accessible government services to all residents 
-          of General Trias City, Cavite.
+          of Barangay San Juan I, City of General Trias City, Cavite.
         </p>
         <p style="margin-top: 20px; font-size: 0.85rem;">
-          © 2026 City Government of General Trias. All rights reserved.
+          © 2026 PROJECT CONNECT. All rights reserved.
         </p>
       </div>
 
       <div class="footer-section">
         <h4>Quick Access</h4>
         <ul>
-          <li><a href="{{ route('login') }}">Resident Portal</a></li>
           <li><a href="{{ route('register') }}">Register</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#announcements">Announcements</a></li>
+          <li><a href="#about">Services</a></li>
+
         </ul>
       </div>
 
-      <div class="footer-section">
-        <h4>About</h4>
-        <ul>
-          <li><a href="#about">About BMS</a></li>
-          <li><a href="#contact">Contact Us</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
-        </ul>
-      </div>
 
       <div class="footer-section">
         <h4>Connect</h4>
         <ul>
-          <li><a href="#">Facebook</a></li>
-          <li><a href="#">Twitter</a></li>
-          <li><a href="#">Email</a></li>
-          <li><a href="#">Hotline</a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61577772153879">Facebook</a></li>
+          <li><a href="https://maps.app.goo.gl/jb8Hb745vhcvAAjD9">Google Maps</a></li>
+
         </ul>
       </div>
     </div>
 
-    <div class="footer-bottom">
-      <p>Official Government System · Barangay Management System · General Trias, Cavite</p>
-    </div>
+
   </footer>
 
   <script>
@@ -1400,6 +1291,18 @@
         }
       });
     });
+
+    function closePopup() {
+    document.getElementById('floatingPopup').style.display = 'none';
+}
+
+// Show popup on page load
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('floatingPopup').style.display = 'block';
+});
   </script>
+
+
 </body>
 </html>
+
