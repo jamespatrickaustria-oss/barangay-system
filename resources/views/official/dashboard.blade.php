@@ -295,13 +295,54 @@
         background: #f5f5f5;
     }
 
-    @media (max-width: 768px) {
+    /* Tablet and below */
+    @media (max-width: 1024px) {
+        .welcome-left h1 {
+            font-size: 24px;
+        }
+
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+        }
+
+        th, td {
+            padding: 12px 16px;
+        }
+    }
+
+    /* Mobile devices */
+    @media (max-width: 768px) {
+        .welcome-bar {
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 32px;
+        }
+
+        .welcome-left h1 {
+            font-size: 22px;
+        }
+
+        .welcome-left p {
+            font-size: 13px;
+        }
+
+        .welcome-date {
+            font-size: 12px;
         }
 
         .action-buttons {
             flex-direction: column;
+            margin-bottom: 32px;
         }
 
         .action-btn-link {
@@ -309,10 +350,108 @@
             text-align: center;
         }
 
-        .welcome-bar {
-            flex-direction: column;
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
+        }
+
+        .stat-card {
+            padding: 16px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+        }
+
+        .stat-link {
+            font-size: 11px;
+        }
+
+        .section-header {
+            flex-direction: column;
             align-items: flex-start;
+            gap: 12px;
+        }
+
+        .table-card {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            min-width: 650px;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            font-size: 13px;
+        }
+
+        th {
+            font-size: 11px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 12px;
+        }
+
+        .resident-name {
+            font-size: 13px;
+        }
+
+        .resident-email {
+            font-size: 11px;
+        }
+
+        .action-btn {
+            padding: 6px 10px;
+            font-size: 11px;
+        }
+    }
+
+    /* Small mobile devices */
+    @media (max-width: 480px) {
+        .welcome-bar {
+            margin-bottom: 24px;
+        }
+
+        .welcome-left h1 {
+            font-size: 20px;
+        }
+
+        .action-buttons,
+        .stats-grid,
+        .section-header,
+        .table-card {
+            margin-bottom: 24px;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-value {
+            font-size: 22px;
+        }
+
+        .section-title {
+            font-size: 15px;
+        }
+
+        .actions-cell {
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .action-btn {
+            width: 100%;
+            text-align: center;
         }
     }
 </style>
@@ -414,5 +553,36 @@
         </div>
     @endif
 @endif
+
+<div class="section-header">
+    <h2 class="section-title">Resident ID List</h2>
+</div>
+
+<div class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Resident</th>
+                <th>Account No.</th>
+                <th>Issued At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse(($recentResidentIds ?? collect()) as $id)
+                <tr>
+                    <td>{{ $id->user?->getFullName() ?? 'N/A' }}</td>
+                    <td>{{ $id->user?->account_number ?? 'N/A' }}</td>
+                    <td>{{ optional($id->issued_at)->format('M d, Y h:i A') ?? 'N/A' }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="3" class="empty-message">
+                        <p>No resident IDs found.</p>
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 
 @endsection

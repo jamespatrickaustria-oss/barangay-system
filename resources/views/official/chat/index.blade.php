@@ -228,7 +228,7 @@
                 item.innerHTML = `
                     <div class="thread-name">${thread.resident_name}</div>
                     <div class="thread-preview">${thread.latest_preview ?? ''}</div>
-                    <div class="thread-time">${thread.last_message_at ?? ''}</div>
+                    <div class="thread-time">${thread.last_message_at_human ?? ''}</div>
                 `;
                 item.addEventListener('click', async () => {
                     activeThreadId = thread.id;

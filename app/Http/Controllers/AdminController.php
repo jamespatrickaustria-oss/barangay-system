@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\OnlineId;
 use App\Services\MailService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\OfficialController;
 
 class AdminController extends Controller
 {
@@ -26,7 +28,12 @@ class AdminController extends Controller
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('totalOfficials', 'totalResidents', 'pendingResidents', 'recentOfficials'));
+        $recentResidentIds = OnlineId::with('user')
+            ->latest('issued_at')
+            ->take(10)
+            ->get();
+
+        return view('admin.dashboard', compact('totalOfficials', 'totalResidents', 'pendingResidents', 'recentOfficials', 'recentResidentIds'));
     }
 
     /**
@@ -39,6 +46,127 @@ class AdminController extends Controller
             ->paginate(15);
 
         return view('admin.officials.index', compact('officials'));
+    }
+
+    /**
+     * Display all registered users.
+     */
+    public function users(Request $request)
+    {
+        $filter = $request->get('filter', 'all');
+        
+        $query = User::query();
+        
+        // Apply status filter
+        if ($filter !== 'all') {
+            $query->where('status', $filter);
+        }
+        
+        $users = $query->latest()->paginate(15);
+        
+        // Get stats for the dashboard cards
+        $pendingCount = User::where('status', 'pending')->count();
+        $approvedCount = User::where('status', 'approved')->count();
+        $rejectedCount = User::where('status', 'rejected')->count();
+
+        return view('admin.users.index', compact('users', 'pendingCount', 'approvedCount', 'rejectedCount'));
+    }
+
+    /**
+     * Display detailed information for one user.
+     */
+    public function showUser(User $user)
+    {
+        return view('admin.users.show', compact('user'));
+    }
+
+    /**
+     * Approve a user account.
+     */
+    public function approveUser(Request $request, User $user)
+    {
+        $authUser = auth()->user();
+
+        if (!in_array($authUser->role, ['admin', 'official'], true)) {
+            abort(403, 'You are not allowed to approve users.');
+        }
+
+        if ($authUser->role === 'official' && $user->role !== 'resident') {
+            abort(403, 'Barangay Officials can only approve Resident accounts.');
+        }
+
+        if ($authUser->role === 'admin' && !in_array($user->role, ['resident', 'official'], true)) {
+            abort(403, 'Admin can only approve Resident or Barangay Official accounts.');
+        }
+
+        $finalRole = $user->role;
+
+        if ($authUser->role === 'admin') {
+            $validated = $request->validate([
+                'assigned_role' => ['required', 'string', 'in:resident,official'],
+            ]);
+
+            $finalRole = $validated['assigned_role'];
+        }
+
+        $user->update([
+            'status' => 'approved',
+            'role' => $finalRole,
+            'approved_by' => $authUser->id,
+            'approved_at' => now(),
+            'approver_role' => $authUser->role,
+        ]);
+
+        // When approving a resident, ensure account number, OnlineId, and approval email are set.
+        if ($finalRole === 'resident') {
+            $user->ensureResidentAccountNumber();
+
+            if (!OnlineId::where('user_id', $user->id)->exists()) {
+                OnlineId::create([
+                    'user_id'   => $user->id,
+                    'id_number' => OnlineId::generateIdNumber(),
+                    'issued_at' => now(),
+                ]);
+            }
+
+            MailService::send(
+                $user->email,
+                $user->getFullName(),
+                'Your Account Has Been Approved',
+                MailService::modernAccountApprovedEmail($user->getFullName(), url('/login'))
+            );
+        }
+
+        return redirect()->back()->with('success', 'User approved successfully.');
+    }
+
+    /**
+     * Reject a user account.
+     */
+    public function rejectUser(User $user)
+    {
+        $authUser = auth()->user();
+
+        if (!in_array($authUser->role, ['admin', 'official'], true)) {
+            abort(403, 'You are not allowed to reject users.');
+        }
+
+        if ($authUser->role === 'official' && $user->role !== 'resident') {
+            abort(403, 'Barangay Officials can only reject Resident accounts.');
+        }
+
+        if ($authUser->role === 'admin' && !in_array($user->role, ['resident', 'official'], true)) {
+            abort(403, 'Admin can only reject Resident or Barangay Official accounts.');
+        }
+
+        $user->update([
+            'status' => 'rejected',
+            'approved_by' => $authUser->id,
+            'approved_at' => now(),
+            'approver_role' => $authUser->role,
+        ]);
+
+        return redirect()->back()->with('success', 'User rejected successfully.');
     }
 
     /**
@@ -102,5 +230,135 @@ class AdminController extends Controller
         $official->delete();
 
         return redirect()->back()->with('success', 'Official removed successfully.');
+    }
+
+    /**
+     * Display a listing of residents.
+     */
+    public function residents(Request $request)
+    {
+        return app(OfficialController::class)->residents($request);
+    }
+
+    /**
+     * Show the form for creating a new resident.
+     */
+    public function createResident()
+    {
+        return app(OfficialController::class)->createResident();
+    }
+
+    /**
+     * Store a newly created resident.
+     */
+    public function storeResident(Request $request)
+    {
+        return app(OfficialController::class)->storeResident($request);
+    }
+
+    /**
+     * Display the specified resident.
+     */
+    public function showResident($id)
+    {
+        return app(OfficialController::class)->showResident($id);
+    }
+
+    /**
+     * Show the form for editing a resident.
+     */
+    public function editResident($id)
+    {
+        return app(OfficialController::class)->editResident($id);
+    }
+
+    /**
+     * Update the specified resident.
+     */
+    public function updateResident(Request $request, $id)
+    {
+        return app(OfficialController::class)->updateResident($request, $id);
+    }
+
+    /**
+     * Delete the specified resident.
+     */
+    public function approveResident($id)
+    {
+        return app(OfficialController::class)->approveResident($id);
+    }
+
+    public function rejectResident($id)
+    {
+        return app(OfficialController::class)->rejectResident($id);
+    }
+
+    public function deleteResident($id)
+    {
+        return app(OfficialController::class)->deleteResident($id);
+    }
+
+    /**
+     * View the resident online ID card.
+     */
+    public function viewResidentId($id)
+    {
+        return app(OfficialController::class)->viewResidentId($id);
+    }
+
+    /**
+     * Display a listing of announcements.
+     */
+    public function announcements(Request $request)
+    {
+        return app(OfficialController::class)->announcements($request);
+    }
+
+    /**
+     * Show the form for creating a new announcement.
+     */
+    public function createAnnouncement()
+    {
+        return app(OfficialController::class)->createAnnouncement();
+    }
+
+    /**
+     * Store a newly created announcement.
+     */
+    public function storeAnnouncement(Request $request)
+    {
+        return app(OfficialController::class)->storeAnnouncement($request);
+    }
+
+    /**
+     * Show the form for editing an announcement.
+     */
+    public function editAnnouncement($id)
+    {
+        return app(OfficialController::class)->editAnnouncement($id);
+    }
+
+    /**
+     * Update the specified announcement.
+     */
+    public function updateAnnouncement(Request $request, $id)
+    {
+        return app(OfficialController::class)->updateAnnouncement($request, $id);
+    }
+
+    /**
+     * Delete the specified announcement.
+     */
+    public function deleteAnnouncement($id)
+    {
+        return app(OfficialController::class)->deleteAnnouncement($id);
+    }
+
+    /**
+     * Toggle announcement status.
+     */
+    public function toggleAnnouncement($id)
+    {
+        return app(OfficialController::class)->toggleAnnouncement($id);
     }
 }

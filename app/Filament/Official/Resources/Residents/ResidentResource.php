@@ -22,6 +22,16 @@ class ResidentResource extends Resource
 {
     protected static ?string $model = Resident::class;
 
+    protected static ?string $navigationLabel = 'Residents';
+
+    protected static ?string $modelLabel = 'Resident';
+
+    protected static ?string $pluralModelLabel = 'Residents';
+
+    protected static ?string $navigationGroup = 'Management';
+
+    protected static ?int $navigationSort = 2;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema
@@ -62,5 +72,14 @@ class ResidentResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function canViewAny(): bool
+    {
+        if (!auth()->check()) {
+            return false;
+        }
+
+        return in_array(auth()->user()->role, ['admin', 'official'], true);
     }
 }

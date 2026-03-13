@@ -22,6 +22,16 @@ class AnnouncementResource extends Resource
 {
     protected static ?string $model = Announcement::class;
 
+    protected static ?string $navigationLabel = 'Announcements';
+
+    protected static ?string $modelLabel = 'Announcement';
+
+    protected static ?string $pluralModelLabel = 'Announcements';
+
+    protected static ?string $navigationGroup = 'Management';
+
+    protected static ?int $navigationSort = 3;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema
@@ -62,5 +72,14 @@ class AnnouncementResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function canViewAny(): bool
+    {
+        if (!auth()->check()) {
+            return false;
+        }
+
+        return in_array(auth()->user()->role, ['admin', 'official'], true);
     }
 }

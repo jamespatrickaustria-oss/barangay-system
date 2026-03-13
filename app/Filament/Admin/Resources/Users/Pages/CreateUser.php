@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Users\Pages;
 
 use App\Filament\Admin\Resources\Users\UserResource;
+use App\Models\User;
 use App\Services\MailService;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Str;
@@ -26,6 +27,14 @@ class CreateUser extends CreateRecord
         if (!empty($data['password'])) {
             $data['password'] = bcrypt($data['password']);
         }
+
+        // Generate unique account number
+        $data['account_number'] = User::generateAccountNumber(
+            $data['first_name'],
+            $data['middle_name'] ?? null,
+            $data['surname'],
+            $data['birthdate'] ?? null
+        );
         
         return $data;
     }

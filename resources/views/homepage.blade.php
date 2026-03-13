@@ -841,34 +841,205 @@
     }
 
     /* ══════════════════════════════════════════════════════════════════
-       RESPONSIVE
+       RESPONSIVE DESIGN
     ══════════════════════════════════════════════════════════════════ */
     @media (max-width: 768px) {
+      header {
+        position: relative;
+      }
+
       .header-inner {
-        padding: 0 20px;
+        padding: 0 16px;
+        height: 60px;
+      }
+
+      .top-banner {
+        padding: 6px 16px;
+        font-size: 0.75rem;
       }
 
       nav, .nav-menu {
         display: none;
       }
 
+      nav a {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+      }
+
+      .logo-group img {
+        width: 40px;
+        height: 40px;
+      }
+
+      .logo-text strong {
+        font-size: 0.9rem;
+      }
+
       .logo-text span {
-        display: none;
+        font-size: 0.6rem;
+      }
+
+      .btn-primary {
+        padding: 8px 16px;
+        font-size: 0.8rem;
       }
 
       .hero {
-        padding: 60px 20px;
+        margin-top: 60px;
+        padding: 50px 16px;
+      }
+
+      .hero-title {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        margin-bottom: 12px;
+      }
+
+      .hero-subtitle {
+        font-size: clamp(0.95rem, 3vw, 1.2rem);
+        margin-bottom: 16px;
+      }
+
+      .hero-description {
+        font-size: 0.95rem;
+        margin: 0 auto 30px;
+        line-height: 1.6;
+      }
+
+      .hero-ctas {
+        gap: 12px;
+        margin-bottom: 40px;
+      }
+
+      .btn-white,
+      .btn-outline {
+        padding: 12px 20px;
+        font-size: 0.85rem;
+        min-height: 44px;
       }
 
       .stats {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 16px;
+      }
+
+      .stat-card {
+        padding: 16px;
+        border-radius: 8px;
+      }
+
+      .stat-value {
+        font-size: 1.8rem;
+      }
+
+      .stat-label {
+        font-size: 0.8rem;
+      }
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
       }
 
       .about,
       .services,
       .announcements,
       .contact {
-        padding: 60px 20px;
+        padding: 50px 16px;
+      }
+
+      .about-grid {
+        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+
+      .about-card {
+        padding: 28px 20px;
+      }
+
+      .about-card h3 {
+        font-size: 1.1rem;
+      }
+
+      .about-icon {
+        font-size: 2.2rem;
+      }
+
+      .section-title {
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+      }
+
+      .section-description {
+        font-size: 0.95rem;
+      }
+
+      .services-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+      }
+
+      .service-card {
+        padding: 28px 20px;
+      }
+
+      .service-card h3 {
+        font-size: 1.1rem;
+      }
+
+      .service-icon {
+        font-size: 2.2rem;
+      }
+
+      .announcement-card {
+        grid-template-columns: 70px 1fr;
+        gap: 16px;
+        padding: 20px;
+      }
+
+      .announcement-date {
+        padding: 12px 8px;
+        min-width: 70px;
+      }
+
+      .announcement-day {
+        font-size: 1.6rem;
+      }
+
+      .announcement-month {
+        font-size: 0.75rem;
+      }
+
+      .announcement-content h3 {
+        font-size: 1.05rem;
+      }
+
+      .announcement-content p {
+        font-size: 0.9rem;
+      }
+
+      .quick-links {
+        padding: 50px 16px;
+      }
+
+      .quick-links h2 {
+        font-size: 1.6rem;
+      }
+
+      .links-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+      }
+
+      .quick-link-card {
+        padding: 16px;
+      }
+
+      .quick-link-icon {
+        font-size: 2rem;
+      }
+
+      .quick-link-card span {
+        font-size: 0.85rem;
       }
 
       .contact-inner {
@@ -876,12 +1047,75 @@
         gap: 40px;
       }
 
+      .contact-info h2 {
+        font-size: 1.8rem;
+      }
+
       .contact-form {
-        padding: 32px 24px;
+        padding: 28px 20px;
+      }
+
+      .contact-form h3 {
+        font-size: 1.3rem;
       }
 
       .form-row {
         grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-group label {
+        font-size: 0.85rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+      }
+
+      .form-group textarea {
+        min-height: 100px;
+      }
+
+      .btn-submit {
+        min-height: 44px;
+        font-size: 0.9rem;
+      }
+
+      .city-banner {
+        margin-top: 40px;
+        padding: 28px 20px;
+      }
+
+      .city-banner h3 {
+        font-size: 1.3rem;
+      }
+
+      .city-banner p {
+        font-size: 0.95rem;
+      }
+
+      .contact-item {
+        gap: 12px;
+      }
+
+      .contact-item-icon {
+        font-size: 1.3rem;
+      }
+
+      .contact-item h4 {
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+      }
+
+      .contact-item p {
+        font-size: 0.95rem;
       }
 
       .footer-inner {
@@ -889,8 +1123,325 @@
         gap: 32px;
       }
 
+      .footer-brand h3 {
+        font-size: 1.2rem;
+      }
+
+      .footer-section h4 {
+        font-size: 0.95rem;
+      }
+
+      .footer-section a {
+        font-size: 0.9rem;
+      }
+
+      .footer-bottom {
+        padding-top: 20px;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-inner {
+        padding: 0 12px;
+        height: 56px;
+      }
+
+      .top-banner {
+        padding: 4px 12px;
+        font-size: 0.7rem;
+      }
+
+      .logo-group img {
+        width: 36px;
+        height: 36px;
+      }
+
+      .logo-text strong {
+        font-size: 0.8rem;
+      }
+
+      .logo-text span {
+        display: none;
+      }
+
+      .btn-primary {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+      }
+
+      .hero {
+        margin-top: 56px;
+        padding: 40px 12px;
+      }
+
+      .hero-title {
+        font-size: clamp(1.3rem, 3vw, 2rem);
+        margin-bottom: 8px;
+      }
+
+      .hero-subtitle {
+        font-size: clamp(0.85rem, 2vw, 1rem);
+        margin-bottom: 12px;
+      }
+
+      .hero-description {
+        font-size: 0.9rem;
+        margin: 0 auto 24px;
+        line-height: 1.5;
+      }
+
+      .hero-ctas {
+        gap: 8px;
+        margin-bottom: 32px;
+        flex-direction: column;
+      }
+
+      .btn-white,
+      .btn-outline {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 0.8rem;
+        justify-content: center;
+        min-height: 44px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .stat-card {
+        padding: 12px;
+      }
+
+      .stat-value {
+        font-size: 1.6rem;
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+      }
+
+      .about,
+      .services,
+      .announcements,
+      .contact {
+        padding: 40px 12px;
+      }
+
+      .about-grid {
+        gap: 16px;
+        grid-template-columns: 1fr;
+      }
+
+      .about-card {
+        padding: 20px 16px;
+      }
+
+      .about-card h3 {
+        font-size: 1rem;
+      }
+
+      .about-icon {
+        font-size: 2rem;
+      }
+
+      .section-title {
+        font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+      }
+
+      .section-description {
+        font-size: 0.9rem;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .service-card {
+        padding: 20px 16px;
+      }
+
+      .service-card h3 {
+        font-size: 1rem;
+      }
+
+      .service-icon {
+        font-size: 2rem;
+      }
+
+      .service-card p {
+        font-size: 0.9rem;
+      }
+
+      .service-link {
+        font-size: 0.9rem;
+      }
+
       .announcement-card {
         grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      .announcement-date {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0;
+        border: none;
+        background: transparent;
+      }
+
+      .announcement-day {
+        font-size: 1.3rem;
+      }
+
+      .announcement-month {
+        font-size: 0.7rem;
+      }
+
+      .announcement-content h3 {
+        font-size: 0.95rem;
+      }
+
+      .announcement-content p {
+        font-size: 0.85rem;
+      }
+
+      .quick-links {
+        padding: 40px 12px;
+      }
+
+      .quick-links h2 {
+        font-size: 1.4rem;
+        margin-bottom: 12px;
+      }
+
+      .quick-links-inner > p {
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+      }
+
+      .links-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .quick-link-card {
+        padding: 12px;
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .quick-link-icon {
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+      }
+
+      .quick-link-card span {
+        font-size: 0.75rem;
+        text-align: center;
+      }
+
+      .contact-inner {
+        gap: 32px;
+      }
+
+      .contact-info h2 {
+        font-size: 1.5rem;
+      }
+
+      .contact-form {
+        padding: 20px 16px;
+      }
+
+      .contact-form h3 {
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+      }
+
+      .form-group label {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+        border-radius: 6px;
+      }
+
+      .form-group textarea {
+        min-height: 80px;
+      }
+
+      .btn-submit {
+        min-height: 44px;
+        font-size: 0.85rem;
+      }
+
+      .city-banner {
+        margin-top: 32px;
+        padding: 20px 16px;
+      }
+
+      .city-banner h3 {
+        font-size: 1.1rem;
+      }
+
+      .footer-inner {
+        gap: 24px;
+      }
+
+      .footer-brand h3 {
+        font-size: 1.05rem;
+      }
+
+      .footer-brand p {
+        font-size: 0.85rem;
+      }
+
+      .footer-section h4 {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+      }
+
+      .footer-section a {
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+      }
+
+      .footer-bottom {
+        font-size: 0.75rem;
+        padding-top: 16px;
+      }
+    }
+
+    /* Touch device optimization */
+    @media (hover: none) and (pointer: coarse) {
+      .btn-white,
+      .btn-outline,
+      .btn-primary,
+      .btn-submit,
+      nav a,
+      .service-link,
+      .quick-link-card {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      button, a[class*="btn"] {
+        -webkit-tap-highlight-color: transparent;
       }
     }
   </style>

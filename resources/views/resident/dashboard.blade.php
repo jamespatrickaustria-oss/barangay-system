@@ -505,7 +505,7 @@
         .stats-row {
             grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .quick-access-grid {
             grid-template-columns: 1fr;
         }
@@ -524,43 +524,124 @@
         .hero-banner {
             flex-direction: column;
             text-align: center;
-            padding: 40px 28px;
+            padding: 32px 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
         }
 
         .hero-emoji {
-            position: static;
-            margin-top: 20px;
-            transform: none;
+            display: none;
+        }
+
+        .hero-content h1 {
+            font-size: 22px;
+        }
+
+        .hero-content > p {
+            font-size: 14px;
+            margin-bottom: 14px;
         }
 
         .stats-row {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            padding: 20px 16px;
+            border-radius: 16px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            font-size: 20px;
+            margin-bottom: 10px;
         }
 
         .quick-access-grid {
             grid-template-columns: 1fr;
+            gap: 14px;
+            margin-bottom: 32px;
         }
 
-        .hero-content h1 {
-            font-size: 24px;
+        .quick-card {
+            padding: 22px 20px;
+            border-radius: 16px;
         }
+
+        .quick-icon { font-size: 32px; margin-bottom: 10px; }
+
+        .announcements-section { margin-top: 40px; }
+
+        .announcements-title { font-size: 20px; margin-bottom: 20px; }
 
         .ann-card {
-            gap: 16px;
+            gap: 14px;
+            padding: 16px;
+            border-radius: 14px;
         }
 
+        .ann-card:hover { transform: none; }
+
         .ann-date {
-            width: 60px;
+            width: 56px;
             padding: 10px 6px;
         }
 
-        .ann-date .day {
-            font-size: 18px;
+        .ann-date .day  { font-size: 17px; }
+        .ann-date .month { font-size: 10px; }
+
+        .ann-body h4 { font-size: 14px; }
+        .ann-body p  { font-size: 13px; }
+
+        .quick-panel {
+            padding: 24px 20px;
+            border-radius: 16px;
         }
 
-        .ann-date .month {
-            font-size: 10px;
+        .quick-access-header { font-size: 18px; margin-bottom: 16px; }
+    }
+
+    @media (max-width: 480px) {
+        .stats-row {
+            grid-template-columns: 1fr;
+            gap: 12px;
         }
+
+        .hero-content h1 { font-size: 19px; }
+
+        .stat-card {
+            padding: 18px 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stat-icon { margin-bottom: 0; flex-shrink: 0; }
+
+        .stat-value { font-size: 24px; margin-bottom: 2px; }
+        .stat-label { margin-bottom: 8px; }
+
+        .ann-card { flex-direction: column; gap: 12px; }
+
+        .ann-date {
+            width: 100%;
+            border-radius: 10px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .ann-date .day  { font-size: 20px; }
+        .ann-date .month { font-size: 12px; }
     }
 </style>
 
@@ -592,7 +673,7 @@
 
     <div class="stat-card muted">
         <div class="stat-icon">📅</div>
-        <div class="stat-value" style="font-size: 18px;">{{ auth()->user()->created_at->format('M Y') }}</div>
+        <div class="stat-value" style="font-size: 18px;">{{ auth()->user()->created_at->format('M d, Y') }}</div>
         <div class="stat-label">Member Since</div>
     </div>
 </div>

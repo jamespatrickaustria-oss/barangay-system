@@ -1,0 +1,92 @@
+@import 'tailwindcss';
+
+/* Custom responsive styles for Admin Panel */
+:root {
+    --sidebar-width: 16rem;
+}
+
+/* Enhance mobile responsiveness */
+@media (max-width: 768px) {
+    /* Improve touch targets on mobile */
+    .fi-sidebar-nav-item {
+        min-height: 48px !important;
+    }
+
+    /* Better spacing on mobile */
+    .fi-main {
+        padding: 1rem !important;
+    }
+
+    .fi-section-content-ctn {
+        padding: 1rem !important;
+    }
+
+    /* Make tables scroll horizontally on mobile */
+    .fi-ta-table-ctn {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Stack form fields on mobile */
+    .fi-fo-field-wrp-label-inline .fi-fo-field-wrp-label {
+        width: 100% !important;
+        text-align: left !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* Responsive card grid */
+    .fi-section {
+        gap: 1rem !important;
+    }
+
+    /* Better button spacing */
+    .fi-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Widget responsive columns */
+    .fi-wi-stats-overview-stat {
+        min-width: 100% !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    /* Tablet adjustments */
+    .fi-main {
+        padding: 1.5rem !important;
+    }
+
+    /* Two column layout for widgets on tablet */
+    .fi-wi-stats-overview {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Ensure smooth transitions */
+.fi-sidebar {
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Improve mobile menu */
+@media (max-width: 768px) {
+    .fi-topbar {
+        padding: 0.75rem 1rem !important;
+    }
+
+    /* Mobile navigation improvements */
+    .fi-sidebar-open .fi-sidebar {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* Widget dashboard responsive grid */
+.fi-wi {
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .fi-dashboard-wi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+    }
+}

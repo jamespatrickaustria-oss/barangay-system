@@ -26,7 +26,8 @@ class ResidentController extends Controller
         $announcements = Announcement::where('is_active', true)
             ->where(function ($query) {
                 $query->whereNull('expires_at')
-                    ->orWhere('expires_at', '>=', now());
+                    // Expiration is selected via date input, so keep it visible for the full selected day.
+                    ->orWhereDate('expires_at', '>=', today());
             })
             ->latest('published_at')
             ->take(5)
@@ -43,6 +44,16 @@ class ResidentController extends Controller
         return view('resident.profile', ['user' => auth()->user()]);
     }
 
+    public function index(Request $request)
+{
+    $sortBy = $request->get('sort', 'id');
+    $sortOrder = $request->get('order', 'asc');
+    
+    $users = User::orderBy($sortBy, $sortOrder)->paginate(15);
+    return view('admin.users.index', compact('users'));
+}
+
+
     /**
      * Update the resident's profile.
      */
@@ -53,6 +64,12 @@ class ResidentController extends Controller
             'middle_name' => 'nullable|string|max:255',
             'surname' => 'required|string|max:255',
             'phone' => 'nullable|string',
+            'father_name' => 'nullable|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
+            'house_no' => 'nullable|string|max:100',
+            'barangay' => 'nullable|string|max:255',
+            'municipality_city' => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:255',
             'address' => 'nullable|string',
             'birthdate' => 'nullable|date',
             'gender' => 'nullable|string|in:male,female,other',
@@ -63,18 +80,25 @@ class ResidentController extends Controller
         $user = auth()->user();
 
         if ($request->hasFile('profile_photo')) {
-            if ($user->profile_photo) {
-                Storage::delete('public/photos/' . $user->profile_photo);
+            $existingPhotoPath = $user->getProfilePhotoStoragePath();
+
+            if ($existingPhotoPath) {
+                Storage::disk('public')->delete($existingPhotoPath);
             }
 
-            $filename = $request->file('profile_photo')->store('photos', 'public');
-            $user->profile_photo = basename($filename);
+            $user->profile_photo = $request->file('profile_photo')->store('uploads/profile_photos', 'public');
         }
 
         $user->first_name = $validated['first_name'];
         $user->middle_name = $validated['middle_name'] ?? null;
         $user->surname = $validated['surname'];
         $user->phone = $request->phone;
+        $user->father_name = $validated['father_name'] ?? null;
+        $user->mother_name = $validated['mother_name'] ?? null;
+        $user->house_no = $validated['house_no'] ?? null;
+        $user->barangay = $validated['barangay'] ?? null;
+        $user->municipality_city = $validated['municipality_city'] ?? null;
+        $user->nationality = $validated['nationality'] ?? null;
         $user->address = $request->address;
         $user->birthdate = $request->birthdate;
         $user->gender = $request->gender;
@@ -97,33 +121,9 @@ class ResidentController extends Controller
             return redirect()->back()->with('error', 'No Online ID found for your account.');
         }
 
+        $onlineId->user->ensureResidentAccountNumber();
+
         return view('resident.online-id', compact('onlineId'));
-    }
-
-    /**
-     * Update ID photo.
-     */
-    public function updateIdPhoto(Request $request)
-    {
-        $validated = $request->validate([
-            'profile_photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
-
-        $user = auth()->user();
-
-        if ($request->hasFile('profile_photo')) {
-            // Delete old photo if exists
-            if ($user->profile_photo) {
-                Storage::delete('public/photos/' . $user->profile_photo);
-            }
-
-            // Store new photo
-            $filename = $request->file('profile_photo')->store('photos', 'public');
-            $user->profile_photo = basename($filename);
-            $user->save();
-        }
-
-        return redirect()->back()->with('success', 'ID photo updated successfully.');
     }
 
     /**
@@ -131,6 +131,15 @@ class ResidentController extends Controller
      */
     public function notifications(Request $request)
     {
+        $announcements = Announcement::with('user')
+            ->where('is_active', true)
+            ->where(function ($query) {
+                $query->whereNull('expires_at')
+                    ->orWhereDate('expires_at', '>=', today());
+            })
+            ->latest('published_at')
+            ->paginate(10);
+
         $notifications = Notification::where('user_id', auth()->id())
             ->where('title', '!=', 'Account Approved')
             ->latest()
@@ -141,7 +150,7 @@ class ResidentController extends Controller
             ->where('title', '!=', 'Account Approved')
             ->count();
 
-        return view('resident.notifications', compact('notifications', 'unread'));
+        return view('resident.notifications', compact('notifications', 'unread', 'announcements'));
     }
 
     /**
@@ -157,5 +166,18 @@ class ResidentController extends Controller
         $notification->save();
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Mark all notifications as read.
+     */
+    public function markAllRead()
+    {
+        Notification::where('user_id', auth()->id())
+            ->where('is_read', false)
+            ->where('title', '!=', 'Account Approved')
+            ->update(['is_read' => true]);
+
+        return back()->with('success', 'All alerts marked as read.');
     }
 }

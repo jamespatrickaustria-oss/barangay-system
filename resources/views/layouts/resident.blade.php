@@ -60,29 +60,56 @@
             overflow-x: hidden;
         }
 
+        /* ── SCROLL PROGRESS BAR ──────────────────── */
+        .scroll-progress {
+            height: 3px;
+            background: linear-gradient(90deg, var(--blue), var(--green));
+            width: 0%;
+            transition: width 0.1s linear;
+            position: relative;
+            z-index: 2;
+        }
+
         /* ── HEADER ──────────────────────────────── */
-        header, .top-nav {
+        .top-nav {
             position: fixed;
             top: 0; left: 0; right: 0;
             z-index: 1000;
-            background: rgba(255,255,255,0.96);
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 20px rgba(26,110,199,0.08);
+            transition: all 0.3s ease;
         }
 
-        .header-inner, .nav-container {
+        .nav-bar {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 20px rgba(26,110,199,0.06);
+            transition: all 0.3s ease;
+        }
+
+        .top-nav.scrolled .nav-bar {
+            background: rgba(255,255,255,0.98);
+            box-shadow: 0 4px 30px rgba(26,110,199,0.14);
+        }
+
+        .nav-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 28px;
-            height: 72px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 20px;
+            gap: 16px;
+            transition: height 0.3s ease;
         }
 
-        .logo-group, .nav-brand {
+        .top-nav.scrolled .nav-container {
+            height: 60px;
+        }
+
+        /* ── BRAND ──────────────────────────────── */
+        .nav-brand {
             display: flex;
             align-items: center;
             gap: 14px;
@@ -90,21 +117,26 @@
             flex-shrink: 0;
         }
 
-        .logo-group img, .brand-icon img {
-            width: 48px;
-            height: 48px;
+        .brand-icon img {
+            width: 46px;
+            height: 46px;
             object-fit: contain;
-            mix-blend-mode: multiply;
             filter: drop-shadow(0 1px 3px rgba(0,0,0,0.15));
+            transition: all 0.3s ease;
         }
 
-        .logo-text, .brand-text {
+        .top-nav.scrolled .brand-icon img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .brand-text {
             line-height: 1.2;
             display: flex;
             flex-direction: column;
         }
 
-        .logo-text strong, .brand-text strong, .brand-title {
+        .brand-title {
             display: block;
             font-family: 'Playfair Display', serif;
             font-size: 1rem;
@@ -114,7 +146,7 @@
             line-height: 1.1;
         }
 
-        .logo-text span, .brand-text span, .brand-subtitle {
+        .brand-subtitle {
             font-size: 0.72rem;
             color: var(--green);
             font-weight: 500;
@@ -122,106 +154,344 @@
             text-transform: uppercase;
         }
 
-        nav, .nav-menu {
+        /* ── NAV MENU ───────────────────────────── */
+        .nav-menu {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 2px;
             list-style: none;
         }
 
-        nav a, .nav-item a {
-            padding: 8px 14px;
+        .nav-item a {
+            position: relative;
+            padding: 8px 15px;
             font-size: 0.875rem;
             font-weight: 500;
             color: var(--text-light);
             text-decoration: none;
-            border-radius: 8px;
-            transition: all .2s;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
         }
 
-        nav a:hover, .nav-item a:hover,
-        nav a.active, .nav-item a.active {
+        .nav-item a .nav-icon {
+            font-size: 0.9rem;
+            opacity: 0.65;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .nav-item a:hover {
             color: var(--blue);
             background: var(--sky);
         }
 
+        .nav-item a:hover .nav-icon {
+            opacity: 1;
+            transform: translateY(-1px);
+        }
+
+        .nav-item a.active {
+            color: var(--blue);
+            background: rgba(26,110,199,0.09);
+            font-weight: 600;
+        }
+
+        .nav-item a.active .nav-icon { opacity: 1; }
+
+        .nav-item a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--blue), var(--green));
+            border-radius: 2px;
+        }
+
+        /* ── NAV ACTIONS ────────────────────────── */
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
+        /* Notification */
+        .notif-wrapper { position: relative; }
+
         .notif-button {
+            width: 40px;
+            height: 40px;
             background: transparent;
-            border: none;
-            font-size: 1.2rem;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            font-size: 1.1rem;
             cursor: pointer;
             position: relative;
-            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.2s;
+            color: var(--text-light);
         }
 
         .notif-button:hover {
-            transform: scale(1.1);
+            background: var(--sky);
+            border-color: var(--border);
+        }
+
+        .notif-button.has-unread {
+            animation: bell-ring 3.5s ease-in-out infinite;
+        }
+
+        @keyframes bell-ring {
+            0%, 80%, 100% { transform: rotate(0deg); }
+            83%  { transform: rotate(14deg); }
+            86%  { transform: rotate(-11deg); }
+            89%  { transform: rotate(9deg); }
+            92%  { transform: rotate(-6deg); }
+            95%  { transform: rotate(3deg); }
         }
 
         .notif-badge {
             position: absolute;
-            top: -4px;
-            right: -4px;
-            background: var(--gold);
+            top: 4px;
+            right: 4px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
-            font-size: 10px;
-            font-weight: 700;
-            min-width: 18px;
-            height: 18px;
+            font-size: 9px;
+            font-weight: 800;
+            min-width: 16px;
+            height: 16px;
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0 5px;
+            padding: 0 4px;
             border: 2px solid var(--white);
+            line-height: 1;
         }
 
-        .user-menu {
-            position: relative;
+        /* Notification Panel */
+        .notif-panel {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: -8px;
+            width: 340px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(26,110,199,0.18);
+            overflow: hidden;
+            z-index: 200;
         }
+
+        .notif-panel.show {
+            display: block;
+            animation: dropIn 0.2s ease;
+        }
+
+        @keyframes dropIn {
+            from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0)   scale(1);    }
+        }
+
+        .notif-panel-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(26,110,199,0.04), rgba(58,125,68,0.02));
+        }
+
+        .notif-panel-title {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .notif-count-tag {
+            background: var(--blue);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 20px;
+        }
+
+        .notif-panel-link {
+            font-size: 12px;
+            color: var(--blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .notif-panel-link:hover { text-decoration: underline; }
+
+        .notif-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .notif-list::-webkit-scrollbar { width: 4px; }
+        .notif-list::-webkit-scrollbar-track { background: transparent; }
+        .notif-list::-webkit-scrollbar-thumb { background: var(--sky-mid); border-radius: 4px; }
+
+        .notif-list-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 13px 18px;
+            border-bottom: 1px solid rgba(26,110,199,0.05);
+            transition: background 0.15s;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .notif-list-item:hover { background: var(--off-white); }
+        .notif-list-item.unread-item { background: rgba(26,110,199,0.03); }
+
+        .notif-item-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--blue);
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+
+        .notif-list-item:not(.unread-item) .notif-item-dot {
+            background: transparent;
+            border: 1.5px solid var(--gray-400);
+        }
+
+        .notif-item-content { flex: 1; min-width: 0; }
+
+        .notif-item-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .notif-item-desc {
+            font-size: 11px;
+            color: var(--text-light);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+
+        .notif-item-time {
+            font-size: 10px;
+            color: var(--gray-400);
+            flex-shrink: 0;
+            margin-top: 3px;
+            white-space: nowrap;
+        }
+
+        .notif-empty {
+            padding: 30px 20px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .notif-empty-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 8px;
+            opacity: 0.45;
+        }
+
+        .notif-panel-footer {
+            padding: 11px 18px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            background: rgba(26,110,199,0.02);
+        }
+
+        .notif-panel-footer a {
+            font-size: 13px;
+            color: var(--blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* ── USER MENU ──────────────────────────── */
+        .user-menu { position: relative; }
 
         .user-button {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 6px 12px;
-            border-radius: 24px;
+            gap: 8px;
+            padding: 5px 12px 5px 5px;
+            border-radius: 30px;
             background: var(--sky);
-            border: none;
+            border: 1.5px solid rgba(26,110,199,0.12);
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .user-button:hover {
             background: var(--sky-mid);
+            border-color: rgba(26,110,199,0.3);
+            box-shadow: 0 4px 14px rgba(26,110,199,0.14);
         }
 
         .user-avatar {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
+            overflow: hidden;
             background: linear-gradient(135deg, var(--blue), var(--green));
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 12px;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(26,110,199,0.2);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .user-name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text);
-            display: inline;
         }
+
+        .user-chevron {
+            font-size: 10px;
+            color: var(--text-light);
+            transition: transform 0.25s;
+            display: inline-block;
+            margin-left: 1px;
+        }
+
+        .user-menu.open .user-chevron { transform: rotate(180deg); }
 
         .user-dropdown {
             display: none;
@@ -230,62 +500,338 @@
             right: 0;
             background: var(--white);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            min-width: 220px;
-            box-shadow: 0 10px 30px rgba(26,110,199,0.15);
+            border-radius: 16px;
+            min-width: 248px;
+            box-shadow: 0 20px 60px rgba(26,110,199,0.18);
             overflow: hidden;
+            z-index: 200;
         }
 
         .user-dropdown.show {
             display: block;
+            animation: dropIn 0.2s ease;
         }
 
         .dropdown-header {
-            padding: 16px;
+            padding: 16px 16px 12px;
             border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, rgba(26,110,199,0.05), rgba(58,125,68,0.03));
         }
 
-        .dropdown-header .user-full-name {
-            font-weight: 600;
+        .dropdown-avatar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dropdown-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            border: 2.5px solid white;
+            box-shadow: 0 3px 10px rgba(26,110,199,0.2);
+            flex-shrink: 0;
+        }
+
+        .dropdown-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .dropdown-user-info .user-full-name {
+            font-weight: 700;
             font-size: 14px;
             color: var(--text);
+            line-height: 1.2;
         }
 
-        .dropdown-header .user-email {
-            font-size: 12px;
+        .user-role-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--green-dark);
+            background: rgba(58,125,68,0.12);
+            border-radius: 20px;
+            padding: 2px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 3px;
+        }
+
+        .dropdown-user-info .user-email {
+            font-size: 11px;
             color: var(--text-light);
             margin-top: 2px;
         }
 
+        .dropdown-nav { padding: 6px 0; }
+
         .dropdown-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
-            padding: 12px 16px;
+            padding: 10px 16px;
             border: none;
             background: none;
             cursor: pointer;
             text-align: left;
             font-family: inherit;
-            font-size: 14px;
+            font-size: 13.5px;
             color: var(--text);
-            transition: background 0.2s;
+            transition: background 0.15s;
             text-decoration: none;
         }
 
-        .dropdown-item:hover {
-            background: var(--off-white);
+        .dropdown-item:hover { background: var(--off-white); }
+
+        .dropdown-item-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: var(--sky);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+            transition: background 0.15s;
         }
+
+        .dropdown-item:hover .dropdown-item-icon { background: rgba(26,110,199,0.15); }
 
         .dropdown-divider {
             height: 1px;
             background: var(--border);
-            margin: 4px 0;
+            margin: 4px 8px;
         }
 
-        .dropdown-item.logout {
+        .dropdown-item.logout { color: #dc2626; }
+        .dropdown-item.logout .dropdown-item-icon { background: rgba(220,38,38,0.08); }
+        .dropdown-item.logout:hover { background: rgba(220,38,38,0.05); }
+
+        /* ── HAMBURGER ──────────────────────────── */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 10px;
+            border: none;
+            background: none;
+            transition: background 0.2s;
+        }
+
+        .hamburger:hover { background: var(--sky); }
+
+        .hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* ── MOBILE OVERLAY & DRAWER ────────────── */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10,20,40,0.45);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-overlay.show { display: block; opacity: 1; }
+
+        .mobile-drawer {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            max-width: calc(100vw - 40px);
+            height: 100vh;
+            background: var(--white);
+            box-shadow: -10px 0 60px rgba(0,0,0,0.12);
+            z-index: 1002;
+            overflow-y: auto;
+            transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-drawer.open { right: 0; }
+
+        .mobile-drawer-header {
+            padding: 24px 20px 18px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, rgba(26,110,199,0.05), rgba(58,125,68,0.02));
+            position: relative;
+        }
+
+        .mobile-drawer-close {
+            position: absolute;
+            top: 18px;
+            right: 16px;
+            width: 30px;
+            height: 30px;
+            background: var(--off-white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            transition: background 0.2s;
+        }
+
+        .mobile-drawer-close:hover { background: var(--sky); }
+
+        .mobile-user-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .mobile-user-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(26,110,199,0.25);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .mobile-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .mobile-user-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .mobile-role-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--green-dark);
+            background: rgba(58,125,68,0.12);
+            border-radius: 20px;
+            padding: 2px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 3px;
+        }
+
+        .mobile-nav-body { padding: 12px; flex: 1; }
+
+        .mobile-section-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 10px 12px 4px;
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 2px;
+            transition: all 0.2s;
+        }
+
+        .mobile-nav-link:hover, .mobile-nav-link.active {
+            background: var(--sky);
+            color: var(--blue);
+        }
+
+        .mobile-nav-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--off-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .mobile-nav-link:hover .mobile-nav-icon,
+        .mobile-nav-link.active .mobile-nav-icon { background: rgba(26,110,199,0.12); }
+
+        .mobile-drawer-footer {
+            padding: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .mobile-logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
             color: #dc2626;
+            background: none;
+            width: 100%;
+            border: none;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .mobile-logout-btn:hover { background: rgba(220,38,38,0.06); }
+
+        .mobile-logout-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(220,38,38,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
         }
 
         /* MAIN CONTENT */
@@ -325,26 +871,139 @@
             flex-shrink: 0;
         }
 
-        /* RESPONSIVE */
+        /* RESPONSIVE DESIGN */
         @media (max-width: 768px) {
-            nav, .nav-menu {
-                display: none;
-            }
+            .nav-menu   { display: none; }
+            .hamburger  { display: flex; }
+            .user-name  { display: none; }
+            .brand-subtitle { display: none; }
 
-            .user-name {
-                display: none;
-            }
-
-            .brand-subtitle {
-                display: none;
-            }
-
-            .header-inner, .nav-container {
+            .nav-container {
                 padding: 0 16px;
+                height: 62px;
             }
+
+            .top-nav.scrolled .nav-container { height: 56px; }
+
+            .brand-icon img { width: 40px; height: 40px; }
+            .brand-title    { font-size: 0.9rem; }
 
             .main-container {
                 padding: 20px 16px 100px;
+                margin-top: 62px;
+            }
+
+            .notif-panel {
+                width: calc(100vw - 32px);
+                right: -8px;
+            }
+
+            .user-button { padding: 4px 10px 4px 4px; }
+
+            .user-avatar {
+                width: 30px;
+                height: 30px;
+                font-size: 11px;
+            }
+
+            .alert {
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 0 12px;
+                height: 58px;
+                gap: 10px;
+            }
+
+            .main-container {
+                padding: 16px 12px 100px;
+                margin-top: 58px;
+            }
+
+            .brand-icon img  { width: 36px; height: 36px; }
+            .brand-title     { font-size: 0.85rem; }
+            .brand-subtitle  { font-size: 0.65rem; }
+
+            .notif-panel {
+                width: calc(100vw - 24px);
+                right: -4px;
+            }
+
+            .user-dropdown {
+                right: 0;
+                width: calc(100vw - 32px);
+                max-width: 280px;
+            }
+
+            .alert {
+                font-size: 12px;
+                padding: 10px 12px;
+            }
+
+            .alert-icon { font-size: 16px; }
+        }
+
+        /* FOOTER RESPONSIVE */
+        @media (max-width: 768px) {
+            footer {
+                padding: 40px 16px 24px !important;
+                margin-top: 60px !important;
+            }
+
+            footer > div > div:first-child {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 32px !important;
+                margin-bottom: 32px !important;
+            }
+
+            footer .footer-col {
+                margin-bottom: 24px;
+            }
+
+            footer .footer-col h4 {
+                font-size: 12px !important;
+                margin-bottom: 12px !important;
+            }
+
+            footer .footer-col a {
+                font-size: 12px !important;
+                margin-bottom: 8px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            footer {
+                padding: 32px 12px 20px !important;
+            }
+
+            footer > div > div:first-child {
+                grid-template-columns: 1fr !important;
+                gap: 24px !important;
+            }
+
+            footer > div > div:last-child {
+                flex-direction: column !important;
+                align-items: flex-start;
+            }
+
+            footer > div > div:last-child p {
+                font-size: 11px !important;
+            }
+        }
+
+        /* BUTTON AND INPUT RESPONSIVENESS */
+        @media (hover: none) and (pointer: coarse) {
+            .notif-button, .user-button { min-height: 44px; }
+
+            .nav-item a {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
             }
         }
     </style>
@@ -359,89 +1018,216 @@
             : (file_exists(public_path('images/city_of_general trias.png'))
                 ? asset('images/city_of_general trias.png')
                 : asset('images/city_of_general_trias.png'));
+        $residentPhotoUrl = auth()->user()->profile_photo_url;
     @endphp
-    <!-- TOP NAVIGATION -->
-    <nav class="top-nav">
-        <div class="nav-container">
-            <a href="{{ route('resident.dashboard') }}" class="nav-brand">
-                <div class="brand-icon">
-                    <img src="{{ $sealLogo }}" alt="City of General Trias Seal">
+    <!-- MOBILE OVERLAY + DRAWER -->
+    <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+    <div class="mobile-drawer" id="mobileDrawer">
+        <div class="mobile-drawer-header">
+            <button class="mobile-drawer-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
+            <div class="mobile-user-row">
+                <div class="mobile-user-avatar">
+                    @if($residentPhotoUrl)
+                        <img src="{{ $residentPhotoUrl }}" alt="{{ auth()->user()->getFullName() }}">
+                    @else
+                        {{ strtoupper(substr(auth()->user()->getFullName(), 0, 1)) }}
+                    @endif
                 </div>
-                <div class="brand-text">
-                    <div class="brand-title">Barangay Portal</div>
-                    <div class="brand-subtitle">Resident Services</div>
+                <div>
+                    <div class="mobile-user-name">{{ auth()->user()->getFullName() }}</div>
+                    <div class="mobile-role-badge">Resident</div>
                 </div>
+            </div>
+        </div>
+        <div class="mobile-nav-body">
+            <div class="mobile-section-label">Navigation</div>
+            <a href="{{ route('resident.dashboard') }}" class="mobile-nav-link {{ request()->is('resident/dashboard') ? 'active' : '' }}">
+                Home
             </a>
+            <a href="{{ route('resident.online-id') }}" class="mobile-nav-link {{ request()->is('resident/online-id') ? 'active' : '' }}">
+                My Online ID
+            </a>
+            <a href="{{ route('resident.notifications') }}" class="mobile-nav-link {{ request()->is('resident/notifications') ? 'active' : '' }}">
+                Announcements
+            </a>
+            <div class="mobile-section-label">Account</div>
+            <a href="{{ route('resident.profile') }}" class="mobile-nav-link {{ request()->is('resident/profile') ? 'active' : '' }}">
+                My Profile
+            </a>
+        </div>
+        <div class="mobile-drawer-footer">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="mobile-logout-btn">
+                    <span class="mobile-logout-icon">🚪</span>
+                    Log Out
+                </button>
+            </form>
+        </div>
+    </div>
 
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="{{ route('resident.dashboard') }}" class="{{ request()->is('resident/dashboard') ? 'active' : '' }}">
-                        <span class="nav-icon">🏠</span>
-                        <span>Home</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('resident.online-id') }}" class="{{ request()->is('resident/online-id') ? 'active' : '' }}">
-                        <span class="nav-icon">🪪</span>
-                        <span>My ID</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('resident.notifications') }}" class="{{ request()->is('resident/notifications') ? 'active' : '' }}">
-                        <span class="nav-icon">📢</span>
-                        <span>Announcements</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('resident.profile') }}" class="{{ request()->is('resident/profile') ? 'active' : '' }}">
-                        <span class="nav-icon">👤</span>
-                        <span>Profile</span>
-                    </a>
-                </li>
-            </ul>
+    <!-- TOP NAVIGATION -->
+    <nav class="top-nav" id="topNav">
+        <div class="scroll-progress" id="scrollProgress"></div>
+        <div class="nav-bar">
+            <div class="nav-container">
+                <a href="{{ route('resident.dashboard') }}" class="nav-brand">
+                    <div class="brand-icon">
+                        <img src="{{ $sealLogo }}" alt="City of General Trias Seal">
+                    </div>
+                    <div class="brand-text">
+                        <div class="brand-title">PROJECT CONNECT</div>
+                        <div class="brand-subtitle">Brgy. San Juan I</div>
+                    </div>
+                </a>
 
-            <div class="nav-actions">
-                <button class="notif-button" onclick="window.location.href='{{ route('resident.notifications') }}'">
-                    🔔
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="{{ route('resident.dashboard') }}" class="{{ request()->is('resident/dashboard') ? 'active' : '' }}">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('resident.online-id') }}" class="{{ request()->is('resident/online-id') ? 'active' : '' }}">
+                            Digital ID
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('resident.notifications') }}" class="{{ request()->is('resident/notifications') ? 'active' : '' }}">
+                            Announcements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('resident.profile') }}" class="{{ request()->is('resident/profile') ? 'active' : '' }}">
+                            Profile
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="nav-actions">
                     @php
+                        $philippineTz = 'Asia/Manila';
                         $unreadCount = App\Models\Notification::where('user_id', auth()->id())
                             ->where('is_read', false)
                             ->where('title', '!=', 'Account Approved')
                             ->count();
+                        $recentNotifs = App\Models\Notification::where('user_id', auth()->id())
+                            ->where('title', '!=', 'Account Approved')
+                            ->orderBy('created_at', 'desc')
+                            ->take(5)
+                            ->get();
                     @endphp
-                    @if($unreadCount > 0)
-                        <span class="notif-badge">{{ $unreadCount }}</span>
-                    @endif
-                </button>
 
-                <div class="user-menu">
-                    <button class="user-button" onclick="toggleUserMenu()">
-                        <div class="user-avatar">{{ substr(auth()->user()->getFullName(), 0, 1) }}</div>
-                        <span class="user-name">{{ auth()->user()->getFullName() }}</span>
-                    </button>
-
-                    <div class="user-dropdown" id="userDropdown">
-                        <div class="dropdown-header">
-                            <div class="user-full-name">{{ auth()->user()->getFullName() }}</div>
-                            <div class="user-email">{{ auth()->user()->email }}</div>
+                    <!-- Notification Bell -->
+                    <div class="notif-wrapper">
+                        <button class="notif-button {{ $unreadCount > 0 ? 'has-unread' : '' }}"
+                                onclick="toggleNotifPanel(event)"
+                                aria-label="Notifications">
+                            🔔
+                            @if($unreadCount > 0)
+                                <span class="notif-badge">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
+                            @endif
+                        </button>
+                        <div class="notif-panel" id="notifPanel">
+                            <div class="notif-panel-header">
+                                <span class="notif-panel-title">
+                                    Notifications
+                                    @if($unreadCount > 0)
+                                        <span class="notif-count-tag">{{ $unreadCount }}</span>
+                                    @endif
+                                </span>
+                                <a href="{{ route('resident.notifications') }}" class="notif-panel-link">View all</a>
+                            </div>
+                            <div class="notif-list">
+                                @forelse($recentNotifs as $notif)
+                                    <a href="{{ route('resident.notifications') }}" class="notif-list-item {{ !$notif->is_read ? 'unread-item' : '' }}">
+                                        <div class="notif-item-dot"></div>
+                                        <div class="notif-item-content">
+                                            <div class="notif-item-title">{{ $notif->title }}</div>
+                                            <div class="notif-item-desc">{{ Str::limit($notif->message, 80) }}</div>
+                                        </div>
+                                        <div class="notif-item-time">{{ $notif->created_at->timezone($philippineTz)->diffForHumans(now($philippineTz), true, true) }}</div>
+                                    </a>
+                                @empty
+                                    <div class="notif-empty">
+                                        <span class="notif-empty-icon">🔔</span>
+                                        No notifications yet
+                                    </div>
+                                @endforelse
+                            </div>
+                            <div class="notif-panel-footer">
+                                <a href="{{ route('resident.notifications') }}">See all notifications →</a>
+                            </div>
                         </div>
-                        <a href="{{ route('resident.profile') }}" class="dropdown-item">
-                            <span>👤</span>
-                            <span>My Profile</span>
-                        </a>
-                        <a href="{{ route('resident.online-id') }}" class="dropdown-item">
-                            <span>🪪</span>
-                            <span>My Online ID</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <form action="{{ route('logout') }}" method="POST" style="width: 100%;">
-                            @csrf
-                            <button type="submit" class="dropdown-item logout" style="width: 100%;">
-                                <span>🚪</span>
-                                <span>Log Out</span>
-                            </button>
-                        </form>
                     </div>
+
+                    <!-- User Menu -->
+                    <div class="user-menu" id="userMenuEl">
+                        <button class="user-button" onclick="toggleUserMenu()" aria-label="User menu">
+                            <div class="user-avatar">
+                                @if($residentPhotoUrl)
+                                    <img src="{{ $residentPhotoUrl }}" alt="{{ auth()->user()->getFullName() }}">
+                                @else
+                                    {{ strtoupper(substr(auth()->user()->getFullName(), 0, 1)) }}
+                                @endif
+                            </div>
+                            <span class="user-name">{{ auth()->user()->getFullName() }}</span>
+                            <span class="user-chevron">▼</span>
+                        </button>
+
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <div class="dropdown-avatar-row">
+                                    <div class="dropdown-avatar">
+                                        @if($residentPhotoUrl)
+                                            <img src="{{ $residentPhotoUrl }}" alt="{{ auth()->user()->getFullName() }}">
+                                        @else
+                                            {{ strtoupper(substr(auth()->user()->getFullName(), 0, 1)) }}
+                                        @endif
+                                    </div>
+                                    <div class="dropdown-user-info">
+                                        <div class="user-full-name">{{ auth()->user()->getFullName() }}</div>
+                                        <div class="user-role-badge">Resident</div>
+                                        <div class="user-email">{{ auth()->user()->email }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown-nav">
+                                <a href="{{ route('resident.profile') }}" class="dropdown-item">
+                                    <span class="dropdown-item-icon">👤</span>
+                                    My Profile
+                                </a>
+                                <a href="{{ route('resident.online-id') }}" class="dropdown-item">
+                                    <span class="dropdown-item-icon">🪪</span>
+                                    My Online ID
+                                </a>
+                                <a href="{{ route('resident.notifications') }}" class="dropdown-item">
+                                    <span class="dropdown-item-icon">🔔</span>
+                                    Notifications
+                                    @if($unreadCount > 0)
+                                        <span style="margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;">{{ $unreadCount }}</span>
+                                    @endif
+                                </a>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-nav">
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item logout" style="width:100%">
+                                        <span class="dropdown-item-icon">🚪</span>
+                                        Log Out
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hamburger -->
+                    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -532,20 +1318,80 @@
     </footer>
 
     <script>
-        function toggleUserMenu() {
-            const dropdown = document.getElementById('userDropdown');
-            dropdown.classList.toggle('show');
+        // ── Scroll effects ─────────────────────────────────────
+        const topNav        = document.getElementById('topNav');
+        const scrollProg    = document.getElementById('scrollProgress');
+
+        window.addEventListener('scroll', () => {
+            const scrollTop  = window.scrollY;
+            const docHeight  = document.documentElement.scrollHeight - window.innerHeight;
+            const progress   = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            if (scrollProg) scrollProg.style.width = progress + '%';
+            if (topNav)     topNav.classList.toggle('scrolled', scrollTop > 30);
+        }, { passive: true });
+
+        // ── Notification panel ──────────────────────────────────
+        function toggleNotifPanel(e) {
+            e.stopPropagation();
+            const panel    = document.getElementById('notifPanel');
+            const isShown  = panel.classList.contains('show');
+            closeAllDropdowns();
+            if (!isShown) panel.classList.add('show');
         }
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const userMenu = event.target.closest('.user-menu');
+        // ── User dropdown ───────────────────────────────────────
+        const userMenuEl = document.getElementById('userMenuEl');
+
+        function toggleUserMenu() {
             const dropdown = document.getElementById('userDropdown');
-            
-            if (!userMenu && dropdown) {
-                dropdown.classList.remove('show');
+            const isShown  = dropdown.classList.contains('show');
+            closeAllDropdowns();
+            if (!isShown) {
+                dropdown.classList.add('show');
+                userMenuEl && userMenuEl.classList.add('open');
+            }
+        }
+
+        function closeAllDropdowns() {
+            document.getElementById('notifPanel')?.classList.remove('show');
+            document.getElementById('userDropdown')?.classList.remove('show');
+            userMenuEl?.classList.remove('open');
+        }
+
+        // Close on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.notif-wrapper') && !e.target.closest('.user-menu')) {
+                closeAllDropdowns();
             }
         });
+
+        // Close on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeAllDropdowns();
+                closeMobileMenu();
+            }
+        });
+
+        // ── Mobile drawer ───────────────────────────────────────
+        function toggleMobileMenu() {
+            const drawer     = document.getElementById('mobileDrawer');
+            drawer.classList.contains('open') ? closeMobileMenu() : openMobileMenu();
+        }
+
+        function openMobileMenu() {
+            document.getElementById('mobileDrawer').classList.add('open');
+            document.getElementById('mobileOverlay').classList.add('show');
+            document.getElementById('hamburger').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('mobileDrawer')?.classList.remove('open');
+            document.getElementById('mobileOverlay')?.classList.remove('show');
+            document.getElementById('hamburger')?.classList.remove('open');
+            document.body.style.overflow = '';
+        }
     </script>
 </body>
 </html>

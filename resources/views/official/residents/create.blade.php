@@ -187,22 +187,55 @@
         ✉️ The resident will receive a welcome email with their login credentials.
     </div>
 
-    <form method="POST" action="{{ route('official.residents.store') }}">
+    <form method="POST" action="{{ route('official.residents.store') }}" enctype="multipart/form-data">
         @csrf
 
         <div class="form-grid">
-            <div class="full">
+            <div>
                 <div class="form-group">
-                    <label for="name">Full Name *</label>
+                    <label for="first_name">First Name *</label>
                     <input 
                         type="text" 
-                        id="name" 
-                        name="name"
-                        value="{{ old('name') }}"
-                        placeholder="Juan Dela Cruz"
+                        id="first_name" 
+                        name="first_name"
+                        value="{{ old('first_name') }}"
+                        placeholder="Juan"
                         required
                     >
-                    @error('name')
+                    @error('first_name')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="middle_name">Middle Name</label>
+                    <input 
+                        type="text" 
+                        id="middle_name" 
+                        name="middle_name"
+                        value="{{ old('middle_name') }}"
+                        placeholder="Meow"
+                    >
+                    @error('middle_name')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="surname">Surname *</label>
+                    <input 
+                        type="text" 
+                        id="surname" 
+                        name="surname"
+                        value="{{ old('surname') }}"
+                        placeholder="Cruz"
+                        required
+                    >
+                    @error('surname')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
@@ -239,6 +272,102 @@
                         required
                     >
                     @error('phone')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="father_name">Father</label>
+                    <input
+                        type="text"
+                        id="father_name"
+                        name="father_name"
+                        value="{{ old('father_name') }}"
+                        placeholder="Enter full name"
+                    >
+                    @error('father_name')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="mother_name">Mother</label>
+                    <input
+                        type="text"
+                        id="mother_name"
+                        name="mother_name"
+                        value="{{ old('mother_name') }}"
+                        placeholder="Enter full name"
+                    >
+                    @error('mother_name')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="house_no">House No#</label>
+                    <input
+                        type="text"
+                        id="house_no"
+                        name="house_no"
+                        value="{{ old('house_no') }}"
+                        placeholder="e.g. 123-B"
+                    >
+                    @error('house_no')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="barangay">Barangay</label>
+                    <input
+                        type="text"
+                        id="barangay"
+                        name="barangay"
+                        value="{{ old('barangay') }}"
+                        placeholder="e.g. Barangay San Juan"
+                    >
+                    @error('barangay')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="municipality_city">Municipality/City</label>
+                    <input
+                        type="text"
+                        id="municipality_city"
+                        name="municipality_city"
+                        value="{{ old('municipality_city') }}"
+                        placeholder="e.g. General Trias"
+                    >
+                    @error('municipality_city')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="nationality">Nationality</label>
+                    <input
+                        type="text"
+                        id="nationality"
+                        name="nationality"
+                        value="{{ old('nationality') }}"
+                        placeholder="e.g. Filipino"
+                    >
+                    @error('nationality')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
@@ -292,13 +421,30 @@
 
             <div class="full">
                 <div class="form-group">
+                    <label for="profile_photo">Upload Personal Photo *</label>
+                    <input 
+                        type="file" 
+                        id="profile_photo" 
+                        name="profile_photo"
+                        accept=".jpg,.jpeg,.png"
+                        required
+                    >
+                    <small style="color: var(--text-muted); font-size: 12px;">Accepted formats: JPG, JPEG, PNG. Max 5MB.</small>
+                    @error('profile_photo')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="full">
+                <div class="form-group">
                     <label for="address">Address *</label>
                     <input 
                         type="text" 
                         id="address" 
                         name="address"
                         value="{{ old('address') }}"
-                        placeholder="Street address and Barangay name"
+                        placeholder="Street address, Barangay name"
                         required
                     >
                     @error('address')
@@ -340,7 +486,7 @@
                 <div class="form-group">
                     <label for="marital_status">Marital Status</label>
                     <select id="marital_status" name="marital_status">
-                        <option value="">Select Marital Status</option>
+                        <option value="">Select Civil Status</option>
                         <option value="single" @selected(old('marital_status') === 'single')>Single</option>
                         <option value="married" @selected(old('marital_status') === 'married')>Married</option>
                         <option value="divorced" @selected(old('marital_status') === 'divorced')>Divorced</option>

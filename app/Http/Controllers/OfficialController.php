@@ -8,6 +8,7 @@ use App\Models\OnlineId;
 use App\Models\Announcement;
 use App\Services\MailService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -41,7 +42,12 @@ class OfficialController extends Controller
             ->take(5)
             ->get();
 
-        return view('official.dashboard', compact('pending', 'approved', 'total', 'unread', 'notificationCount', 'pendingResidents'));
+        $recentResidentIds = OnlineId::with('user')
+            ->latest('issued_at')
+            ->take(10)
+            ->get();
+
+        return view('official.dashboard', compact('pending', 'approved', 'total', 'unread', 'notificationCount', 'pendingResidents', 'recentResidentIds'));
     }
 
     /**
@@ -89,16 +95,46 @@ class OfficialController extends Controller
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'surname' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email',
+                function ($attribute, $value, $fail) {
+                    if (User::onlyTrashed()->where('email', $value)->exists()) {
+                        $fail('This email address has been previously used and cannot be registered again.');
+                    }
+                },
+            ],
             'password' => 'required|string|min:8|confirmed',
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
+            'phone' => 'required|string|max:20',
+            'profile_photo' => 'required|file|image|mimes:jpg,jpeg,png|max:5120',
+            'father_name' => 'nullable|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
+            'house_no' => 'nullable|string|max:100',
+            'barangay' => 'nullable|string|max:255',
+            'municipality_city' => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:500',
             'birthdate' => 'nullable|date',
-            'gender' => 'nullable|string',
+            'gender' => 'nullable|in:male,female,other',
             'marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
         ]);
 
         $plainPassword = $request->password;
+
+        $profilePhotoPath = null;
+
+        if ($request->hasFile('profile_photo')) {
+            $photoFile = $request->file('profile_photo');
+            $profilePhotoPath = $photoFile->store('uploads/profile_photos', 'public');
+        }
+
+        $accountNumber = User::generateAccountNumber(
+            $validated['first_name'],
+            $validated['middle_name'] ?? null,
+            $validated['surname'],
+            $validated['birthdate'] ?? null
+        );
 
         $user = User::create([
             'first_name' => $validated['first_name'],
@@ -107,12 +143,20 @@ class OfficialController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
+            'profile_photo' => $profilePhotoPath,
+            'father_name' => $validated['father_name'] ?? null,
+            'mother_name' => $validated['mother_name'] ?? null,
+            'house_no' => $validated['house_no'] ?? null,
+            'barangay' => $validated['barangay'] ?? null,
+            'municipality_city' => $validated['municipality_city'] ?? null,
+            'nationality' => $validated['nationality'] ?? null,
             'address' => $validated['address'] ?? null,
             'birthdate' => $validated['birthdate'] ?? null,
             'gender' => $validated['gender'] ?? null,
             'marital_status' => $validated['marital_status'] ?? null,
             'role' => 'resident',
             'status' => 'approved',
+            'account_number' => $accountNumber,
         ]);
 
         OnlineId::create([
@@ -163,12 +207,29 @@ class OfficialController extends Controller
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'surname' => 'required|string|max:255',
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
+            'phone' => 'nullable|string|max:20',
+            'profile_photo' => 'nullable|file|image|mimes:jpg,jpeg,png|max:5120',
+            'father_name' => 'nullable|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
+            'house_no' => 'nullable|string|max:100',
+            'barangay' => 'nullable|string|max:255',
+            'municipality_city' => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:500',
             'birthdate' => 'nullable|date',
-            'gender' => 'nullable|string',
+            'gender' => 'nullable|in:male,female,other',
             'marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
         ]);
+
+        if ($request->hasFile('profile_photo')) {
+            $existingPhotoPath = $resident->getProfilePhotoStoragePath();
+
+            if ($existingPhotoPath) {
+                Storage::disk('public')->delete($existingPhotoPath);
+            }
+
+            $validated['profile_photo'] = $request->file('profile_photo')->store('uploads/profile_photos', 'public');
+        }
 
         $resident->update($validated);
 
@@ -243,6 +304,36 @@ class OfficialController extends Controller
         $resident->delete();
 
         return redirect()->back()->with('success', 'Resident deleted successfully.');
+    }
+
+    /**
+     * View a resident's online ID card and auto-generate it if missing.
+     */
+    public function viewResidentId($id)
+    {
+        $resident = User::where('id', $id)
+            ->where('role', 'resident')
+            ->firstOrFail();
+
+        $resident->ensureResidentAccountNumber();
+
+        $onlineId = OnlineId::firstOrCreate(
+            ['user_id' => $resident->id],
+            [
+                'id_number' => OnlineId::generateIdNumber(),
+                'issued_at' => now(),
+            ]
+        );
+
+        if (is_null($onlineId->issued_at)) {
+            $onlineId->issued_at = now();
+            $onlineId->save();
+        }
+
+        return view('official.residents.view-id', [
+            'resident' => $resident,
+            'onlineId' => $onlineId,
+        ]);
     }
 
     /**
@@ -340,7 +431,7 @@ class OfficialController extends Controller
      */
     public function announcements(Request $request)
     {
-        $announcements = Announcement::where('user_id', auth()->id())
+        $announcements = Announcement::with('user')
             ->latest()
             ->paginate(15);
 
@@ -363,15 +454,25 @@ class OfficialController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'expires_at' => 'nullable|date|after_or_equal:today',
         ]);
+
+        $photoPath = null;
+
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('uploads/announcement_photos', 'public');
+        }
 
         $announcement = Announcement::create([
             'user_id' => auth()->id(),
             'title' => $validated['title'],
             'content' => $validated['content'],
+            'photo_path' => $photoPath,
             'published_at' => now(),
-            'expires_at' => $validated['expires_at'] ?? null,
+            'expires_at' => !empty($validated['expires_at'])
+                ? Carbon::parse($validated['expires_at'])->endOfDay()
+                : null,
             'is_active' => true,
         ]);
 
@@ -383,9 +484,7 @@ class OfficialController extends Controller
      */
     public function editAnnouncement($id)
     {
-        $announcement = Announcement::where('id', $id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+        $announcement = Announcement::findOrFail($id);
 
         return view('official.announcements.edit', compact('announcement'));
     }
@@ -395,20 +494,38 @@ class OfficialController extends Controller
      */
     public function updateAnnouncement(Request $request, $id)
     {
-        $announcement = Announcement::where('id', $id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+        $announcement = Announcement::findOrFail($id);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'remove_photo' => 'nullable|boolean',
             'expires_at' => 'nullable|date|after_or_equal:today',
         ]);
+
+        $photoPath = $announcement->photo_path;
+
+        if (!empty($validated['remove_photo']) && $photoPath) {
+            Storage::disk('public')->delete($photoPath);
+            $photoPath = null;
+        }
+
+        if ($request->hasFile('photo')) {
+            if ($photoPath) {
+                Storage::disk('public')->delete($photoPath);
+            }
+
+            $photoPath = $request->file('photo')->store('uploads/announcement_photos', 'public');
+        }
 
         $announcement->update([
             'title' => $validated['title'],
             'content' => $validated['content'],
-            'expires_at' => $validated['expires_at'] ?? null,
+            'photo_path' => $photoPath,
+            'expires_at' => !empty($validated['expires_at'])
+                ? Carbon::parse($validated['expires_at'])->endOfDay()
+                : null,
         ]);
 
         return redirect('/official/announcements')->with('success', 'Announcement updated successfully.');
@@ -419,9 +536,7 @@ class OfficialController extends Controller
      */
     public function toggleAnnouncement($id)
     {
-        $announcement = Announcement::where('id', $id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+        $announcement = Announcement::findOrFail($id);
 
         $announcement->is_active = !$announcement->is_active;
         $announcement->save();
@@ -435,9 +550,11 @@ class OfficialController extends Controller
      */
     public function deleteAnnouncement($id)
     {
-        $announcement = Announcement::where('id', $id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+        $announcement = Announcement::findOrFail($id);
+
+        if (!empty($announcement->photo_path)) {
+            Storage::disk('public')->delete($announcement->photo_path);
+        }
 
         $announcement->delete();
 

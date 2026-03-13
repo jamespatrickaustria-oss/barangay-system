@@ -3,6 +3,10 @@
 @section('title', 'Resident Management')
 
 @section('content')
+@php
+    $routePrefix = request()->segment(1) === 'admin' ? 'admin' : 'official';
+@endphp
+
 <style>
     :root {
         --blue: #1a6fcc;
@@ -290,6 +294,15 @@
         background: var(--blue-light);
     }
 
+    .id-btn {
+        border-color: #0f766e;
+        color: #0f766e;
+    }
+
+    .id-btn:hover {
+        background: #e6fffa;
+    }
+
     .delete-btn {
         border-color: #f44336;
         color: #f44336;
@@ -348,11 +361,11 @@
 
 <div class="page-header">
     <h1 class="page-title">Resident Management</h1>
-    <a href="{{ route('official.residents.create') }}" class="add-resident-btn">+ Add Resident</a>
+    <a href="{{ route($routePrefix . '.residents.create') }}" class="add-resident-btn">+ Add Resident</a>
 </div>
 
 <div class="filter-card">
-    <form method="GET" action="{{ route('official.residents.index') }}" class="filter-form">
+    <form method="GET" action="{{ route($routePrefix . '.residents.index') }}" class="filter-form">
         <div class="search-wrapper">
             <span class="search-icon">🔍</span>
             <input 
@@ -419,17 +432,18 @@
                         <td>
                             <div class="actions-cell">
                                 @if($resident->status === 'pending')
-                                    <form method="POST" action="{{ route('official.residents.approve', $resident->id) }}" style="display: inline;">
+                                    <form method="POST" action="{{ route($routePrefix . '.residents.approve', $resident->id) }}" style="display: inline;">
                                         @csrf
                                         <button type="submit" class="action-btn approve-btn">✓ Approve</button>
                                     </form>
-                                    <form method="POST" action="{{ route('official.residents.reject', $resident->id) }}" style="display: inline;">
+                                    <form method="POST" action="{{ route($routePrefix . '.residents.reject', $resident->id) }}" style="display: inline;">
                                         @csrf
                                         <button type="submit" class="action-btn reject-btn" onclick="return confirm('Are you sure?')">✗ Reject</button>
                                     </form>
                                 @endif
-                                <a href="{{ route('official.residents.edit', $resident->id) }}" class="action-btn edit-btn">✏️ Edit</a>
-                                <form method="POST" action="{{ route('official.residents.destroy', $resident->id) }}" style="display: inline;">
+                                <a href="{{ route($routePrefix . '.residents.view-id', $resident->id) }}" class="action-btn id-btn">🪪 View ID</a>
+                                <a href="{{ route($routePrefix . '.residents.edit', $resident->id) }}" class="action-btn edit-btn">✏️ Edit</a>
+                                <form method="POST" action="{{ route($routePrefix . '.residents.destroy', $resident->id) }}" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="action-btn delete-btn" onclick="return confirm('Are you sure you want to delete this resident? This action cannot be undone.')">🗑️ Delete</button>

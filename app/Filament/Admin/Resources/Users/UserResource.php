@@ -16,20 +16,21 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationLabel = 'Officials';
+    protected static ?string $navigationLabel = 'Barangay Officials';
 
     protected static ?string $modelLabel = 'Official';
 
-    protected static ?string $pluralModelLabel = 'Officials';
+    protected static ?string $pluralModelLabel = 'Barangay Officials';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlineUsers;
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {
@@ -70,5 +71,25 @@ class UserResource extends Resource
     {
         return parent::getEloquentQuery()
             ->where('role', 'official');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->check() && auth()->user()->role === 'admin';
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->check() && auth()->user()->role === 'admin';
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->check() && auth()->user()->role === 'admin';
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->check() && auth()->user()->role === 'admin';
     }
 }

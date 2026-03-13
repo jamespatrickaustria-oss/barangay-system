@@ -3,6 +3,9 @@
 @section('title', 'Announcements')
 
 @section('content')
+@php
+    $routePrefix = request()->segment(1) === 'admin' ? 'admin' : 'official';
+@endphp
 <style>
     :root {
         --blue: #1a6fcc;
@@ -135,6 +138,18 @@
         text-overflow: ellipsis;
     }
 
+    .announcement-photo {
+        margin-bottom: 14px;
+    }
+
+    .announcement-photo img {
+        width: 100%;
+        max-width: 380px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        object-fit: cover;
+    }
+
     .actions {
         display: flex;
         gap: 8px;
@@ -265,7 +280,7 @@
 
 <div class="page-header">
     <h1 class="page-title">📢 Announcements</h1>
-    <a href="{{ route('official.announcements.create') }}" class="create-btn">+ Create Announcement</a>
+    <a href="{{ route($routePrefix . '.announcements.create') }}" class="create-btn">+ Create Announcement</a>
 </div>
 
 @if($announcements->count() > 0)
@@ -275,7 +290,8 @@
                 <div>
                     <h2 class="announcement-title">{{ $announcement->title }}</h2>
                     <div class="announcement-meta">
-                        <div class="meta-item">📅 {{ $announcement->published_at->format('M d, Y') }}</div>
+                        <div class="meta-item">📅 {{ optional($announcement->published_at)->format('M d, Y h:i A') ?? optional($announcement->created_at)->format('M d, Y h:i A') }}</div>
+                        <div class="meta-item">👤 {{ optional($announcement->user)->getFullName() ?? 'Unknown Author' }}</div>
                         @if($announcement->expires_at)
                             <div class="meta-item">⏰ Expires: {{ $announcement->expires_at->format('M d, Y') }}</div>
                         @endif
@@ -294,21 +310,27 @@
                 </div>
             </div>
 
+            @if($announcement->photo_path)
+                <div class="announcement-photo">
+                    <img src="{{ asset('storage/' . $announcement->photo_path) }}" alt="Announcement image">
+                </div>
+            @endif
+
             <div class="announcement-content">
                 <p>{{ $announcement->content }}</p>
             </div>
 
             <div class="actions">
-                <a href="{{ route('official.announcements.edit', $announcement->id) }}" class="action-btn edit-btn">
+                <a href="{{ route($routePrefix . '.announcements.edit', $announcement->id) }}" class="action-btn edit-btn">
                     ✏️ Edit
                 </a>
-                <form method="POST" action="{{ route('official.announcements.toggle', $announcement->id) }}" style="display: inline;">
+                <form method="POST" action="{{ route($routePrefix . '.announcements.toggle', $announcement->id) }}" style="display: inline;">
                     @csrf
                     <button type="submit" class="action-btn toggle-btn {{ !$announcement->is_active ? 'inactive' : '' }}">
                         {{ $announcement->is_active ? '👁️ Hide' : '👁️ Show' }}
                     </button>
                 </form>
-                <form method="POST" action="{{ route('official.announcements.destroy', $announcement->id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this announcement?');">
+                <form method="POST" action="{{ route($routePrefix . '.announcements.destroy', $announcement->id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this announcement?');">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="action-btn delete-btn">🗑️ Delete</button>
@@ -325,7 +347,7 @@
         <div class="empty-icon">📭</div>
         <p>No announcements yet</p>
         <p style="font-size: 13px; color: var(--text-muted);">
-            <a href="{{ route('official.announcements.create') }}" style="color: var(--blue); font-weight: 700; text-decoration: none;">Create your first announcement</a> to share updates with residents
+            <a href="{{ route($routePrefix . '.announcements.create') }}" style="color: var(--blue); font-weight: 700; text-decoration: none;">Create your first announcement</a> to share updates with residents
         </p>
     </div>
 @endif

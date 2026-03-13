@@ -32,6 +32,10 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('admin')
+            ->responsive()
+            ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('16rem')
+            ->collapsedSidebarWidth('4rem')
             ->brandLogo($brandLogo)
             ->darkModeBrandLogo($brandLogo)
             ->brandLogoHeight('2.5rem')
@@ -39,8 +43,18 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->renderHook(
+                'panels::body.end',
+                fn () => view('filament.admin.custom-styles')
+            )
             ->pages([
-                Dashboard::class,
+                \App\Filament\Admin\Pages\Dashboard::class,
+            ])
+            ->resources([
+                \App\Filament\Admin\Resources\UserApprovalResource::class,
+                \App\Filament\Admin\Resources\Users\UserResource::class,
+                \App\Filament\Admin\Resources\Residents\ResidentResource::class,
+                \App\Filament\Admin\Resources\Announcements\AnnouncementResource::class,
             ])
             ->widgets([
                 AccountWidget::class,
@@ -60,6 +74,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->authGuard('web');
+            ->authGuard('web')
+            ->login();
     }
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title') - Barangay Management System</title>
+    <title>PROJECT CONNECT - @yield('title')</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -125,10 +125,11 @@
         }
 
         .user-avatar {
-            width: 38px;
-            height: 38px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--blue), var(--green));
+            overflow: hidden;
+            background: var(--green);
             color: white;
             font-weight: 700;
             font-size: 14px;
@@ -136,6 +137,15 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            margin:  20px;
+            
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .user-info .user-name {
@@ -309,6 +319,7 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
+            overflow: hidden;
             background: linear-gradient(135deg, var(--blue), var(--green));
             color: white;
             font-weight: 700;
@@ -318,10 +329,17 @@
             justify-content: center;
         }
 
+        .topbar-user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
         .topbar-user-dropdown {
             display: none;
             position: absolute;
-            top: 64px;
+            bottom: 65px;
             right: 28px;
             background: var(--white);
             border: 1px solid var(--border);
@@ -391,6 +409,244 @@
             border-left: 4px solid #dc3545;
             color: #b91c1c;
         }
+
+        /* Mobile menu toggle button */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1001;
+            background: var(--blue);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 12px;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .mobile-menu-toggle:hover {
+            background: var(--blue-dark);
+        }
+
+        /* Mobile overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* RESPONSIVE STYLES */
+        /* Tablets and below */
+        @media (max-width: 1024px) {
+            :root {
+                --sidebar-width: 220px;
+            }
+
+            .sidebar {
+                width: 220px;
+            }
+
+            .topbar {
+                padding: 0 20px;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+
+            .nav-link {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+
+            .topbar-left .page-title {
+                font-size: 16px;
+            }
+        }
+
+        /* Mobile devices */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -260px;
+                top: 0;
+                bottom: 0;
+                width: 260px;
+                z-index: 999;
+                transition: left 0.3s ease;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .topbar {
+                height: auto;
+                min-height: 64px;
+                padding: 12px 20px 12px 60px;
+                flex-wrap: wrap;
+            }
+
+            .topbar-left .page-title {
+                font-size: 16px;
+            }
+
+            .topbar-right {
+                gap: 8px;
+            }
+
+            .topbar-user span {
+                display: none;
+            }
+
+            .content-area {
+                padding: 16px;
+            }
+
+            .sidebar-logo {
+                padding: 16px;
+            }
+
+            .logo-title {
+                font-size: 16px;
+            }
+
+            .logo-sub {
+                font-size: 11px;
+            }
+
+            .sidebar-nav {
+                padding: 16px 12px;
+            }
+
+            .nav-link {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .topbar-user-dropdown {
+                right: 16px;
+            }
+
+            .alert {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+        }
+
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            .mobile-menu-toggle {
+                top: 12px;
+                left: 12px;
+                padding: 8px 10px;
+                font-size: 18px;
+            }
+
+            .topbar {
+                padding: 10px 16px 10px 56px;
+            }
+
+            .topbar-left .page-title {
+                font-size: 15px;
+            }
+
+            .content-area {
+                padding: 12px;
+            }
+
+            .sidebar {
+                width: 240px;
+                left: -240px;
+            }
+
+            .logo-icon img {
+                width: 36px;
+                height: 36px;
+            }
+
+            .logo-title {
+                font-size: 15px;
+            }
+
+            .logo-sub {
+                font-size: 10px;
+            }
+
+            .nav-link {
+                padding: 9px 12px;
+                font-size: 12px;
+            }
+
+            .nav-section-label {
+                font-size: 10px;
+                padding: 12px 12px 6px;
+            }
+
+            .sidebar-user {
+                padding: 12px;
+            }
+
+            .user-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .user-name {
+                font-size: 13px;
+            }
+
+            .user-role {
+                font-size: 11px;
+            }
+
+            .notif-btn {
+                font-size: 18px;
+                padding: 6px;
+            }
+
+            .topbar-user-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 11px;
+            }
+        }
+
+        /* Landscape phones */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .sidebar {
+                width: 200px;
+                left: -200px;
+            }
+
+            .topbar {
+                height: 56px;
+                min-height: 56px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -400,100 +656,166 @@
             : (file_exists(public_path('images/city_of_general trias.png'))
                 ? asset('images/city_of_general trias.png')
                 : asset('images/city_of_general_trias.png'));
+        $userPhotoUrl = auth()->check() ? auth()->user()->profile_photo_url : null;
     @endphp
+    
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleMobileSidebar()">☰</button>
+    
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+    
     <div class="app-wrapper">
         <!-- SIDEBAR -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <!-- Logo -->
             <div class="sidebar-logo">
                 <div class="logo-icon">
                     <img src="{{ $sealLogo }}" alt="City of General Trias Seal">
                 </div>
                 <div class="logo-text">
-                    <div class="logo-title">Barangay</div>
-                    <div class="logo-sub">SYSTEM</div>
+                    <div class="logo-title">PROJECT CONNECT</div>
+                    <div class="logo-sub">Brgy. San Juan I</div>
                 </div>
             </div>
 
-            <!-- User Info -->
-            @auth
-            <div class="sidebar-user">
-                <div class="user-avatar">{{ substr(auth()->user()->name, 0, 1) }}</div>
-                <div class="user-info">
-                    <div class="user-name">{{ auth()->user()->name }}</div>
-                    <div class="user-role {{ strtolower(auth()->user()->role) }}">
-                        {{ ucfirst(auth()->user()->role) }}
-                    </div>
-                </div>
-            </div>
-            @endauth
+            
 
             <!-- Navigation -->
             <nav class="sidebar-nav">
                 @auth
                     @if(auth()->user()->role === 'resident')
-                        <div class="nav-section-label">Main</div>
+                        <div class="nav-section-label">MENU</div>
                         <a href="{{ route('resident.dashboard') }}" class="nav-link {{ request()->is('resident/dashboard') ? 'active' : '' }}">
-                            <span class="nav-icon">🏠</span>
-                            <span>Dashboard</span>
+                            Dashboard
                         </a>
                         <a href="{{ route('resident.profile') }}" class="nav-link {{ request()->is('resident/profile') ? 'active' : '' }}">
-                            <span class="nav-icon">👤</span>
-                            <span>My Profile</span>
+                            My Profile
                         </a>
                         <a href="{{ route('resident.online-id') }}" class="nav-link {{ request()->is('resident/online-id') ? 'active' : '' }}">
-                            <span class="nav-icon">🪪</span>
-                            <span>Online ID</span>
+                            Online ID
                         </a>
                         <a href="{{ route('resident.notifications') }}" class="nav-link {{ request()->is('resident/notifications') ? 'active' : '' }}">
-                            <span class="nav-icon">🔔</span>
-                            <span>Notifications</span>
+                            Notifications
                         </a>
 
                     @elseif(auth()->user()->role === 'official')
-                        <div class="nav-section-label">Main</div>
+                        <div class="nav-section-label">MENU</div>
                         <a href="{{ route('official.dashboard') }}" class="nav-link {{ request()->is('official/dashboard') ? 'active' : '' }}">
-                            <span class="nav-icon">📊</span>
+                            <span class="nav-icon"></span>
                             <span>Dashboard</span>
                         </a>
                         <a href="{{ route('official.residents.index') }}" class="nav-link {{ request()->is('official/residents*') ? 'active' : '' }}">
-                            <span class="nav-icon">👥</span>
+                            <span class="nav-icon"></span>
                             <span>Residents</span>
                         </a>
                         <a href="{{ route('official.announcements.index') }}" class="nav-link {{ request()->is('official/announcements*') ? 'active' : '' }}">
-                            <span class="nav-icon">📢</span>
+                            <span class="nav-icon"></span>
                             <span>Announcements</span>
                         </a>
                         <a href="{{ route('official.notifications.create') }}" class="nav-link {{ request()->is('official/notifications*') ? 'active' : '' }}">
-                            <span class="nav-icon">🔔</span>
-                            <span>Send Notification</span>
+                            <span class="nav-icon"></span>
+                            <span>Send Alert</span>
                         </a>
                         <a href="{{ route('official.chat.index') }}" class="nav-link {{ request()->is('official/chat*') ? 'active' : '' }}">
-                            <span class="nav-icon">💬</span>
+                            <span class="nav-icon"></span>
                             <span>Resident Chat</span>
-                        </a>
-                        <a href="{{ route('official.profile') }}" class="nav-link {{ request()->is('official/profile') ? 'active' : '' }}">
-                            <span class="nav-icon">👤</span>
-                            <span>My Profile</span>
                         </a>
 
                     @elseif(auth()->user()->role === 'admin')
-                        <div class="nav-section-label">Main</div>
+                        <div class="nav-section-label">MENU</div>
                         <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}">
-                            <span class="nav-icon">📊</span>
+                            <span class="nav-icon"></span>
                             <span>Dashboard</span>
                         </a>
+                        
+                        <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->is('admin/users*') ? 'active' : '' }}">
+                            <span class="nav-icon"></span>
+                            <span>User Approvals</span>
+                        </a>
+
+                        <a href="{{ route('admin.residents.index') }}" class="nav-link {{ request()->is('admin/residents*') ? 'active' : '' }}">
+                            <span class="nav-icon"></span>
+                            <span>Residents</span>
+                        </a>
+
+                        <a href="{{ route('admin.announcements.index') }}" class="nav-link {{ request()->is('admin/announcements*') ? 'active' : '' }}">
+                            <span class="nav-icon"></span>
+                            <span>Announcements</span>
+                        </a>
+                        
                         <a href="{{ route('admin.officials.index') }}" class="nav-link {{ request()->is('admin/officials*') ? 'active' : '' }}">
-                            <span class="nav-icon">👮</span>
-                            <span>Officials</span>
+                            <span class="nav-icon"></span>
+                            <span>Barangay Officials</span>
                         </a>
                     @endif
                 @endauth
             </nav>
+            <!-- User Info -->
+            @auth
+            <div class="sidebar-user">
+                <div class="user-avatar">
+                    @if($userPhotoUrl)
+                        <img src="{{ $userPhotoUrl }}" alt="{{ auth()->user()->getFullName() }} profile photo">
+                    @else
+                        {{ strtoupper(substr(auth()->user()->getFullName(), 0, 1)) }}
+                    @endif
+                </div>
+                <div class="user-info">
+                    <div class="user-name">{{ auth()->user()->getFullName() }}</div>
+                    <div class="user-role {{ strtolower(auth()->user()->role) }}">
+                    {{ ucfirst(auth()->user()->role) }}
+                    </div>
+                </div>
+            </div>
+            @endauth
 
             <!-- Footer -->
             <div class="sidebar-footer">
-                <p>Barangay System v1.0</p>
+                <!-- <p>Barangay System v1.0</p> -->
+                 
+                <div class="topbar-right">
+                    @auth
+                        @if(auth()->user()->role === 'resident')
+                            <button class="notif-btn" onclick="window.location.href='{{ route('resident.notifications') }}'">
+                                🔔
+                                @php
+                                    $unreadCount = App\Models\Notification::where('user_id', auth()->id())
+                                        ->where('is_read', false)
+                                        ->count();
+                                @endphp
+                                @if($unreadCount > 0)
+                                    <span class="notif-badge">{{ $unreadCount }}</span>
+                                @endif
+                            </button>
+                        @endif
+
+                        <div class="topbar-user" onclick="toggleUserDropdown()">
+                            <div class="topbar-user-avatar">
+                                @if($userPhotoUrl)
+                                    <img src="{{ $userPhotoUrl }}" alt="{{ auth()->user()->getFullName() }} profile photo">
+                                @else
+                                    {{ strtoupper(substr(auth()->user()->getFullName(), 0, 1)) }}
+                                @endif
+                            </div>
+                            <span style="font-size: 14px; font-weight: 500; color: var(--text);">{{ auth()->user()->getFullName() }}</span>
+                        </div>
+
+                        <div class="topbar-user-dropdown" id="userDropdown">
+                            <form action="{{ route('logout') }}" method="POST" style="width: 100%;">
+                                @csrf
+                                <button type="submit" class="dropdown-item logout" style="width: 100%;">
+                                    Logout
+                                </button>
+                            </form>
+                            <button class="dropdown-item" onclick="window.location.href='{{ auth()->user()->role === 'resident' ? route('resident.profile') : (auth()->user()->role === 'official' ? route('official.profile') : '#') }}'">
+                                Profile
+                            </button>
+                            
+                        </div>
+                    @endauth
+                </div>
+
             </div>
         </aside>
 
@@ -505,7 +827,7 @@
                     <div class="page-title">@yield('title')</div>
                 </div>
 
-                <div class="topbar-right">
+                <!-- <div class="topbar-right">
                     @auth
                         @if(auth()->user()->role === 'resident')
                             <button class="notif-btn" onclick="window.location.href='{{ route('resident.notifications') }}'">
@@ -528,17 +850,17 @@
 
                         <div class="topbar-user-dropdown" id="userDropdown">
                             <button class="dropdown-item" onclick="window.location.href='{{ auth()->user()->role === 'resident' ? route('resident.profile') : (auth()->user()->role === 'official' ? route('official.profile') : '#') }}'">
-                                👤 Profile
+                                Profile
                             </button>
                             <form action="{{ route('logout') }}" method="POST" style="width: 100%;">
                                 @csrf
                                 <button type="submit" class="dropdown-item logout" style="width: 100%;">
-                                    🚪 Logout
+                                    Logout
                                 </button>
                             </form>
                         </div>
                     @endauth
-                </div>
+                </div> -->
             </div>
 
             <!-- CONTENT AREA -->
@@ -589,6 +911,27 @@
                 }
             });
         }
+
+        // Mobile sidebar toggle
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Close mobile sidebar when clicking on a nav link
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        toggleMobileSidebar();
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

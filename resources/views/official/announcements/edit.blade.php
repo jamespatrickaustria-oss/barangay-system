@@ -3,6 +3,9 @@
 @section('title', 'Edit Announcement')
 
 @section('content')
+@php
+    $routePrefix = request()->segment(1) === 'admin' ? 'admin' : 'official';
+@endphp
 <style>
     :root {
         --blue: #1a6fcc;
@@ -192,7 +195,7 @@
     }
 </style>
 
-<a href="{{ route('official.announcements.index') }}" class="back-link">← Back to Announcements</a>
+<a href="{{ route($routePrefix . '.announcements.index') }}" class="back-link">← Back to Announcements</a>
 
 <div class="form-card">
     <h1 class="form-title">✏️ Edit Announcement</h1>
@@ -211,7 +214,7 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('official.announcements.update', $announcement->id) }}">
+    <form method="POST" action="{{ route($routePrefix . '.announcements.update', $announcement->id) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -244,6 +247,41 @@
         </div>
 
         <div class="form-group">
+            <label for="photo">Update Photo (Optional)</label>
+            <input
+                type="file"
+                id="photo"
+                name="photo"
+                accept=".jpg,.jpeg,.png"
+                onchange="previewPhoto(this)"
+            >
+            <small style="color: var(--text-muted); font-size: 12px; margin-top: 4px; display: block;">
+                Supported formats: JPG, JPEG, PNG. Max 5MB.
+            </small>
+            @error('photo')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
+
+            {{-- Preview of NEW selected photo --}}
+            <div id="photo-preview-wrap" style="display:none; margin-top: 12px;">
+                <p style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin: 0 0 6px 0;">New Photo Preview</p>
+                <img id="photo-preview" src="" alt="New photo preview" style="max-width: 260px; max-height: 200px; border-radius: 10px; border: 2px solid var(--blue); object-fit: cover; display: block;">
+                <button type="button" onclick="clearPhotoPreview()" style="margin-top: 8px; background: none; border: none; color: #dc3545; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;">✕ Cancel new photo</button>
+            </div>
+
+            @if($announcement->photo_path)
+                <div id="current-photo-wrap" style="margin-top: 12px;">
+                    <p style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin: 0 0 6px 0;">Current Photo</p>
+                    <img src="{{ asset('storage/' . $announcement->photo_path) }}" alt="Announcement photo" style="max-width: 220px; border-radius: 10px; border: 1px solid var(--border); object-fit: cover; display: block;">
+                    <label style="display: block; margin-top: 8px; text-transform: none; letter-spacing: normal; font-size: 13px; font-weight: 600; color: var(--text);">
+                        <input type="checkbox" name="remove_photo" value="1" {{ old('remove_photo') ? 'checked' : '' }} style="width: auto; margin-right: 6px;">
+                        Remove current photo
+                    </label>
+                </div>
+            @endif
+        </div>
+
+        <div class="form-group">
             <label for="expires_at">Expiration Date (Optional)</label>
             <input 
                 type="date" 
@@ -261,9 +299,36 @@
 
         <div class="button-group">
             <button type="submit" class="submit-btn">✓ Save Changes</button>
-            <a href="{{ route('official.announcements.index') }}" class="cancel-btn">Cancel</a>
+            <a href="{{ route($routePrefix . '.announcements.index') }}" class="cancel-btn">Cancel</a>
         </div>
     </form>
 </div>
+
+<script>
+function previewPhoto(input) {
+    const wrap = document.getElementById('photo-preview-wrap');
+    const preview = document.getElementById('photo-preview');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            wrap.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        wrap.style.display = 'none';
+        preview.src = '';
+    }
+}
+
+function clearPhotoPreview() {
+    const input = document.getElementById('photo');
+    const wrap = document.getElementById('photo-preview-wrap');
+    const preview = document.getElementById('photo-preview');
+    input.value = '';
+    wrap.style.display = 'none';
+    preview.src = '';
+}
+</script>
 
 @endsection

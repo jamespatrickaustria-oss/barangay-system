@@ -32,6 +32,10 @@ class OfficialPanelProvider extends PanelProvider
         return $panel
             ->id('official')
             ->path('official')
+            ->responsive()
+            ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('16rem')
+            ->collapsedSidebarWidth('4rem')
             ->brandLogo($brandLogo)
             ->darkModeBrandLogo($brandLogo)
             ->brandLogoHeight('2.5rem')
@@ -39,8 +43,17 @@ class OfficialPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->renderHook(
+                'panels::body.end',
+                fn () => view('filament.official.custom-styles')
+            )
             ->pages([
-                Dashboard::class,
+                \App\Filament\Official\Pages\Dashboard::class,
+            ])
+            ->resources([
+                \App\Filament\Official\Resources\UserApprovalResource::class,
+                \App\Filament\Official\Resources\Residents\ResidentResource::class,
+                \App\Filament\Official\Resources\Announcements\AnnouncementResource::class,
             ])
             ->widgets([
                 AccountWidget::class,

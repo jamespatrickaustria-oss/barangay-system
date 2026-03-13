@@ -114,7 +114,8 @@ class ChatController extends Controller
                     'id' => $thread->id,
                     'resident_name' => $thread->resident?->getFullName() ?? 'Resident',
                     'resident_email' => $thread->resident?->email,
-                    'last_message_at' => optional($thread->last_message_at ?? $thread->updated_at)->toDateTimeString(),
+                    'last_message_at' => optional($thread->last_message_at ?? $thread->updated_at)->setTimezone('Asia/Manila')->toDateTimeString(),
+                    'last_message_at_human' => optional($thread->last_message_at ?? $thread->updated_at)->setTimezone('Asia/Manila')->format('M d, Y h:i A'),
                     'latest_preview' => $latest?->body ?: ($latest?->image_path ? '📷 Image' : 'No messages yet'),
                 ];
             }),
@@ -181,8 +182,8 @@ class ChatController extends Controller
             'sender_name' => $message->sender?->getFullName() ?? 'User',
             'sender_role' => $message->sender?->role,
             'is_mine' => $message->sender_id === $viewerId,
-            'created_at' => $message->created_at?->toDateTimeString(),
-            'created_at_human' => $message->created_at?->format('M d, Y h:i A'),
+            'created_at' => $message->created_at?->setTimezone('Asia/Manila')->toDateTimeString(),
+            'created_at_human' => $message->created_at?->setTimezone('Asia/Manila')->format('M d, Y h:i A'),
         ];
     }
 }

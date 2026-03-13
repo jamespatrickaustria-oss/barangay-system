@@ -16,7 +16,17 @@ class AuthController extends Controller
      */
     private function redirectByRole(User $user)
     {
-        // Admin can always login - no email verification needed
+        if ($user->status === 'pending') {
+            Auth::logout();
+            return redirect('/login')->with('error', 'Your account is still pending approval.');
+        }
+
+        if ($user->status === 'rejected') {
+            Auth::logout();
+            return redirect('/login')->with('error', 'Your account was rejected. Please contact the barangay office.');
+        }
+
+        // Admin can proceed as long as status is approved.
         if ($user->role === 'admin') {
             return redirect('/admin/dashboard');
         }
@@ -31,16 +41,6 @@ class AuthController extends Controller
         if ($user->role === 'official' && $user->email_verification_token && !$user->email_verified_at) {
             Auth::logout();
             return redirect('/login')->with('error', 'Your email is not verified. Please check your email for the verification link.');
-        }
-
-        if ($user->role === 'resident' && $user->status === 'pending') {
-            Auth::logout();
-            return redirect('/pending');
-        }
-
-        if ($user->role === 'resident' && $user->status === 'rejected') {
-            Auth::logout();
-            return redirect('/login')->with('error', 'Your registration was rejected. Please contact the barangay office.');
         }
 
         if ($user->role === 'official') {
@@ -65,9 +65,8 @@ class AuthController extends Controller
             $redirect = $this->redirectByRole($user);
 
             if (
-                $user->role === 'admin' ||
-                $user->role === 'official' ||
-                ($user->role === 'resident' && $user->status === 'approved')
+                $user->status === 'approved' &&
+                in_array($user->role, ['admin', 'official', 'resident'], true)
             ) {
                 return $redirect->with('success', 'You are already logged in.');
             }
@@ -107,6 +106,20 @@ class AuthController extends Controller
             return redirect()->back()
                 ->withInput($request->only('email'))
                 ->with('error', 'User account not found with this email.');
+        }
+
+        // Check if user account is pending approval
+        if ($user->status === 'pending') {
+            return redirect()->back()
+                ->withInput($request->only('email'))
+                ->with('error', 'Your account is still pending approval. Please wait for authorization from an administrator.');
+        }
+
+        // Check if user account is rejected
+        if ($user->status === 'rejected') {
+            return redirect()->back()
+                ->withInput($request->only('email'))
+                ->with('error', 'Your account has been rejected. Please contact the barangay office for more information.');
         }
 
         // Check password
@@ -152,13 +165,36 @@ class AuthController extends Controller
             ],
             'password' => 'required|min:8|confirmed',
             'phone' => 'required|string|max:20',
+            'profile_photo' => 'required|file|image|mimes:jpg,jpeg,png|max:5120',
+            'father_name' => 'nullable|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
+            'house_no' => 'nullable|string|max:100',
+            'barangay' => 'nullable|string|max:255',
+            'municipality_city' => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:500',
             'birthdate' => 'nullable|date',
             'gender' => 'nullable|in:male,female,other',
             'marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
         ]);
 
-        // Create new user with pending status
+        // Handle photo upload
+        $profilePhotoPath = null;
+
+        if ($request->hasFile('profile_photo')) {
+            $photoFile = $request->file('profile_photo');
+            $profilePhotoPath = $photoFile->store('uploads/profile_photos', 'public');
+        }
+
+        // Generate unique account number from name initials + birthdate
+        $accountNumber = User::generateAccountNumber(
+            $validated['first_name'],
+            $validated['middle_name'] ?? null,
+            $validated['surname'],
+            $validated['birthdate'] ?? null
+        );
+
+        // Create new user with pending status - all new registrations are residents
         $user = User::create([
             'first_name' => $validated['first_name'],
             'middle_name' => $validated['middle_name'] ?? null,
@@ -166,40 +202,53 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
+            'profile_photo' => $profilePhotoPath,
+            'father_name' => $validated['father_name'] ?? null,
+            'mother_name' => $validated['mother_name'] ?? null,
+            'house_no' => $validated['house_no'] ?? null,
+            'barangay' => $validated['barangay'] ?? null,
+            'municipality_city' => $validated['municipality_city'] ?? null,
+            'nationality' => $validated['nationality'] ?? null,
             'address' => $validated['address'] ?? null,
             'birthdate' => $validated['birthdate'] ?? null,
             'gender' => $validated['gender'] ?? null,
             'marital_status' => $validated['marital_status'] ?? null,
-            'role' => 'resident',
+            'role' => 'resident', // All new registrations default to resident
             'status' => 'pending',
+            'account_number' => $accountNumber,
         ]);
 
-        // Find all officials
-        $officials = User::where('role', 'official')->get();
+        // Notify all admins and officials about the new resident registration
+        $approvers = User::whereIn('role', ['admin', 'official'])
+            ->where('status', 'approved')
+            ->get();
+        
+        $notificationTitle = 'New Resident Registration';
+        $notificationMessage = $user->getFullName() . " has registered and is awaiting approval.";
+        $emailSubject = 'New Resident Registration Pending';
+        $approvalUrl = url('/official/user-approvals');
 
-        // Notify each official
-        foreach ($officials as $official) {
-            // Create notification record
+        // Notify approvers
+        foreach ($approvers as $approver) {
             Notification::create([
-                'user_id' => $official->id,
+                'user_id' => $approver->id,
                 'sender_id' => null,
-                'title' => 'New Resident Registration',
-                'message' => $user->getFullName() . " has registered and is awaiting approval.",
+                'title' => $notificationTitle,
+                'message' => $notificationMessage,
             ]);
 
-            // Send email notification
             MailService::send(
-                $official->email,
-                $official->getFullName(),
-                'New Resident Registration Pending',
-                MailService::pendingApprovalEmail($user->getFullName(), $user->email, url('/official/residents'))
+                $approver->email,
+                $approver->getFullName(),
+                $emailSubject,
+                MailService::pendingApprovalEmail($user->getFullName(), $user->email, $approvalUrl)
             );
         }
 
         return redirect()
             ->route('pending')
             ->with('just_registered', true)
-            ->with('pending_message', 'Wait for Barangay Official approval before you can log in.');
+            ->with('pending_message', 'Your account is pending approval. Please wait for approval from an authorized administrator.');
     }
 
     /**

@@ -3,10 +3,13 @@
 @section('title', 'Create Announcement')
 
 @section('content')
+@php
+    $routePrefix = request()->segment(1) === 'admin' ? 'admin' : 'official';
+@endphp
 <style>
     :root {
         --blue: #1a6fcc;
-        --green: #3a8a3f;
+        --green: #3a8a3f;   
         --blue-light: #daf0fa;
         --surface: #f0f9ff;
         --text: #0d1b2a;
@@ -185,7 +188,7 @@
     }
 </style>
 
-<a href="{{ route('official.announcements.index') }}" class="back-link">← Back to Announcements</a>
+<a href="{{ route($routePrefix . '.announcements.index') }}" class="back-link">← Back to Announcements</a>
 
 <div class="form-card">
     <h1 class="form-title">📢 Create Announcement</h1>
@@ -195,7 +198,7 @@
         ✉️ This announcement will be displayed on the resident dashboard. All approved residents will be able to see it.
     </div>
 
-    <form method="POST" action="{{ route('official.announcements.store') }}">
+    <form method="POST" action="{{ route($routePrefix . '.announcements.store') }}" enctype="multipart/form-data">
         @csrf
 
         <div class="form-group">
@@ -227,6 +230,28 @@
         </div>
 
         <div class="form-group">
+            <label for="photo">Attach Photo (Optional)</label>
+            <input
+                type="file"
+                id="photo"
+                name="photo"
+                accept=".jpg,.jpeg,.png"
+                onchange="previewPhoto(this)"
+            >
+            <small style="color: var(--text-muted); font-size: 12px; margin-top: 4px; display: block;">
+                Supported formats: JPG, JPEG, PNG. Max 5MB.
+            </small>
+            @error('photo')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
+            <div id="photo-preview-wrap" style="display:none; margin-top: 12px;">
+                <p style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin: 0 0 6px 0;">Preview</p>
+                <img id="photo-preview" src="" alt="Photo preview" style="max-width: 260px; max-height: 200px; border-radius: 10px; border: 2px solid var(--border); object-fit: cover; display: block;">
+                <button type="button" onclick="clearPhotoPreview()" style="margin-top: 8px; background: none; border: none; color: #dc3545; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;">✕ Remove</button>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label for="expires_at">Expiration Date (Optional)</label>
             <input 
                 type="date" 
@@ -244,9 +269,36 @@
 
         <div class="button-group">
             <button type="submit" class="submit-btn">📢 Publish Announcement</button>
-            <a href="{{ route('official.announcements.index') }}" class="cancel-btn">Cancel</a>
+            <a href="{{ route($routePrefix . '.announcements.index') }}" class="cancel-btn">Cancel</a>
         </div>
     </form>
 </div>
+
+<script>
+function previewPhoto(input) {
+    const wrap = document.getElementById('photo-preview-wrap');
+    const preview = document.getElementById('photo-preview');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            wrap.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        wrap.style.display = 'none';
+        preview.src = '';
+    }
+}
+
+function clearPhotoPreview() {
+    const input = document.getElementById('photo');
+    const wrap = document.getElementById('photo-preview-wrap');
+    const preview = document.getElementById('photo-preview');
+    input.value = '';
+    wrap.style.display = 'none';
+    preview.src = '';
+}
+</script>
 
 @endsection

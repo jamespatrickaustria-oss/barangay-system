@@ -237,7 +237,40 @@
         margin: 0;
     }
 
+    /* Tablet and below */
+    @media (max-width: 1024px) {
+        .welcome-heading {
+            font-size: 24px;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+        }
+
+        th, td {
+            padding: 12px 16px;
+        }
+    }
+
+    /* Mobile devices */
     @media (max-width: 768px) {
+        .welcome-heading {
+            font-size: 22px;
+        }
+
+        .welcome-subtext {
+            font-size: 13px;
+        }
+
         .action-buttons {
             flex-direction: column;
         }
@@ -249,19 +282,96 @@
 
         .stats-grid {
             grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .stat-card {
+            padding: 16px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .table-card {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            font-size: 13px;
+        }
+
+        th {
+            font-size: 11px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 12px;
+        }
+
+        .official-name {
+            font-size: 13px;
+        }
+
+        .official-email {
+            font-size: 11px;
+        }
+    }
+
+    /* Small mobile devices */
+    @media (max-width: 480px) {
+        .welcome-section {
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+        }
+
+        .welcome-heading {
+            font-size: 20px;
+        }
+
+        .stats-grid,
+        .section-header,
+        .table-card {
+            margin-bottom: 32px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+        }
+
+        .section-title {
+            font-size: 15px;
         }
     }
 </style>
 
 <div class="welcome-section">
-    <p class="welcome-heading">Dashboard</p>
+    <p class="welcome-heading">DASHBOARD</p>
     <p class="welcome-subtext">{{ date('l, F d, Y') }} • Admin Portal</p>
 </div>
 
-<div class="action-buttons">
+<!-- <div class="action-buttons">
     <a href="{{ route('admin.officials.create') }}" class="action-btn">Add Official</a>
     <a href="{{ route('admin.officials.index') }}" class="action-btn secondary">View All</a>
-</div>
+</div> -->
 
 <div class="stats-grid">
     <div class="stat-card">
@@ -282,7 +392,7 @@
 
 @if(isset($recentOfficials) && $recentOfficials->count() > 0)
     <div class="section-header">
-        <h2 class="section-title">Recent Officials</h2>
+        <h2 class="section-title">Recently Approved</h2>
         <a href="{{ route('admin.officials.index') }}" class="view-all-link">View All</a>
     </div>
 
@@ -293,7 +403,9 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Status</th>
-                    <th>Date Added</th>
+                    <th>Approved By</th>
+                    <th>Date Approved</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -311,6 +423,13 @@
                         <td>
                             <span class="status-badge">Approved</span>
                         </td>
+                        <td>    
+                            @if($official->approved_by)
+                                {{ $official->approver ? $official->approver->getFullName() : 'N/A' }}
+                            @else
+                                N/A
+                            @endif
+                        </td>
                         <td>{{ $official->created_at->format('M d, Y') }}</td>
                     </tr>
                 @endforeach
@@ -318,5 +437,36 @@
         </table>
     </div>
 @endif
+
+<div class="section-header">
+    <h2 class="section-title">Resident ID List</h2>
+</div>
+
+<div class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Resident</th>
+                <th>Account No.</th>
+                <th>Issued At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse(($recentResidentIds ?? collect()) as $id)
+                <tr>
+                    <td>{{ $id->user?->getFullName() ?? 'N/A' }}</td>
+                    <td>{{ $id->user?->account_number ?? 'N/A' }}</td>
+                    <td>{{ optional($id->issued_at)->format('M d, Y h:i A') ?? 'N/A' }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="3" class="empty-message">
+                        <p>No resident IDs found.</p>
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 
 @endsection

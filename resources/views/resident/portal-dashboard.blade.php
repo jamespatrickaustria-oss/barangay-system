@@ -249,14 +249,13 @@
 
     <div class="info-card">
         <div class="info-card-icon">📅</div>
-        <div class="info-card-value">{{ auth()->user()->created_at->format('M Y') }}</div>
+        <div class="info-card-value">{{ auth()->user()->created_at->format('M d, Y') }}</div>
         <div class="info-card-label">Member Since</div>
     </div>
 </div>
 
 <!-- Services Section -->
 <h2 class="section-title">
-    <span>🎯</span>
     <span>Available Services</span>
 </h2>
 
@@ -295,7 +294,7 @@
             <div class="announcement-item">
                 <h3 class="announcement-title">{{ $announcement->title }}</h3>
                 <p class="announcement-content">{{ Str::limit($announcement->content, 200) }}</p>
-                <p class="announcement-date">📅 Published: {{ $announcement->published_at->format('F d, Y') }}</p>
+                <p class="announcement-date">📅 Published: {{ optional($announcement->published_at)->format('F d, Y') ?? optional($announcement->created_at)->format('F d, Y') }}</p>
             </div>
         @endforeach
 

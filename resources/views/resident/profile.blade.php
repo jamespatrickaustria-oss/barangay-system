@@ -3,6 +3,9 @@
 @section('title', 'My Profile')
 
 @section('content')
+@php
+    $profilePhotoUrl = auth()->user()->profile_photo_url;
+@endphp
 <style>
     .page-header {
         margin-bottom: 32px;
@@ -30,26 +33,41 @@
         background: white;
         border-radius: 16px;
         padding: 32px;
-        text-align: center;
         box-shadow: var(--shadow);
         border: 1px solid var(--gray-200);
         height: fit-content;
     }
 
+    .profile-identity {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        text-align: left;
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: 12px;
+        padding: 12px;
+    }
+
+    .profile-identity-meta {
+        min-width: 0;
+    }
+
     .avatar {
-        width: 120px;
-        height: 120px;
+        width: 56px;
+        height: 56px;
         border-radius: 50%;
         overflow: hidden;
-        margin: 0 auto 20px;
+        margin: 0;
         background: linear-gradient(135deg, var(--primary), var(--secondary));
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 42px;
+        font-size: 20px;
         color: white;
         font-weight: 800;
-        box-shadow: var(--shadow-lg);
+        box-shadow: var(--shadow);
+        flex-shrink: 0;
     }
 
     .avatar img {
@@ -59,19 +77,21 @@
     }
 
     .user-name {
-        font-size: 22px;
-        font-weight: 700;
+        font-size: 14px;
+        font-weight: 600;
         color: var(--gray-900);
-        margin: 0 0 8px 0;
+        margin: 0 0 4px 0;
+        line-height: 1.3;
+        word-break: break-word;
     }
 
     .role-badge {
-        display: inline-block;
-        padding: 6px 16px;
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
         border-radius: 20px;
-        font-size: 13px;
+        font-size: 11px;
         font-weight: 600;
-        margin-bottom: 24px;
         background: var(--secondary-light);
         color: var(--secondary-dark);
     }
@@ -87,12 +107,13 @@
         background: var(--primary);
         color: white;
         border-radius: 10px;
-        padding: 12px 24px;
+        padding: 10px 16px;
         cursor: pointer;
         font-weight: 600;
-        font-size: 14px;
+        font-size: 13px;
         transition: all 0.2s;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
+        margin-top: 16px;
     }
 
     .change-photo-label:hover {
@@ -105,19 +126,27 @@
         margin-top: 8px;
     }
 
+    .photo-status {
+        font-size: 12px;
+        color: var(--green-dark);
+        margin-top: 8px;
+        font-weight: 600;
+        display: none;
+    }
+
     .right-card {
         background: white;
-        border-radius: 16px;
-        padding: 32px;
-        box-shadow: var(--shadow);
-        border: 1px solid var(--gray-200);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--border);
     }
 
     .section-header {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--gray-900);
-        margin: 0 0 28px 0;
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--text);
+        margin: 0 0 24px 0;
     }
 
     .form-grid {
@@ -134,34 +163,38 @@
     .form-group {
         display: flex;
         flex-direction: column;
+        margin-bottom: 4px;
     }
 
     .form-group label {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--gray-700);
-        margin-bottom: 8px;
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: var(--text-light);
+        margin-bottom: 6px;
     }
 
     .form-group input,
     .form-group select {
-        border: 1px solid var(--gray-300);
-        border-radius: 10px;
-        padding: 12px 16px;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 16px;
         width: 100%;
         box-sizing: border-box;
         font-size: 15px;
         font-family: inherit;
-        color: var(--gray-900);
+        color: var(--text);
         background: white;
-        transition: all 0.2s;
+        transition: border-color 0.2s, box-shadow 0.2s;
         outline: none;
     }
 
     .form-group input:focus,
     .form-group select:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        border-color: var(--blue);
+        box-shadow: 0 0 0 4px rgba(26, 110, 199, 0.1);
     }
 
     .form-group input:readonly {
@@ -172,7 +205,7 @@
 
     .readonly-note {
         font-size: 12px;
-        color: var(--gray-500);
+        color: var(--text-light);
         margin-top: 6px;
     }
 
@@ -193,31 +226,34 @@
 
     .form-footer {
         display: flex;
-        justify-content: flex-end;
+        justify-content: stretch;
         margin-top: 32px;
     }
 
     .save-btn {
-        background: var(--primary);
+        width: 100%;
+        background: linear-gradient(135deg, #1a6ec7, #3a7d44);
         border: none;
-        border-radius: 10px;
-        padding: 14px 32px;
+        border-radius: 12px;
+        padding: 15px;
         color: white;
         font-weight: 700;
-        font-size: 15px;
+        font-size: 16px;
         font-family: inherit;
         cursor: pointer;
-        transition: all 0.2s;
-        box-shadow: var(--shadow-sm);
+        transition: opacity 0.2s, transform 0.1s;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .save-btn:hover {
-        background: var(--primary-dark);
-        box-shadow: var(--shadow);
+        opacity: 0.92;
     }
 
     .save-btn:active {
-        transform: scale(0.98);
+        transform: scale(0.99);
     }
 
     .success-message {
@@ -238,6 +274,76 @@
         .profile-grid {
             grid-template-columns: 1fr;
         }
+
+        .left-card {
+            padding: 20px;
+        }
+
+        .right-card {
+            padding: 28px 20px;
+            border-radius: 16px;
+        }
+
+        .section-header {
+            font-size: 20px;
+        }
+
+        .profile-identity {
+            padding: 10px;
+        }
+
+        .avatar {
+            width: 52px;
+            height: 52px;
+        }
+
+        .user-name {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-title    { font-size: 22px; }
+        .page-subtitle { font-size: 14px; }
+        .page-header   { margin-bottom: 20px; }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .right-card {
+            padding: 20px 16px;
+        }
+
+        .section-header { font-size: 18px; margin-bottom: 18px; }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 14px;
+            font-size: 14px;
+        }
+
+        .save-btn {
+            font-size: 14px;
+            padding: 13px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .page-title { font-size: 19px; }
+
+        .left-card  { padding: 16px; }
+
+        .right-card { padding: 16px 14px; }
+
+        .form-group label { font-size: 11px; }
+
+        .form-group input,
+        .form-group select {
+            padding: 11px 12px;
+            border-radius: 10px;
+        }
     }
 </style>
 
@@ -255,23 +361,32 @@
 
 <div class="profile-grid">
     <div class="left-card">
-        <div class="avatar" id="avatarPreview">
-            {{ strtoupper(substr(auth()->user()->getFullName() ?? 'User', 0, 1)) }}
+        <div class="profile-identity">
+            <div class="avatar" id="avatarPreview">
+                @if($profilePhotoUrl)
+                    <img src="{{ $profilePhotoUrl }}" alt="{{ auth()->user()->getFullName() }} profile photo">
+                @else
+                    {{ strtoupper(substr(auth()->user()->getFullName() ?? 'User', 0, 1)) }}
+                @endif
+            </div>
+            <div class="profile-identity-meta">
+                <h2 class="user-name">{{ auth()->user()->getFullName() }}</h2>
+                <span class="role-badge">Verified Resident</span>
+            </div>
         </div>
-        <h2 class="user-name">{{ auth()->user()->getFullName() }}</h2>
-        <span class="role-badge">✓ Verified Resident</span>
         
         <hr class="divider">
         
-        <input type="file" id="photoInput" name="profile_photo" accept="image/*" style="display: none" onchange="previewPhoto(this)">
+        <input type="file" id="photoInput" name="profile_photo" form="residentProfileForm" accept="image/*" style="display: none" onchange="previewPhoto(this)">
         <label for="photoInput" class="change-photo-label">📷 Change Photo</label>
         <p class="photo-note">JPG or PNG, max 2MB</p>
+        <p class="photo-status" id="photoStatus">Photo selected. Click Update Profile to save changes.</p>
     </div>
 
     <div class="right-card">
         <h2 class="section-header">Personal Information</h2>
 
-        <form method="POST" action="{{ route('resident.profile.update') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('resident.profile.update') }}" enctype="multipart/form-data" id="residentProfileForm">
             @csrf
             @method('PUT')
 
@@ -340,6 +455,38 @@
                     </div>
                 </div>
 
+                <div>
+                    <div class="form-group">
+                        <label for="father_name">Father</label>
+                        <input
+                            type="text"
+                            id="father_name"
+                            name="father_name"
+                            value="{{ old('father_name', auth()->user()->father_name) }}"
+                            placeholder="Enter full name"
+                        >
+                        @error('father_name')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="mother_name">Mother</label>
+                        <input
+                            type="text"
+                            id="mother_name"
+                            name="mother_name"
+                            value="{{ old('mother_name', auth()->user()->mother_name) }}"
+                            placeholder="Enter full name"
+                        >
+                        @error('mother_name')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
                 <div class="full">
                     <div class="form-group">
                         <label for="email">Email Address</label>
@@ -363,6 +510,70 @@
                             value="{{ old('address', auth()->user()->address) }}"
                         >
                         @error('address')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="house_no">House No#</label>
+                        <input
+                            type="text"
+                            id="house_no"
+                            name="house_no"
+                            value="{{ old('house_no', auth()->user()->house_no) }}"
+                            placeholder="e.g. 123-B"
+                        >
+                        @error('house_no')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="barangay">Barangay</label>
+                        <input
+                            type="text"
+                            id="barangay"
+                            name="barangay"
+                            value="{{ old('barangay', auth()->user()->barangay) }}"
+                            placeholder="e.g. Barangay San Juan"
+                        >
+                        @error('barangay')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="municipality_city">Municipality/City</label>
+                        <input
+                            type="text"
+                            id="municipality_city"
+                            name="municipality_city"
+                            value="{{ old('municipality_city', auth()->user()->municipality_city) }}"
+                            placeholder="e.g. General Trias"
+                        >
+                        @error('municipality_city')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="nationality">Nationality</label>
+                        <input
+                            type="text"
+                            id="nationality"
+                            name="nationality"
+                            value="{{ old('nationality', auth()->user()->nationality) }}"
+                            placeholder="e.g. Filipino"
+                        >
+                        @error('nationality')
                             <div class="error-message">{{ $message }}</div>
                         @enderror
                     </div>
@@ -429,10 +640,11 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const preview = document.getElementById('avatarPreview');
-                preview.style.backgroundImage = 'url(' + e.target.result + ')';
-                preview.style.backgroundSize = 'cover';
-                preview.style.backgroundPosition = 'center';
-                preview.innerHTML = '';
+                const photoStatus = document.getElementById('photoStatus');
+                preview.innerHTML = '<img src="' + e.target.result + '" alt="Profile Photo Preview">';
+                if (photoStatus) {
+                    photoStatus.style.display = 'block';
+                }
             };
             reader.readAsDataURL(input.files[0]);
         }
