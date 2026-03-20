@@ -18,7 +18,7 @@ class AdminSeeder extends Seeder
             [
                 'first_name' => 'System',
                 'surname' => 'Administrator',
-                'password' => Hash::make('@@Dfgh@1234@@'),
+                'password' => Hash::make('123'),
                 'role' => 'admin',
                 'status' => 'approved',
             ]

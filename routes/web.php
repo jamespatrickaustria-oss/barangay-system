@@ -7,6 +7,7 @@ use App\Http\Controllers\ResidentController;
 use App\Http\Controllers\OfficialController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,19 @@ Route::get('/pending', function () {
 Route::get('/unauthorized', function () {
     return view('unauthorized');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Verify the contact number
+|--------------------------------------------------------------------------
+*/
+
+// Page (opened from footer link)
+Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.page');
+
+// Actions
+Route::post('/contacts/add', [ContactController::class, 'add'])->name('contacts.add');
+Route::post('/contacts/verify', [ContactController::class, 'verify'])->name('contacts.verify');
 
 /*
 |--------------------------------------------------------------------------

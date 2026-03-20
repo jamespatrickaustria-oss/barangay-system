@@ -18,8 +18,19 @@ class OfficialSeeder extends Seeder
             [
                 'first_name' => 'Juan',
                 'surname' => 'Dela Cruz',
-                'password' => Hash::make('@@Dfgh@1234@@'),
+                'password' => Hash::make('123'),
                 'role' => 'official',
+                'status' => 'approved',
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'res@barangay.gov'],
+            [
+                'first_name' => 'User',
+                'surname' => 'Resident',
+                'password' => Hash::make('123'),
+                'role' => 'resident',
                 'status' => 'approved',
             ]
         );

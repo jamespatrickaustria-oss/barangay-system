@@ -1171,8 +1171,8 @@
         <ul>
           <li><a href="{{ route('register') }}">Register</a></li>
           <li><a href="#about">Services</a></li>
-          <li><a href="#">Verifier</a></li>
-
+          <li><a href="{{ route('contacts.page') }}">Verifier</a></li>
+            
         </ul>
       </div>
 

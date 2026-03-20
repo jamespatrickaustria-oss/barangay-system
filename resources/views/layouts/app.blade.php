@@ -749,8 +749,23 @@
                             <span>User Requests</span>
                         </a>
 
+                        
+
                     @endif
                 @endauth
+
+                @guest
+                <div class="nav-section-label">MENU</div>
+
+                <a href="{{ route('homepage') }}" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
+                    <span class="nav-icon"></span>
+                    <span>Homepage</span>
+                </a>
+                <a href="{{ route('contacts.page') }}" class="nav-link {{ request()->is('contacts*') ? 'active' : '' }}">
+                    <span class="nav-icon"></span>
+                    <span>Verifier</span>
+                </a>
+                @endguest
             </nav>
           
 
