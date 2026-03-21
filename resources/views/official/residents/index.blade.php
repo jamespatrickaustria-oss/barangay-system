@@ -303,6 +303,15 @@
         background: #e6fffa;
     }
 
+    .photo-btn {
+        border-color: #7c3aed;
+        color: #7c3aed;
+    }
+
+    .photo-btn:hover {
+        background: #f3e8ff;
+    }
+
     .delete-btn {
         border-color: #f44336;
         color: #f44336;

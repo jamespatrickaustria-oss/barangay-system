@@ -29,6 +29,7 @@
             min-height: 100vh;
             font-family: 'DM Sans', sans-serif;
             display: flex;
+            flex-wrap: wrap;
             align-items: flex-start;
             justify-content: center;
             color: var(--text);
@@ -41,6 +42,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        footer {
+            width: 100%;
+            flex-basis: 100%;
+            margin-top: 28px;
         }
 
         .register-card {
@@ -538,7 +545,7 @@
     </div>
 
     <!-- Registration Form -->
-    <form method="POST" action="{{ route('register') }}" id="residentRegisterForm" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('register') }}" id="residentRegisterForm">
         @csrf
 
         {{-- Hidden field that receives the assembled +63 phone number on submit --}}
@@ -664,26 +671,6 @@
                                placeholder="Enter full name"
                                class="@error('mother_name') error @enderror">
                         @error('mother_name')<div class="error-message">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-
-                <div class="full">
-                    <div class="form-group">
-                        <label for="profile_photo">Upload Personal Photo <span class="required">*</span></label>
-                        <input type="file" id="profile_photo" name="profile_photo"
-                               accept=".jpg,.jpeg,.png"
-                               class="@error('profile_photo') error @enderror">
-                        <div class="photo-preview" id="profilePhotoPreview">
-                            <img id="profilePhotoPreviewImage" alt="Selected personal photo preview">
-                            <div class="photo-preview-meta">
-                                <strong id="profilePhotoPreviewName"></strong>
-                                <span>Selected photo preview</span>
-                            </div>
-                        </div>
-                        <small style="color:var(--text-light);font-size:12px;margin-top:5px;display:block;">
-                            Accepted formats: JPG, JPEG, PNG &mdash; Max 5MB. Used as your Online ID photo.
-                        </small>
-                        @error('profile_photo')<div class="error-message">{{ $message }}</div>@enderror
                     </div>
                 </div>
 
@@ -880,6 +867,49 @@
 </div>
 </div>
 
+<!-- FOOTER -->
+<footer style="background: linear-gradient(135deg, #0d1b2a 0%, #0a0f18 100%); color: rgba(255,255,255,0.75); padding: 48px 28px 24px; width: 100%;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 36px;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px; text-decoration: none;">
+                    <img src="{{ file_exists(public_path('images/city_of_general_trias_seal.png')) ? asset('images/city_of_general_trias_seal.png') : asset('images/city_of_general_trias.png') }}" alt="Logo" style="width: 36px; height: 36px; filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));"/>
+                    <div style="line-height: 1.2;">
+                        <strong style="display: block; font-family: 'Plus Jakarta Sans', serif; font-size: 14px; color: white; letter-spacing: 0.01em;">Barangay Management System</strong>
+                        <span style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;">City of General Trias</span>
+                    </div>
+                </div>
+                <p style="font-size: 13px; line-height: 1.7; max-width: 220px;">Empowering communities through technology-driven governance and transparent service delivery.</p>
+            </div>
+            <div>
+                <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Services</h4>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Barangay Clearance</a>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Residency Certificate</a>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Business Permits</a>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Indigency Certificate</a>
+            </div>
+            <div>
+                <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Resources</h4>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">FAQs</a>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Privacy Policy</a>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Terms of Use</a>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Support</a>
+            </div>
+            <div>
+                <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Government</h4>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">City Hall</a>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">City Council</a>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Barangay Officials</a>
+                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">DRRMO</a>
+            </div>
+        </div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin: 0;">© 2026 City Government of General Trias, Cavite. All rights reserved.</p>
+            <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin: 0;">Powered by the Barangay Management System</p>
+        </div>
+    </div>
+</footer>
+
 
 <!-- Confirm Modal -->
 <div class="confirm-overlay hidden" id="registerConfirmOverlay"
@@ -909,7 +939,6 @@ const stepRules = {
         { id: 'surname',       label: 'Surname' },
         { id: 'birthdate',     label: 'Birthdate' },
         { id: 'gender',        label: 'Gender' },
-        { id: 'profile_photo', label: 'Personal Photo', type: 'file' },
     ],
     2: [
         { id: 'phone_local', label: 'Phone Number', custom: validatePhone },
@@ -1093,35 +1122,6 @@ const registerForm     = document.getElementById('residentRegisterForm');
 const confirmOverlay   = document.getElementById('registerConfirmOverlay');
 const cancelConfirmBtn = document.getElementById('cancelRegisterConfirm');
 const confirmSubmitBtn = document.getElementById('confirmRegisterSubmit');
-const profilePhotoInput = document.getElementById('profile_photo');
-const profilePhotoPreview = document.getElementById('profilePhotoPreview');
-const profilePhotoPreviewImage = document.getElementById('profilePhotoPreviewImage');
-const profilePhotoPreviewName = document.getElementById('profilePhotoPreviewName');
-
-let currentPhotoPreviewUrl = null;
-
-function updateProfilePhotoPreview(file) {
-    if (currentPhotoPreviewUrl) {
-        URL.revokeObjectURL(currentPhotoPreviewUrl);
-        currentPhotoPreviewUrl = null;
-    }
-
-    if (!file || !file.type.startsWith('image/')) {
-        profilePhotoPreview.classList.remove('visible');
-        profilePhotoPreviewImage.removeAttribute('src');
-        profilePhotoPreviewName.textContent = '';
-        return;
-    }
-
-    currentPhotoPreviewUrl = URL.createObjectURL(file);
-    profilePhotoPreviewImage.src = currentPhotoPreviewUrl;
-    profilePhotoPreviewName.textContent = file.name;
-    profilePhotoPreview.classList.add('visible');
-}
-
-profilePhotoInput.addEventListener('change', function () {
-    updateProfilePhotoPreview(this.files && this.files[0] ? this.files[0] : null);
-});
 
 registerForm.addEventListener('submit', function (e) {
     if (registerForm.dataset.confirmed === 'true') {
@@ -1178,7 +1178,7 @@ function togglePassword(fieldId) {
 @if($errors->any())
 (function () {
     const step1Keys = ['first_name','middle_name','surname','birthdate','gender',
-                       'marital_status','nationality','father_name','mother_name','profile_photo'];
+                       'marital_status','nationality','father_name','mother_name'];
     const step2Keys = ['phone','address','house_no','barangay','municipality_city'];
     const errorKeys = @json($errors->keys());
 

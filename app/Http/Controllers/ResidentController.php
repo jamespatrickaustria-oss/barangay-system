@@ -6,7 +6,6 @@ use App\Models\Notification;
 use App\Models\OnlineId;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ResidentController extends Controller
 {
@@ -74,20 +73,9 @@ class ResidentController extends Controller
             'birthdate' => 'nullable|date',
             'gender' => 'nullable|string|in:male,female,other',
             'marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
-            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $user = auth()->user();
-
-        if ($request->hasFile('profile_photo')) {
-            $existingPhotoPath = $user->getProfilePhotoStoragePath();
-
-            if ($existingPhotoPath) {
-                Storage::disk('public')->delete($existingPhotoPath);
-            }
-
-            $user->profile_photo = $request->file('profile_photo')->store('uploads/profile_photos', 'public');
-        }
 
         $user->first_name = $validated['first_name'];
         $user->middle_name = $validated['middle_name'] ?? null;

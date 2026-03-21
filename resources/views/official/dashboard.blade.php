@@ -57,6 +57,56 @@
         margin-bottom: 48px;
     }
 
+    .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        margin-bottom: 48px;
+    }
+
+    .chart-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f6f9fc 100%);
+        border-radius: 12px;
+        padding: 22px;
+        border: 1px solid var(--border-light);
+        box-shadow: 0 10px 30px rgba(44, 62, 80, 0.06);
+    }
+
+    .chart-card.full {
+        grid-column: 1 / -1;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .chart-title {
+        margin: 0;
+        color: var(--text-primary);
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.2px;
+    }
+
+    .chart-meta {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 12px;
+    }
+
+    .chart-canvas-wrap {
+        position: relative;
+        height: 300px;
+    }
+
+    .chart-canvas-wrap.compact {
+        height: 280px;
+    }
+
     .stat-card {
         background: var(--white);
         border-radius: 8px;
@@ -306,6 +356,11 @@
             gap: 16px;
         }
 
+        .charts-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
         .stat-card {
             padding: 20px;
         }
@@ -353,6 +408,15 @@
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
+        }
+
+        .chart-card {
+            padding: 16px;
+        }
+
+        .chart-canvas-wrap,
+        .chart-canvas-wrap.compact {
+            height: 240px;
         }
 
         .stat-card {
@@ -495,6 +559,38 @@
     </div>
 </div>
 
+<div class="charts-grid">
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3 class="chart-title">Resident Registrations (Last 6 Months)</h3>
+            <p class="chart-meta" id="officialChartUpdatedAt">Loading data...</p>
+        </div>
+        <div class="chart-canvas-wrap">
+            <canvas id="officialMonthlyRegistrationsChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3 class="chart-title">Resident Status Mix</h3>
+            <p class="chart-meta">Pending vs Approved vs Rejected</p>
+        </div>
+        <div class="chart-canvas-wrap compact">
+            <canvas id="officialResidentStatusChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card full">
+        <div class="chart-header">
+            <h3 class="chart-title">My Approval Activity (Last 7 Days)</h3>
+            <p class="chart-meta">Residents approved or rejected by you</p>
+        </div>
+        <div class="chart-canvas-wrap compact">
+            <canvas id="officialApprovalActivityChart"></canvas>
+        </div>
+    </div>
+</div>
+
 @if(isset($pendingResidents) && $pendingResidents->count() > 0)
     <div class="section-header">
         <h2 class="section-title">Pending Approvals</h2>
@@ -584,5 +680,167 @@
         </tbody>
     </table>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+    const officialChartsEndpoint = '{{ route('official.dashboard.charts') }}';
+    const officialInitialChartData = @json($chartData ?? []);
+
+    let officialMonthlyRegistrationsChart;
+    let officialResidentStatusChart;
+    let officialApprovalActivityChart;
+
+    function updateOfficialTimestamp(timestamp) {
+        const target = document.getElementById('officialChartUpdatedAt');
+
+        if (!target || !timestamp) {
+            return;
+        }
+
+        const date = new Date(timestamp);
+        target.textContent = `Updated ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+
+    function renderOfficialCharts(payload) {
+        if (!payload) {
+            return;
+        }
+
+        const monthly = payload.monthlyRegistrations || { labels: [], values: [] };
+        const statusMix = payload.residentStatusDistribution || { labels: [], values: [] };
+        const approvals = payload.approvalActivity || { labels: [], values: [] };
+
+        if (officialMonthlyRegistrationsChart) {
+            officialMonthlyRegistrationsChart.data.labels = monthly.labels;
+            officialMonthlyRegistrationsChart.data.datasets[0].data = monthly.values;
+            officialMonthlyRegistrationsChart.update();
+        } else {
+            officialMonthlyRegistrationsChart = new Chart(document.getElementById('officialMonthlyRegistrationsChart'), {
+                type: 'line',
+                data: {
+                    labels: monthly.labels,
+                    datasets: [{
+                        label: 'New Residents',
+                        data: monthly.values,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.18)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { color: 'rgba(52, 73, 94, 0.08)' },
+                        },
+                        x: {
+                            grid: { display: false },
+                        },
+                    },
+                },
+            });
+        }
+
+        if (officialResidentStatusChart) {
+            officialResidentStatusChart.data.labels = statusMix.labels;
+            officialResidentStatusChart.data.datasets[0].data = statusMix.values;
+            officialResidentStatusChart.update();
+        } else {
+            officialResidentStatusChart = new Chart(document.getElementById('officialResidentStatusChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: statusMix.labels,
+                    datasets: [{
+                        data: statusMix.values,
+                        backgroundColor: ['#f39c12', '#27ae60', '#e74c3c'],
+                        borderWidth: 0,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '64%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, usePointStyle: true },
+                        },
+                    },
+                },
+            });
+        }
+
+        if (officialApprovalActivityChart) {
+            officialApprovalActivityChart.data.labels = approvals.labels;
+            officialApprovalActivityChart.data.datasets[0].data = approvals.values;
+            officialApprovalActivityChart.update();
+        } else {
+            officialApprovalActivityChart = new Chart(document.getElementById('officialApprovalActivityChart'), {
+                type: 'bar',
+                data: {
+                    labels: approvals.labels,
+                    datasets: [{
+                        label: 'Approval Actions',
+                        data: approvals.values,
+                        borderRadius: 8,
+                        backgroundColor: '#2c3e50',
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { color: 'rgba(52, 73, 94, 0.08)' },
+                        },
+                        x: {
+                            grid: { display: false },
+                        },
+                    },
+                },
+            });
+        }
+
+        updateOfficialTimestamp(payload.generatedAt);
+    }
+
+    async function refreshOfficialCharts() {
+        try {
+            const response = await fetch(officialChartsEndpoint, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const payload = await response.json();
+            renderOfficialCharts(payload);
+        } catch (error) {
+            // Keep charts available even if live refresh fails temporarily.
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderOfficialCharts(officialInitialChartData);
+        setInterval(refreshOfficialCharts, 60000);
+    });
+</script>
 
 @endsection

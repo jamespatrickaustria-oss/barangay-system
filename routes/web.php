@@ -62,6 +62,7 @@ Route::middleware(['auth', 'resident'])->prefix('resident')->group(function () {
 
 Route::middleware(['auth', 'official'])->prefix('official')->group(function () {
     Route::get('/dashboard', [OfficialController::class, 'dashboard'])->name('official.dashboard');
+    Route::get('/dashboard/charts', [OfficialController::class, 'dashboardCharts'])->name('official.dashboard.charts');
     
     // Resident management
     Route::get('/residents', [OfficialController::class, 'residents'])->name('official.residents.index');
@@ -69,6 +70,8 @@ Route::middleware(['auth', 'official'])->prefix('official')->group(function () {
     Route::post('/residents', [OfficialController::class, 'storeResident'])->name('official.residents.store');
     Route::get('/residents/{id}/edit', [OfficialController::class, 'editResident'])->name('official.residents.edit');
     Route::put('/residents/{id}', [OfficialController::class, 'updateResident'])->name('official.residents.update');
+    Route::get('/residents/{id}/photo', [OfficialController::class, 'editResidentPhoto'])->name('official.residents.photo.edit');
+    Route::put('/residents/{id}/photo', [OfficialController::class, 'updateResidentPhoto'])->name('official.residents.photo.update');
     Route::post('/residents/{id}/approve', [OfficialController::class, 'approveResident'])->name('official.residents.approve');
     Route::post('/residents/{id}/reject', [OfficialController::class, 'rejectResident'])->name('official.residents.reject');
     Route::get('/residents/{id}/view-id', [OfficialController::class, 'viewResidentId'])->name('official.residents.view-id');
@@ -112,6 +115,7 @@ Route::middleware(['auth', 'official'])->prefix('official')->group(function () {
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/dashboard/charts', [AdminController::class, 'dashboardCharts'])->name('admin.dashboard.charts');
     
     // User approvals
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users.index');
@@ -126,6 +130,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/residents/{id}', [AdminController::class, 'showResident'])->name('admin.residents.show');
     Route::get('/residents/{id}/edit', [AdminController::class, 'editResident'])->name('admin.residents.edit');
     Route::put('/residents/{id}', [AdminController::class, 'updateResident'])->name('admin.residents.update');
+    Route::get('/residents/{id}/photo', [AdminController::class, 'editResidentPhoto'])->name('admin.residents.photo.edit');
+    Route::put('/residents/{id}/photo', [AdminController::class, 'updateResidentPhoto'])->name('admin.residents.photo.update');
     Route::post('/residents/{id}/approve', [AdminController::class, 'approveResident'])->name('admin.residents.approve');
     Route::post('/residents/{id}/reject', [AdminController::class, 'rejectResident'])->name('admin.residents.reject');
     Route::get('/residents/{id}/view-id', [AdminController::class, 'viewResidentId'])->name('admin.residents.view-id');

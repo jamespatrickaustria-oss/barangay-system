@@ -2,13 +2,11 @@
 
 namespace App\Filament\Admin\Resources\Users\Schemas;
 
-use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Forms\Get;
 
 class UserForm
 {
@@ -35,19 +33,12 @@ class UserForm
                             ->email()
                             ->required()
                             ->maxLength(255)
-                            ->unique(table: 'users', column: 'email', ignoreRecord: true)
-                            ->rules([
-                                fn (Get $get, $record): \Closure => function (string $attribute, $value, \Closure $fail) use ($record) {
-                                    // Check if email exists in soft deleted records (excluding current record)
-                                    $query = User::onlyTrashed()->where('email', $value);
-                                    if ($record) {
-                                        $query->where('id', '!=', $record->id);
-                                    }
-                                    if ($query->exists()) {
-                                        $fail('This email address has been previously used and cannot be registered again.');
-                                    }
-                                },
-                            ]),
+                            ->unique(
+                                table: 'users',
+                                column: 'email',
+                                ignoreRecord: true,
+                                modifyRuleUsing: fn ($rule) => $rule->whereNull('deleted_at'),
+                            ),
                         TextInput::make('password')
                             ->label('Password')
                             ->password()

@@ -3,6 +3,9 @@
 @section('title', 'Edit Resident')
 
 @section('content')
+@php
+    $routePrefix = request()->segment(1) === 'admin' ? 'admin' : 'official';
+@endphp
 <style>
     :root {
         --blue: #1a6fcc;
@@ -156,6 +159,44 @@
         margin-top: 4px;
     }
 
+    .photo-preview {
+        margin-top: 10px;
+        display: none;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #f8fbff;
+    }
+
+    .photo-preview.visible {
+        display: flex;
+    }
+
+    .photo-preview img {
+        width: 72px;
+        height: 72px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #d7e1ea;
+        background: #ffffff;
+    }
+
+    .photo-preview-meta {
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.45;
+    }
+
+    .photo-preview-meta strong {
+        display: block;
+        color: var(--text);
+        font-size: 13px;
+        margin-bottom: 3px;
+        word-break: break-word;
+    }
+
     .button-group {
         display: flex;
         gap: 12px;
@@ -212,7 +253,7 @@
     }
 </style>
 
-<a href="{{ route('official.residents.index') }}" class="back-link">← Back to Residents</a>
+<a href="{{ route($routePrefix . '.residents.index') }}" class="back-link">← Back to Residents</a>
 
 <div class="form-card">
     <h1 class="form-title">Edit Resident Profile</h1>
@@ -237,7 +278,7 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('official.residents.update', $resident->id) }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route($routePrefix . '.residents.update', $resident->id) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -426,9 +467,21 @@
                         type="file"
                         id="profile_photo"
                         name="profile_photo"
-                        accept=".jpg,.jpeg,.png"
+                        accept=".jpg,.jpeg,.png,.webp"
                     >
-                    <small style="color: var(--text-muted); font-size: 12px;">Optional. Accepted formats: JPG, JPEG, PNG. Max 5MB.</small>
+                    @if($resident->profile_photo_url)
+                        <small style="color: var(--text-muted); font-size: 12px; display: block; margin-top: 6px;">
+                            Current photo is already set. Selecting a new file will replace it.
+                        </small>
+                    @endif
+                    <div class="photo-preview" id="profilePhotoPreview">
+                        <img id="profilePhotoPreviewImage" alt="Selected resident photo preview">
+                        <div class="photo-preview-meta">
+                            <strong id="profilePhotoPreviewName"></strong>
+                            <span>Selected replacement photo preview</span>
+                        </div>
+                    </div>
+                    <small style="color: var(--text-muted); font-size: 12px;">Optional. Accepted formats: JPG, JPEG, PNG, WEBP. Max 5MB.</small>
                     @error('profile_photo')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
@@ -501,9 +554,44 @@
 
         <div class="button-group">
             <button type="submit" class="submit-btn">✓ Save Changes</button>
-            <a href="{{ route('official.residents.index') }}" class="cancel-btn">Cancel</a>
+            <a href="{{ route($routePrefix . '.residents.index') }}" class="cancel-btn">Cancel</a>
         </div>
     </form>
 </div>
+
+<script>
+    (function () {
+        const input = document.getElementById('profile_photo');
+        const preview = document.getElementById('profilePhotoPreview');
+        const previewImage = document.getElementById('profilePhotoPreviewImage');
+        const previewName = document.getElementById('profilePhotoPreviewName');
+        let objectUrl = null;
+
+        if (!input) {
+            return;
+        }
+
+        input.addEventListener('change', function () {
+            const file = input.files && input.files[0] ? input.files[0] : null;
+
+            if (objectUrl) {
+                URL.revokeObjectURL(objectUrl);
+                objectUrl = null;
+            }
+
+            if (!file || !file.type.startsWith('image/')) {
+                preview.classList.remove('visible');
+                previewImage.removeAttribute('src');
+                previewName.textContent = '';
+                return;
+            }
+
+            objectUrl = URL.createObjectURL(file);
+            previewImage.src = objectUrl;
+            previewName.textContent = file.name;
+            preview.classList.add('visible');
+        });
+    })();
+</script>
 
 @endsection

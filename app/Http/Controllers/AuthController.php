@@ -155,17 +155,10 @@ class AuthController extends Controller
             'email' => [
                 'required',
                 'email',
-                'unique:users,email',
-                function ($attribute, $value, $fail) {
-                    // Check if email exists in soft deleted records
-                    if (User::onlyTrashed()->where('email', $value)->exists()) {
-                        $fail('This email address has been previously used and cannot be registered again.');
-                    }
-                },
+                \Illuminate\Validation\Rule::unique('users', 'email')->whereNull('deleted_at'),
             ],
             'password' => 'required|min:8|confirmed',
             'phone' => 'required|string|max:20',
-            'profile_photo' => 'required|file|image|mimes:jpg,jpeg,png|max:5120',
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
             'house_no' => 'nullable|string|max:100',
@@ -177,14 +170,6 @@ class AuthController extends Controller
             'gender' => 'nullable|in:male,female,other',
             'marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
         ]);
-
-        // Handle photo upload
-        $profilePhotoPath = null;
-
-        if ($request->hasFile('profile_photo')) {
-            $photoFile = $request->file('profile_photo');
-            $profilePhotoPath = $photoFile->store('uploads/profile_photos', 'public');
-        }
 
         // Generate unique account number from name initials + birthdate
         $accountNumber = User::generateAccountNumber(
@@ -202,7 +187,6 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
-            'profile_photo' => $profilePhotoPath,
             'father_name' => $validated['father_name'] ?? null,
             'mother_name' => $validated['mother_name'] ?? null,
             'house_no' => $validated['house_no'] ?? null,

@@ -3,6 +3,9 @@
 @section('title', 'Register Resident')
 
 @section('content')
+@php
+    $routePrefix = request()->segment(1) === 'admin' ? 'admin' : 'official';
+@endphp
 <style>
     :root {
         --blue: #1a6fcc;
@@ -122,6 +125,44 @@
         margin-top: 4px;
     }
 
+    .photo-preview {
+        margin-top: 10px;
+        display: none;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #f8fbff;
+    }
+
+    .photo-preview.visible {
+        display: flex;
+    }
+
+    .photo-preview img {
+        width: 72px;
+        height: 72px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #d7e1ea;
+        background: #ffffff;
+    }
+
+    .photo-preview-meta {
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.45;
+    }
+
+    .photo-preview-meta strong {
+        display: block;
+        color: var(--text);
+        font-size: 13px;
+        margin-bottom: 3px;
+        word-break: break-word;
+    }
+
     .password-wrapper {
         position: relative;
     }
@@ -177,7 +218,7 @@
     }
 </style>
 
-<a href="{{ route('official.residents.index') }}" class="back-link">← Back to Residents</a>
+<a href="{{ route($routePrefix . '.residents.index') }}" class="back-link">← Back to Residents</a>
 
 <div class="form-card">
     <h1 class="form-title">Register New Resident</h1>
@@ -187,7 +228,7 @@
         ✉️ The resident will receive a welcome email with their login credentials.
     </div>
 
-    <form method="POST" action="{{ route('official.residents.store') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route($routePrefix . '.residents.store') }}" enctype="multipart/form-data">
         @csrf
 
         <div class="form-grid">
@@ -426,10 +467,17 @@
                         type="file" 
                         id="profile_photo" 
                         name="profile_photo"
-                        accept=".jpg,.jpeg,.png"
+                        accept=".jpg,.jpeg,.png,.webp"
                         required
                     >
-                    <small style="color: var(--text-muted); font-size: 12px;">Accepted formats: JPG, JPEG, PNG. Max 5MB.</small>
+                    <div class="photo-preview" id="profilePhotoPreview">
+                        <img id="profilePhotoPreviewImage" alt="Selected resident photo preview">
+                        <div class="photo-preview-meta">
+                            <strong id="profilePhotoPreviewName"></strong>
+                            <span>Selected photo preview</span>
+                        </div>
+                    </div>
+                    <small style="color: var(--text-muted); font-size: 12px;">Accepted formats: JPG, JPEG, PNG, WEBP. Max 5MB.</small>
                     @error('profile_photo')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
@@ -505,6 +553,39 @@
 </div>
 
 <script>
+    (function () {
+        const input = document.getElementById('profile_photo');
+        const preview = document.getElementById('profilePhotoPreview');
+        const previewImage = document.getElementById('profilePhotoPreviewImage');
+        const previewName = document.getElementById('profilePhotoPreviewName');
+        let objectUrl = null;
+
+        if (!input) {
+            return;
+        }
+
+        input.addEventListener('change', function () {
+            const file = input.files && input.files[0] ? input.files[0] : null;
+
+            if (objectUrl) {
+                URL.revokeObjectURL(objectUrl);
+                objectUrl = null;
+            }
+
+            if (!file || !file.type.startsWith('image/')) {
+                preview.classList.remove('visible');
+                previewImage.removeAttribute('src');
+                previewName.textContent = '';
+                return;
+            }
+
+            objectUrl = URL.createObjectURL(file);
+            previewImage.src = objectUrl;
+            previewName.textContent = file.name;
+            preview.classList.add('visible');
+        });
+    })();
+
     function togglePassword(fieldId) {
         const passwordField = document.getElementById(fieldId);
         const toggleIcon = document.getElementById('eye-icon-' + fieldId);

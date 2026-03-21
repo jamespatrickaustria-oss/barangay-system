@@ -166,7 +166,10 @@ class User extends Authenticatable implements FilamentUser
             return $this->profile_photo;
         }
 
-        return route('profile-photos.show', $this);
+        return route('profile-photos.show', [
+            'user' => $this,
+            'v' => $this->updated_at?->timestamp,
+        ]);
     }
 
     /**

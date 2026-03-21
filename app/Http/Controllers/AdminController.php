@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\OnlineId;
+use App\Services\DashboardAnalyticsService;
 use App\Services\MailService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\OfficialController;
@@ -13,7 +14,7 @@ class AdminController extends Controller
     /**
      * Show the admin dashboard.
      */
-    public function dashboard()
+    public function dashboard(DashboardAnalyticsService $analytics)
     {
         $totalOfficials = User::where('role', 'official')->count();
 
@@ -33,7 +34,17 @@ class AdminController extends Controller
             ->take(10)
             ->get();
 
-        return view('admin.dashboard', compact('totalOfficials', 'totalResidents', 'pendingResidents', 'recentOfficials', 'recentResidentIds'));
+        $chartData = $analytics->getAdminChartData();
+
+        return view('admin.dashboard', compact('totalOfficials', 'totalResidents', 'pendingResidents', 'recentOfficials', 'recentResidentIds', 'chartData'));
+    }
+
+    /**
+     * Return live chart data for the admin dashboard.
+     */
+    public function dashboardCharts(DashboardAnalyticsService $analytics)
+    {
+        return response()->json($analytics->getAdminChartData());
     }
 
     /**
@@ -186,7 +197,7 @@ class AdminController extends Controller
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'surname' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'email' => ['required', 'email', \Illuminate\Validation\Rule::unique('users', 'email')->whereNull('deleted_at')],
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
@@ -278,6 +289,22 @@ class AdminController extends Controller
     public function updateResident(Request $request, $id)
     {
         return app(OfficialController::class)->updateResident($request, $id);
+    }
+
+    /**
+     * Show the resident photo management interface.
+     */
+    public function editResidentPhoto($id)
+    {
+        return app(OfficialController::class)->editResidentPhoto($id);
+    }
+
+    /**
+     * Upload or replace a resident photo.
+     */
+    public function updateResidentPhoto(Request $request, $id)
+    {
+        return app(OfficialController::class)->updateResidentPhoto($request, $id);
     }
 
     /**

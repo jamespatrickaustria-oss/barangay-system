@@ -14,10 +14,14 @@
             --sky-mid:    #a8dff5;
             --green:      #3a7d44;
             --green-dark: #2c5f35;
+            --green-light:#e7f6ea;
             --white:      #ffffff;
             --off-white:  #f4f8fb;
+            --surface:    #f4f8fb;
             --text:       #1a2433;
             --text-light: #4b5e72;
+            --text-muted: #6b7f93;
+            --blue-light: #eaf4ff;
             --border:     rgba(26,110,199,0.12);
             --gold:       #e8b84b;
         }
@@ -32,107 +36,37 @@
             margin: 0;
             font-family: 'DM Sans', sans-serif;
             display: flex;
+            align-items: flex-start;
+            justify-content: center;
             flex-wrap: wrap;
             min-height: 100vh;
             color: var(--text);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eef3 100%);
+            padding: 40px 20px;
         }
 
         .left-panel {
-            width: 42%;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 45%, #1a8fc7 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 60px 48px;
-            color: white;
-        }
-
-        .shield-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            margin-bottom: 24px;
-        }
-
-        .left-panel h1 {
-            font-size: 42px;
-            font-weight: 800;
-            margin: 0;
-            margin-bottom: 8px;
-        }
-
-        .left-panel > p {
-            font-size: 18px;
-            margin: 8px 0 40px 0;
-            opacity: 0.8;
-        }
-
-        .divider {
-            width: 3px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 2px;
-            margin-bottom: 32px;
-        }
-
-        .feature-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-bottom: 40px;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .feature-icon {
-            width: 32px;
-            height: 32px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            line-height: 32px;
-            flex-shrink: 0;
-        }
-
-        .feature-text {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .left-panel-footer {
-            font-size: 13px;
-            opacity: 0.6;
         }
 
         .right-panel {
-            width: 58%;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--surface);
-            padding: 40px;
+            background: transparent;
         }
 
         .login-card {
-            max-width: 420px;
+            max-width: 700px;
             width: 100%;
             background: white;
             border-radius: 24px;
             padding: 48px;
-            box-shadow: 0 8px 40px rgba(26, 111, 204, 0.12);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.08);
         }
 
         .card-header {
@@ -336,35 +270,34 @@
         .btn-primary:active {
             transform: scale(0.99);
         }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 24px 16px;
+            }
+
+            .login-card {
+                padding: 28px 20px;
+                border-radius: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 16px 12px;
+            }
+
+            .login-card {
+                padding: 20px 16px;
+                border-radius: 12px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="left-panel">
-        <div class="shield-icon">🛡️</div>
-        <h1>Barangay</h1>
-        <p>Management System</p>
-        <div class="divider"></div>
-        
-        <div class="feature-list">
-            <div class="feature-item">
-                <div class="feature-icon">✓</div>
-                <div class="feature-text">Secure Resident Portal</div>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">✓</div>
-                <div class="feature-text">Official ID Generation</div>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">✓</div>
-                <div class="feature-text">Real-time Notifications</div>
-            </div>
-        </div>
-
-        <div class="left-panel-footer">Serving the community with transparency</div>
-    </div>
-
-    <div class="right-panel">
-        <div class="login-card">
+        <div class="right-panel">
+            <div class="login-card">
             <div class="card-header">
                 <span class="badge">Resident Portal</span>
                 <h2>Welcome Back</h2>
@@ -443,6 +376,7 @@
             <div class="register-link">
                 Don't have an account? <a href="{{ route('register') }}">Register here →</a>
             </div>
+            </div>
         </div>
     </div>
 
@@ -488,31 +422,6 @@
             </div>
         </div>
     </footer>
-
-    <style>
-        body { 
-            min-height: 100vh; 
-            display: flex; 
-            flex-wrap: wrap;
-            padding: 0;
-            margin: 0;
-        }
-        .left-panel {
-            width: 42%;
-            min-height: 100vh;
-        }
-        .right-panel { 
-            width: 58%;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            min-height: 100vh;
-        }
-        footer {
-            width: 100%;
-            flex-basis: 100%;
-        }
-    </style>
 
     <script>
         function togglePassword(fieldId) {

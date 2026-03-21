@@ -102,36 +102,11 @@
         margin: 24px 0;
     }
 
-    .change-photo-label {
-        display: inline-block;
-        background: var(--primary);
-        color: white;
-        border-radius: 10px;
-        padding: 10px 16px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 13px;
-        transition: all 0.2s;
-        margin-bottom: 8px;
-        margin-top: 16px;
-    }
-
-    .change-photo-label:hover {
-        background: var(--primary-dark);
-    }
-
     .photo-note {
         font-size: 12px;
         color: var(--gray-500);
-        margin-top: 8px;
-    }
-
-    .photo-status {
-        font-size: 12px;
-        color: var(--green-dark);
-        margin-top: 8px;
-        font-weight: 600;
-        display: none;
+        margin-top: 16px;
+        line-height: 1.6;
     }
 
     .right-card {
@@ -377,16 +352,13 @@
         
         <hr class="divider">
         
-        <input type="file" id="photoInput" name="profile_photo" form="residentProfileForm" accept="image/*" style="display: none" onchange="previewPhoto(this)">
-        <label for="photoInput" class="change-photo-label">📷 Change Photo</label>
-        <p class="photo-note">JPG or PNG, max 2MB</p>
-        <p class="photo-status" id="photoStatus">Photo selected. Click Update Profile to save changes.</p>
+        <p class="photo-note">Resident photo updates are managed by authorized Admin or Official staff.</p>
     </div>
 
     <div class="right-card">
         <h2 class="section-header">Personal Information</h2>
 
-        <form method="POST" action="{{ route('resident.profile.update') }}" enctype="multipart/form-data" id="residentProfileForm">
+        <form method="POST" action="{{ route('resident.profile.update') }}" id="residentProfileForm">
             @csrf
             @method('PUT')
 
@@ -633,22 +605,5 @@
         </form>
     </div>
 </div>
-
-<script>
-    function previewPhoto(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const preview = document.getElementById('avatarPreview');
-                const photoStatus = document.getElementById('photoStatus');
-                preview.innerHTML = '<img src="' + e.target.result + '" alt="Profile Photo Preview">';
-                if (photoStatus) {
-                    photoStatus.style.display = 'block';
-                }
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-</script>
 
 @endsection

@@ -6,9 +6,11 @@ use App\Models\User;
 use App\Models\Notification;
 use App\Models\OnlineId;
 use App\Models\Announcement;
+use App\Services\DashboardAnalyticsService;
 use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +20,7 @@ class OfficialController extends Controller
     /**
      * Show the official dashboard.
      */
-    public function dashboard()
+    public function dashboard(DashboardAnalyticsService $analytics)
     {
         $pending = User::where('role', 'resident')
             ->where('status', 'pending')
@@ -47,7 +49,17 @@ class OfficialController extends Controller
             ->take(10)
             ->get();
 
-        return view('official.dashboard', compact('pending', 'approved', 'total', 'unread', 'notificationCount', 'pendingResidents', 'recentResidentIds'));
+        $chartData = $analytics->getOfficialChartData((int) auth()->id());
+
+        return view('official.dashboard', compact('pending', 'approved', 'total', 'unread', 'notificationCount', 'pendingResidents', 'recentResidentIds', 'chartData'));
+    }
+
+    /**
+     * Return live chart data for the official dashboard.
+     */
+    public function dashboardCharts(DashboardAnalyticsService $analytics)
+    {
+        return response()->json($analytics->getOfficialChartData((int) auth()->id()));
     }
 
     /**
@@ -97,16 +109,11 @@ class OfficialController extends Controller
             'email' => [
                 'required',
                 'email',
-                'unique:users,email',
-                function ($attribute, $value, $fail) {
-                    if (User::onlyTrashed()->where('email', $value)->exists()) {
-                        $fail('This email address has been previously used and cannot be registered again.');
-                    }
-                },
+                \Illuminate\Validation\Rule::unique('users', 'email')->whereNull('deleted_at'),
             ],
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'required|string|max:20',
-            'profile_photo' => 'required|file|image|mimes:jpg,jpeg,png|max:5120',
+            'profile_photo' => $this->residentPhotoValidationRule(true),
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
             'house_no' => 'nullable|string|max:100',
@@ -207,7 +214,7 @@ class OfficialController extends Controller
             'middle_name' => 'nullable|string|max:255',
             'surname' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'profile_photo' => 'nullable|file|image|mimes:jpg,jpeg,png|max:5120',
+            'profile_photo' => $this->residentPhotoValidationRule(false),
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
             'house_no' => 'nullable|string|max:100',
@@ -233,6 +240,67 @@ class OfficialController extends Controller
         $resident->update($validated);
 
         return redirect()->back()->with('success', 'Resident profile updated.');
+    }
+
+    /**
+     * Show the dedicated resident photo management interface.
+     */
+    public function editResidentPhoto($id)
+    {
+        abort_unless(in_array(auth()->user()->role, ['admin', 'official'], true), 403);
+
+        $resident = User::where('id', $id)
+            ->where('role', 'resident')
+            ->firstOrFail();
+
+        return view('official.residents.photo', compact('resident'));
+    }
+
+    /**
+     * Upload or replace the resident photo.
+     */
+    public function updateResidentPhoto(Request $request, $id)
+    {
+        abort_unless(in_array(auth()->user()->role, ['admin', 'official'], true), 403);
+
+        $resident = User::where('id', $id)
+            ->where('role', 'resident')
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'profile_photo' => $this->residentPhotoValidationRule(true),
+        ]);
+
+        try {
+            DB::transaction(function () use ($resident, $validated): void {
+                $existingPhotoPath = $resident->getProfilePhotoStoragePath();
+
+                if ($existingPhotoPath) {
+                    Storage::disk('public')->delete($existingPhotoPath);
+                }
+
+                $resident->profile_photo = $validated['profile_photo']->store('uploads/profile_photos', 'public');
+                $resident->save();
+            });
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Unable to upload resident photo right now. Please try again.');
+        }
+
+        return redirect()->back()->with('success', 'Resident photo uploaded successfully.');
+    }
+
+    /**
+     * Validation rule used across resident photo create/update flows.
+     */
+    private function residentPhotoValidationRule(bool $required): string
+    {
+        $baseRule = 'file|image|mimes:jpg,jpeg,png,webp|max:5120';
+
+        return $required ? 'required|' . $baseRule : 'nullable|' . $baseRule;
     }
 
     /**
