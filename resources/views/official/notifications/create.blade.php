@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Send Notification')
+@section('title', 'Send Alert')
 
 @section('content')
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -226,13 +226,13 @@
 </style>
 
 <div class="form-card">
-    <h1 class="form-title">📢 Send Notification</h1>
+    <h1 class="form-title">📢 Send Alert</h1>
 
     <form method="POST" action="{{ route('official.notifications.store') }}" x-data="{ recipientType: 'all', charCount: 0 }" x-cloak>
         @csrf
 
         <div class="form-group">
-            <label for="title">Notification Title *</label>
+            <label for="title">Alert Title *</label>
             <input 
                 type="text" 
                 id="title" 
@@ -268,7 +268,7 @@
             <label class="recipient-card" :class="{ selected: recipientType === 'all' }">
                 <input type="radio" name="recipient_type" value="all" x-model="recipientType">
                 <div class="recipient-content">
-                    <div class="recipient-title">👥 All Residents</div>
+                    <div class="recipient-title">All Residents</div>
                     <div class="recipient-desc">Send to every approved resident</div>
                 </div>
             </label>
@@ -276,7 +276,7 @@
             <label class="recipient-card" :class="{ selected: recipientType === 'specific' }">
                 <input type="radio" name="recipient_type" value="specific" x-model="recipientType">
                 <div class="recipient-content">
-                    <div class="recipient-title">🎯 Specific Residents</div>
+                    <div class="recipient-title">Specific Residents</div>
                     <div class="recipient-desc">Choose individual residents</div>
                 </div>
             </label>
@@ -302,7 +302,7 @@
             @enderror
         </div>
 
-        <button type="submit" class="submit-btn">Send Notification →</button>
+        <button type="submit" class="submit-btn">Send Alert →</button>
     </form>
 </div>
 

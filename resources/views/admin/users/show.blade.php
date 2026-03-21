@@ -72,6 +72,9 @@
     }
 </style>
 
+<!-------------------------------------------
+    USER MODAL VIEW
+----------------------------------------- -->
 <div class="details-card">
     <div class="details-header">
         <h1 class="details-title">{{ $user->getFullName() }}</h1>
@@ -79,12 +82,21 @@
     </div>
 
     <div class="details-body">
-        <div>
+        <!-- <div>
             <div class="field-label">ID</div>
             <div class="field-value">{{ $user->id }}</div>
+        </div> -->
+
+        <div>
+            <div class="field-label">Name:</div>
+            <div class="field-value">{{ $user->getFullName() }}</div>
+        </div>
+
+        <div>
         </div>
         <div>
-            <div class="field-label">Position</div>
+            
+            <div class="field-label">Account Type</div>
             <div class="field-value">
                 @if($user->role === 'admin')
                     Admin
@@ -97,13 +109,20 @@
         </div>
 
         <div>
-            <div class="field-label">Email</div>
-            <div class="field-value">{{ $user->email }}</div>
-        </div>
-        <div>
             <div class="field-label">Status</div>
             <div class="field-value">{{ ucfirst($user->status) }}</div>
         </div>
+
+        <div>
+            <div class="field-label">Email</div>
+            <div class="field-value">{{ $user->email }}</div>
+        </div>
+
+        <div>
+            <div class="field-label">Phone</div>
+            <div class="field-value">{{ $user->phone ?? 'N/A' }}</div>
+        </div>
+
 
         <div>
             <div class="field-label">House No#</div>
@@ -124,31 +143,27 @@
         </div>
 
         <div>
-            <div class="field-label">Phone</div>
-            <div class="field-value">{{ $user->phone ?? 'N/A' }}</div>
-        </div>
-
-        <div>
-            <div class="field-label">Father Name</div>
+            <div class="field-label">Father's Name</div>
             <div class="field-value">{{ $user->father_name ?? 'N/A' }}</div>
         </div>
 
         <div>
-            <div class="field-label">Mother Name</div>
+            <div class="field-label">Mother's Name</div>
             <div class="field-value">{{ $user->mother_name ?? 'N/A' }}</div>
         </div>
 
-        <div>
+        <!-- <div>
             <div class="field-label">Address</div>
             <div class="field-value">{{ $user->address ?? 'N/A' }}</div>
-        </div>
+        </div> -->
 
+        
         <div>
-            <div class="field-label">Created</div>
+            <div class="field-label">Date Created</div>
             <div class="field-value">{{ $user->created_at?->format('M d, Y h:i A') ?? 'N/A' }}</div>
         </div>
         <div>
-            <div class="field-label">Updated</div>
+            <div class="field-label">Date Updated</div>
             <div class="field-value">{{ $user->updated_at?->format('M d, Y h:i A') ?? 'N/A' }}</div>
         </div>
     </div>

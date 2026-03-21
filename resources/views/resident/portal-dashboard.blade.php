@@ -226,15 +226,17 @@
 <!-- Welcome Banner -->
 <div class="welcome-banner">
     <h1 class="welcome-title">Welcome, {{ auth()->user()->getFullName() }}! 👋</h1>
-    <p class="welcome-subtitle">Access barangay services and stay updated with community announcements</p>
+    <p class="welcome-subtitle">Stay updated with community announcements</p>
     <div class="welcome-status">
-        <span>✓</span>
-        <span>Account Verified</span>
+        
+        <span> 👤 Member Since: </span>
+        <span>{{ auth()->user()->created_at->format('M d, Y') }} </span>
+        
     </div>
 </div>
 
 <!-- Quick Info Cards -->
-<div class="info-cards">
+<!-- <div class="info-cards">
     <div class="info-card">
         <div class="info-card-icon">🔔</div>
         <div class="info-card-value">{{ $unread ?? 0 }}</div>
@@ -254,8 +256,9 @@
     </div>
 </div>
 
-<!-- Services Section -->
-<h2 class="section-title">
+
+SERVICES --->
+<!-- <h2 class="section-title">
     <span>Available Services</span>
 </h2>
 
@@ -279,8 +282,8 @@
         <h3 class="service-title">My Profile</h3>
         <p class="service-description">Update your personal information and manage account settings</p>
         <span class="service-action">Manage Profile →</span>
-    </a>
-</div>
+    </a> -->
+<!-- </div> --> 
 
 <!-- Recent Announcements -->
 @if(isset($announcements) && $announcements->count() > 0)

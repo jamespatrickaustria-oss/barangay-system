@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'User Approvals')
+@section('title', 'User Requests')
 
 @section('content')
 <style>
@@ -525,7 +525,7 @@
 </style>
 
 <div class="page-header">
-    <h1 class="page-title">👥 User Approvals</h1>
+    <h1 class="page-title">User Requests</h1>
     
     <div class="filter-tabs">
         <a href="?filter=all" class="filter-tab {{ request('filter', 'all') === 'all' ? 'active' : '' }}">All</a>
@@ -580,11 +580,11 @@
                             <td>
                                 <span class="role-badge role-{{ $user->role }}">
                                     @if($user->role === 'admin')
-                                        👑 Admin
+                                        Admin
                                     @elseif($user->role === 'official')
-                                        🏛 Official
+                                        Official
                                     @else
-                                        👤 Resident
+                                        Resident
                                     @endif
                                 </span>
                             </td>
@@ -642,7 +642,7 @@
                                             <span class="no-actions">Only admins can approve officials</span>
                                         @endif
                                     @else
-                                        <span class="no-actions">{{ ucfirst($user->status) }}</span>
+                                        <!-- <span class="no-actions">{{ ucfirst($user->status) }}</span> -->
                                     @endif
                                     <button type="button" class="action-btn view-btn" onclick="showUserDetails({{ $user->id }})">
                                         👁 View
@@ -672,7 +672,7 @@
 <div id="userModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="modal-title">User Details</h2>
+            <h2 class="modal-title">Resident Information</h2>
             <button class="modal-close" onclick="closeModal()">&times;</button>
         </div>
         <div class="modal-body" id="modalBody">

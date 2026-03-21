@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Add Official')
+@section('title', 'Register')
 
 @section('content')
 <style>
@@ -166,14 +166,14 @@
     }
 </style>
 
-<a href="{{ route('admin.officials.index') }}" class="back-link">← Back to Officials</a>
+<a href="{{ route('admin.officials.index') }}" class="back-link">← Back to Barangay Officials List</a>
 
 <div class="form-card">
-    <h1 class="form-title">Add Barangay Official</h1>
+    <h1 class="form-title">Register a Barangay Official</h1>
     <p class="form-subtitle">Grant system administrator access to an official</p>
 
     <div class="info-box">
-        ✉️ A welcome email with login credentials will be sent to this official.
+        The log-in credentials will be sent to the registered email address.
     </div>
 
     <form method="POST" action="{{ route('admin.officials.store') }}">
@@ -295,7 +295,7 @@
             </div>
         </div>
 
-        <button type="submit" class="submit-btn">+ Create Official Account</button>
+        <button type="submit" class="submit-btn">Register</button>
     </form>
 </div>
 

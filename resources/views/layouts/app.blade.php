@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>PROJECT CONNECT - @yield('title')</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/city_of_general_trias_seal.png') }}">
+    
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -675,7 +677,7 @@
                 </div>
                 <div class="logo-text">
                     <div class="logo-title">PROJECT CONNECT</div>
-                    <div class="logo-sub">Brgy. San Juan I</div>
+                    <div class="logo-sub">BRGY. SAN JUAN I</div>
                 </div>
             </div>
 
@@ -705,22 +707,20 @@
                             <span class="nav-icon"></span>
                             <span>Dashboard</span>
                         </a>
+                        <a href="{{ route('official.notifications.create') }}" class="nav-link {{ request()->is('official/notifications*') ? 'active' : '' }}">
+                            <span class="nav-icon"></span>
+                            <span>Alerts</span>
+                        </a>
+                         <a href="{{ route('official.announcements.index') }}" class="nav-link {{ request()->is('official/announcements*') ? 'active' : '' }}">
+                            <span class="nav-icon"></span>
+                            <span>Announcements</span>
+                        </a>
+                        
                         <a href="{{ route('official.residents.index') }}" class="nav-link {{ request()->is('official/residents*') ? 'active' : '' }}">
                             <span class="nav-icon"></span>
                             <span>Residents</span>
                         </a>
-                        <a href="{{ route('official.announcements.index') }}" class="nav-link {{ request()->is('official/announcements*') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
-                            <span>Announcements</span>
-                        </a>
-                        <a href="{{ route('official.notifications.create') }}" class="nav-link {{ request()->is('official/notifications*') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
-                            <span>Send Alert</span>
-                        </a>
-                        <a href="{{ route('official.chat.index') }}" class="nav-link {{ request()->is('official/chat*') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
-                            <span>Resident Chat</span>
-                        </a>
+                        
 
                     @elseif(auth()->user()->role === 'admin')
                         <div class="nav-section-label">MENU</div>
@@ -728,47 +728,46 @@
                             <span class="nav-icon"></span>
                             <span>Dashboard</span>
                         </a>
-                        
-                        <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->is('admin/users*') ? 'active' : '' }}">
+
+                        <a href="{{ route('admin.announcements.index') }}" class="nav-link {{ request()->is('admin/announcements*') ? 'active' : '' }}">
                             <span class="nav-icon"></span>
-                            <span>User Approvals</span>
+                            <span>Announcements</span>
+                        </a>
+
+                        <a href="{{ route('admin.officials.index') }}" class="nav-link {{ request()->is('admin/officials*') ? 'active' : '' }}">
+                            <span class="nav-icon"></span>
+                            <span>Barangay Officials</span>
                         </a>
 
                         <a href="{{ route('admin.residents.index') }}" class="nav-link {{ request()->is('admin/residents*') ? 'active' : '' }}">
                             <span class="nav-icon"></span>
                             <span>Residents</span>
                         </a>
-
-                        <a href="{{ route('admin.announcements.index') }}" class="nav-link {{ request()->is('admin/announcements*') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
-                            <span>Announcements</span>
-                        </a>
                         
-                        <a href="{{ route('admin.officials.index') }}" class="nav-link {{ request()->is('admin/officials*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->is('admin/users*') ? 'active' : '' }}">
                             <span class="nav-icon"></span>
-                            <span>Barangay Officials</span>
+                            <span>User Requests</span>
                         </a>
+
+                        
+
                     @endif
                 @endauth
+
+                @guest
+                <div class="nav-section-label">MENU</div>
+
+                <a href="{{ route('homepage') }}" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
+                    <span class="nav-icon"></span>
+                    <span>Homepage</span>
+                </a>
+                <a href="{{ route('contacts.page') }}" class="nav-link {{ request()->is('contacts*') ? 'active' : '' }}">
+                    <span class="nav-icon"></span>
+                    <span>Verifier</span>
+                </a>
+                @endguest
             </nav>
-            <!-- User Info -->
-            @auth
-            <div class="sidebar-user">
-                <div class="user-avatar">
-                    @if($userPhotoUrl)
-                        <img src="{{ $userPhotoUrl }}" alt="{{ auth()->user()->getFullName() }} profile photo">
-                    @else
-                        {{ strtoupper(substr(auth()->user()->getFullName(), 0, 1)) }}
-                    @endif
-                </div>
-                <div class="user-info">
-                    <div class="user-name">{{ auth()->user()->getFullName() }}</div>
-                    <div class="user-role {{ strtolower(auth()->user()->role) }}">
-                    {{ ucfirst(auth()->user()->role) }}
-                    </div>
-                </div>
-            </div>
-            @endauth
+          
 
             <!-- Footer -->
             <div class="sidebar-footer">

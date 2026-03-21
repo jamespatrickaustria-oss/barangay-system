@@ -14,6 +14,20 @@
         --border: #c8e4f8;
     }
 
+    .back-link {
+        color: var(--blue);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 20px;
+        display: inline-block;
+        transition: opacity 0.2s;
+    }
+
+    .back-link:hover {
+        opacity: 0.8;
+    }
+
     .profile-grid {
         display: grid;
         grid-template-columns: 1fr 2fr;
@@ -238,6 +252,7 @@
         ✓ {{ session('success') }}
     </div>
 @endif
+<a href="{{ route('official.dashboard') }}" class="back-link">← Back to Dashboard</a>
 
 <div class="profile-grid">
     <div class="left-card">
@@ -311,51 +326,6 @@
 
                 <div>
                     <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input 
-                            type="tel" 
-                            id="phone" 
-                            name="phone"
-                            value="{{ old('phone', auth()->user()->phone) }}"
-                            pattern="[0-9\+\-\(\)\s\.]*"
-                            inputmode="numeric"
-                        >
-                        @error('phone')
-                            <div class="error-message">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="full">
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            value="{{ auth()->user()->email }}"
-                            readonly
-                        >
-                        <p class="readonly-note">Email address cannot be changed.</p>
-                    </div>
-                </div>
-
-                <div class="full">
-                    <div class="form-group">
-                        <label for="address">Address</label>
-                        <input 
-                            type="text" 
-                            id="address" 
-                            name="address"
-                            value="{{ old('address', auth()->user()->address) }}"
-                        >
-                        @error('address')
-                            <div class="error-message">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <div>
-                    <div class="form-group">
                         <label for="birthdate">Birthdate</label>
                         <input 
                             type="date" 
@@ -369,7 +339,7 @@
                     </div>
                 </div>
 
-                <div>
+                 <div>
                     <div class="form-group">
                         <label for="gender">Gender</label>
                         <select id="gender" name="gender">
@@ -400,10 +370,57 @@
                         @enderror
                     </div>
                 </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone"
+                            value="{{ old('phone', auth()->user()->phone) }}"
+                            pattern="[0-9\+\-\(\)\s\.]*"
+                            inputmode="numeric"
+                        >
+                        @error('phone')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            value="{{ auth()->user()->email }}"
+                            readonly
+                        >
+                        <p class="readonly-note">Email address cannot be changed.</p>
+                    </div>
+                </div>
+
+                <div class="full">
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input 
+                            type="text" 
+                            id="address" 
+                            name="address"
+                            value="{{ old('address', auth()->user()->address) }}"
+                        >
+                        @error('address')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                
             </div>
 
             <div class="form-footer">
-                <button type="submit" class="save-btn">💾 Update Profile</button>
+                <button type="submit" class="save-btn"> Update Profile</button>
             </div>
         </form>
     </div>

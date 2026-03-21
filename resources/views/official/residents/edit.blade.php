@@ -318,7 +318,7 @@
 
             <div>
                 <div class="form-group">
-                    <label for="surname">Surname *</label>
+                    <label for="surname"> Last Name *</label>
                     <input 
                         type="text" 
                         id="surname" 
@@ -335,30 +335,14 @@
 
             <div>
                 <div class="form-group">
-                    <label for="email">Email Address (Read-only)</label>
+                    <label for="birthdate">Birthdate</label>
                     <input 
-                        type="email" 
-                        id="email" 
-                        class="read-only-field"
-                        value="{{ $resident->email }}"
-                        disabled
+                        type="date" 
+                        id="birthdate" 
+                        name="birthdate"
+                        value="{{ old('birthdate', optional($resident->birthdate)->format('Y-m-d')) }}"
                     >
-                </div>
-            </div>
-
-            <div>
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input 
-                        type="tel" 
-                        id="phone" 
-                        name="phone"
-                        value="{{ old('phone', $resident->phone) }}"
-                        placeholder="+63 9XX XXX XXXX"
-                        pattern="[0-9\+\-\(\)\s\.]*"
-                        inputmode="numeric"
-                    >
-                    @error('phone')
+                    @error('birthdate')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
@@ -366,7 +350,39 @@
 
             <div>
                 <div class="form-group">
-                    <label for="father_name">Father</label>
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="male" @selected(old('gender', $resident->gender) === 'male')>Male</option>
+                        <option value="female" @selected(old('gender', $resident->gender) === 'female')>Female</option>
+                        <option value="other" @selected(old('gender', $resident->gender) === 'other')>Other</option>
+                    </select>
+                    @error('gender')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="marital_status">Civil Status</label>
+                    <select id="marital_status" name="marital_status">
+                        <option value="">Select Civil Status</option>
+                        <option value="single" @selected(old('marital_status', $resident->marital_status) === 'single')>Single</option>
+                        <option value="married" @selected(old('marital_status', $resident->marital_status) === 'married')>Married</option>
+                        <option value="divorced" @selected(old('marital_status', $resident->marital_status) === 'divorced')>Divorced</option>
+                        <option value="widowed" @selected(old('marital_status', $resident->marital_status) === 'widowed')>Widowed</option>
+                        <option value="separated" @selected(old('marital_status', $resident->marital_status) === 'separated')>Separated</option>
+                    </select>
+                    @error('marital_status')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="father_name">Father's Name</label>
                     <input
                         type="text"
                         id="father_name"
@@ -382,7 +398,7 @@
 
             <div>
                 <div class="form-group">
-                    <label for="mother_name">Mother</label>
+                    <label for="mother_name">Mother's Name</label>
                     <input
                         type="text"
                         id="mother_name"
@@ -460,6 +476,39 @@
                 </div>
             </div>
 
+            <div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone"
+                        value="{{ old('phone', $resident->phone) }}"
+                        placeholder="+63 9XX XXX XXXX"
+                        pattern="[0-9\+\-\(\)\s\.]*"
+                        inputmode="numeric"
+                    >
+                    @error('phone')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="email">Email Address (Read-only)</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="read-only-field"
+                        value="{{ $resident->email }}"
+                        disabled
+                    >
+                </div>
+            </div>
+
+
+
             <div class="full">
                 <div class="form-group">
                     <label for="profile_photo">Update Personal Photo</label>
@@ -488,7 +537,7 @@
                 </div>
             </div>
 
-            <div class="full">
+            <!-- <div class="full">
                 <div class="form-group">
                     <label for="address">Address</label>
                     <input 
@@ -502,59 +551,15 @@
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
-            </div>
+            </div> -->
 
-            <div>
-                <div class="form-group">
-                    <label for="birthdate">Birthdate</label>
-                    <input 
-                        type="date" 
-                        id="birthdate" 
-                        name="birthdate"
-                        value="{{ old('birthdate', optional($resident->birthdate)->format('Y-m-d')) }}"
-                    >
-                    @error('birthdate')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-
-            <div>
-                <div class="form-group">
-                    <label for="gender">Gender</label>
-                    <select id="gender" name="gender">
-                        <option value="">Select Gender</option>
-                        <option value="male" @selected(old('gender', $resident->gender) === 'male')>Male</option>
-                        <option value="female" @selected(old('gender', $resident->gender) === 'female')>Female</option>
-                        <option value="other" @selected(old('gender', $resident->gender) === 'other')>Other</option>
-                    </select>
-                    @error('gender')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-
-            <div>
-                <div class="form-group">
-                    <label for="marital_status">Civil Status</label>
-                    <select id="marital_status" name="marital_status">
-                        <option value="">Select Civil Status</option>
-                        <option value="single" @selected(old('marital_status', $resident->marital_status) === 'single')>Single</option>
-                        <option value="married" @selected(old('marital_status', $resident->marital_status) === 'married')>Married</option>
-                        <option value="divorced" @selected(old('marital_status', $resident->marital_status) === 'divorced')>Divorced</option>
-                        <option value="widowed" @selected(old('marital_status', $resident->marital_status) === 'widowed')>Widowed</option>
-                        <option value="separated" @selected(old('marital_status', $resident->marital_status) === 'separated')>Separated</option>
-                    </select>
-                    @error('marital_status')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
+            
         </div>
 
         <div class="button-group">
+
+            <a href="{{ route('official.residents.index') }}" class="cancel-btn">Cancel</a>
             <button type="submit" class="submit-btn">✓ Save Changes</button>
-            <a href="{{ route($routePrefix . '.residents.index') }}" class="cancel-btn">Cancel</a>
         </div>
     </form>
 </div>

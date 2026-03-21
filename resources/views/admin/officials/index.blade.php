@@ -272,7 +272,7 @@
                                     @click="selectedName='{{ $official->getFullName() }}'; selectedId={{ $official->id }}; showModal=true"
                                     class="delete-btn"
                                 >
-                                    🗑️ Remove
+                                    Remove
                                 </button>
                             </td>
                         </tr>
@@ -282,7 +282,7 @@
         </div>
     @else
         <div class="empty-message">
-            <p>📭 No officials registered yet</p>
+            <p>No officials registered yet</p>
         </div>
     @endif
 
@@ -296,7 +296,7 @@
                     Are you sure you want to remove <strong x-text="selectedName"></strong>? This cannot be undone.
                 </p>
                 <div class="modal-buttons">
-                    <button @click="showModal=false" class="modal-btn modal-cancel">Cancel</button>
+                    <button @click="showModal=false" class="modal-btn modal-cancel">No</button>
                     <form 
                         :action="`{{ route('admin.officials.destroy', '__ID__') }}`.replace('__ID__', selectedId)"
                         method="POST"
@@ -304,7 +304,7 @@
                     >
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="modal-btn modal-confirm">Yes, Remove</button>
+                        <button type="submit" class="modal-btn modal-confirm">Yes</button>
                     </form>
                 </div>
             </div>

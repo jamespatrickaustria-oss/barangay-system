@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Resident Management')
+@section('title', 'Residents')
 
 @section('content')
 @php
@@ -369,7 +369,7 @@
 </style>
 
 <div class="page-header">
-    <h1 class="page-title">Resident Management</h1>
+    <h1 class="page-title">Residents List</h1>
     <a href="{{ route($routePrefix . '.residents.create') }}" class="add-resident-btn">+ Add Resident</a>
 </div>
 
@@ -406,7 +406,7 @@
                     <th>Resident</th>
                     <th>Phone</th>
                     <th>Status</th>
-                    <th>Registered</th>
+                    <th>Date Approved</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -444,19 +444,19 @@
                                 @if($resident->status === 'pending')
                                     <form method="POST" action="{{ route($routePrefix . '.residents.approve', $resident->id) }}" style="display: inline;">
                                         @csrf
-                                        <button type="submit" class="action-btn approve-btn">✓ Approve</button>
+                                        <button type="submit" class="action-btn approve-btn">Approve</button>
                                     </form>
                                     <form method="POST" action="{{ route($routePrefix . '.residents.reject', $resident->id) }}" style="display: inline;">
                                         @csrf
-                                        <button type="submit" class="action-btn reject-btn" onclick="return confirm('Are you sure?')">✗ Reject</button>
+                                        <button type="submit" class="action-btn reject-btn" onclick="return confirm('Are you sure?')">Reject</button>
                                     </form>
                                 @endif
-                                <a href="{{ route($routePrefix . '.residents.view-id', $resident->id) }}" class="action-btn id-btn">🪪 View ID</a>
-                                <a href="{{ route($routePrefix . '.residents.edit', $resident->id) }}" class="action-btn edit-btn">✏️ Edit</a>
+                                <a href="{{ route($routePrefix . '.residents.view-id', $resident->id) }}" class="action-btn id-btn">View ID</a>
+                                <a href="{{ route($routePrefix . '.residents.edit', $resident->id) }}" class="action-btn edit-btn">Edit</a>
                                 <form method="POST" action="{{ route($routePrefix . '.residents.destroy', $resident->id) }}" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="action-btn delete-btn" onclick="return confirm('Are you sure you want to delete this resident? This action cannot be undone.')">🗑️ Delete</button>
+                                    <button type="submit" class="action-btn delete-btn" onclick="return confirm('Are you sure you want to delete this resident? This action cannot be undone.')">Delete</button>
                                 </form>
                             </div>
                         </td>

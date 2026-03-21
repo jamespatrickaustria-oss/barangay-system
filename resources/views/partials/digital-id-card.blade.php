@@ -227,7 +227,6 @@
     }
 
     .digital-id-bottom-row {
-        margin-top: 12px;
         display: grid;
         grid-template-columns: minmax(0, 1fr) 170px;
         gap: 10px;
@@ -380,9 +379,9 @@
             <div class="digital-id-header-left">
                 <img src="{{ asset('images/city_of_general_trias_seal.png') }}" alt="Barangay Seal" class="digital-id-seal">
                 <div>
-                    <p class="digital-id-meta-small">Republic of the Philippines</p>
-                    <p class="digital-id-meta-main">Barangay Digital Identification</p>
-                    <p class="digital-id-meta-small">Official resident profile card</p>
+                    <!-- <p class="digital-id-meta-small">Republic of the Philippines</p> -->
+                    <p class="digital-id-meta-main">Barangay Digital ID</p>
+                    <p class="digital-id-meta-small">SAN JUAN I</p>
                 </div>
             </div>
             <div class="digital-id-badge">
@@ -442,7 +441,7 @@
                 </div>
 
                 <div class="digital-id-bottom-row">
-                    <div class="digital-id-signature">Authorized Barangay Signature</div>
+                    <div class="digital-id-signature">Resident's Signature</div>
                     <div class="digital-id-qr">
                         @if($qrCodeDataUri)
                             <img src="{{ $qrCodeDataUri }}" alt="QR code for account number {{ $qrAccountNumber }}">
@@ -456,8 +455,10 @@
         </div>
 
         <div class="digital-id-footer">
-            <span><strong>Profile-synced:</strong> details update automatically from your resident profile.</span>
-            <span><strong>Issued:</strong> {{ $issuedAt }}</span>
+            <!-- <span><strong>Valid Until: </strong> [insert date]</span> -->
+             <span> </span>
+             <!-- <span><strong>VALID UNTIL: </strong> {{ $issuedAt }}</span> -->
+            <span><strong>VALID UNTIL: </strong> N/ A</span>
         </div>
     </div>
 </div>

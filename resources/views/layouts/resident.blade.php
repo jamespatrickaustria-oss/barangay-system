@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title') - Barangay Service Portal</title>
-    
+    <title> PROJECT CONNECT - @yield('title') </title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/city_of_general_trias_seal.png') }}">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     
@@ -948,53 +948,81 @@
             .alert-icon { font-size: 16px; }
         }
 
+        /* ══════════════════════════════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════════════════════════════ */
+    footer {
+      background: var(--text);
+      color: rgba(255, 255, 255, 0.8);
+      padding: 60px 32px 24px;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand h3 {
+      color: white;
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .footer-brand p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .footer-section h4 {
+      color: white;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .footer-section ul {
+      
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 12px;
+    }
+
+    .footer-section a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: color 0.2s;
+      font-size: 0.95rem;
+    }
+
+    .footer-section a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 24px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+
         /* FOOTER RESPONSIVE */
         @media (max-width: 768px) {
-            footer {
-                padding: 40px 16px 24px !important;
-                margin-top: 60px !important;
-            }
-
-            footer > div > div:first-child {
-                grid-template-columns: 1fr 1fr !important;
-                gap: 32px !important;
-                margin-bottom: 32px !important;
-            }
-
-            footer .footer-col {
-                margin-bottom: 24px;
-            }
-
-            footer .footer-col h4 {
-                font-size: 12px !important;
-                margin-bottom: 12px !important;
-            }
-
-            footer .footer-col a {
-                font-size: 12px !important;
-                margin-bottom: 8px !important;
+            .footer-inner {
+                grid-template-columns: 1fr;
+                gap: 32px;
             }
         }
 
-        @media (max-width: 480px) {
-            footer {
-                padding: 32px 12px 20px !important;
-            }
-
-            footer > div > div:first-child {
-                grid-template-columns: 1fr !important;
-                gap: 24px !important;
-            }
-
-            footer > div > div:last-child {
-                flex-direction: column !important;
-                align-items: flex-start;
-            }
-
-            footer > div > div:last-child p {
-                font-size: 11px !important;
-            }
-        }
+        
 
         /* BUTTON AND INPUT RESPONSIVENESS */
         @media (hover: none) and (pointer: coarse) {
@@ -1268,54 +1296,44 @@
 
     @include('resident.partials.chat-widget')
 
-    <!-- ══ FOOTER ═══════════════════════════════════════════════ -->
-    <footer style="background: linear-gradient(135deg, var(--text) 0%, #0f1820 100%); color: rgba(255,255,255,0.75); padding: 60px 28px 32px; margin-top: 80px;">
-        <div style="max-width: 1200px; margin: 0 auto;">
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px;">
-                <div class="footer-brand">
-                    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px; text-decoration: none;">
-                        @php
-                            $sealLogo = file_exists(public_path('images/city_of_general_trias_seal.png'))
-                                ? asset('images/city_of_general_trias_seal.png')
-                                : (file_exists(public_path('images/city_of_general trias.png'))
-                                    ? asset('images/city_of_general trias.png')
-                                    : asset('images/city_of_general_trias.png'));
-                        @endphp
-                        <img src="{{ $sealLogo }}" alt="Logo" style="width: 40px; height: 40px; filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));"/>
-                        <div style="line-height: 1.2;">
-                            <strong style="display: block; font-family: 'Playfair Display', serif; font-size: 15px; color: white; letter-spacing: 0.01em;">Barangay Service</strong>
-                            <span style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;">Portal</span>
-                        </div>
-                    </div>
-                    <p style="font-size: 13px; line-height: 1.7; color: rgba(255,255,255,0.75); max-width: 280px;">Empowering residents through secure, transparent, and convenient online access to barangay services and information.</p>
-                </div>
-                <div class="footer-col">
-                    <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Services</h4>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Barangay Clearance</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Residency Certificate</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Business Permits</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Indigency Certificate</a>
-                </div>
-                <div class="footer-col">
-                    <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Resources</h4>
-                    <a href="{{ route('resident.dashboard') }}" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">My Dashboard</a>
-                    <a href="{{ route('resident.profile') }}" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">My Profile</a>
-                    <a href="{{ route('resident.online-id') }}" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Online ID</a>
-                    <a href="{{ route('resident.notifications') }}" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Announcements</a>
-                </div>
-                <div class="footer-col">
-                    <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Support</h4>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">FAQs</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Privacy Policy</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Terms of Use</a>
-                </div>
-            </div>
-            <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                <p style="font-size: 13px; color: rgba(255,255,255,0.4); margin: 0;">© 2026 City Government of General Trias, Cavite. All rights reserved.</p>
-                <p style="font-size: 13px; color: rgba(255,255,255,0.4); margin: 0;">Powered by the Barangay Management System</p>
-            </div>
-        </div>
-    </footer>
+    <!-- ══════════════════════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>PROJECT CONNECT</h3>
+        <p>
+          Providing transparent, efficient, and accessible government services to all residents 
+          of Barangay San Juan I, City of General Trias City, Cavite.
+        </p>
+        <p style="margin-top: 20px; font-size: 0.85rem;">
+          © 2026 PROJECT CONNECT. All rights reserved.
+        </p>
+      </div>
+
+      <div class="footer-section">
+        <h4>Quick Access</h4>
+        <ul>
+          <li><a href="{{ route('register') }}">Register</a></li>
+          <li><a href="#about">Services</a></li>
+
+        </ul>
+      </div>
+
+
+      <div class="footer-section">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://www.facebook.com/profile.php?id=61577772153879">Facebook</a></li>
+          <li><a href="https://maps.app.goo.gl/jb8Hb745vhcvAAjD9">Google Maps</a></li>
+
+        </ul>
+      </div>
+    </div>
+
+
+  </footer>
 
     <script>
         // ── Scroll effects ─────────────────────────────────────

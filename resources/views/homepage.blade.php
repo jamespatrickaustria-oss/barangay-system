@@ -1,12 +1,12 @@
-<!-- test -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PROJECT CONNECT</title>
+  <title>PROJECT CONNECT</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="icon" type="image/x-icon" href="{{ asset('images/city_of_general_trias_seal.png') }}">
   <link rel="icon" type="image/x-icon" href="{{ asset('images/city_of_general_trias_seal.png') }}">
   <style>
     :root {
@@ -17,6 +17,7 @@
       --green:      #3a7d44;
       --green-dark: #2c5f35;
       --soft-blue:  #d4f4ff;
+      --soft-blue:  #d4f4ff;
       --off-white:  #f4f8fb;
       --text:       #1a2433;
       --text-light: #4b5e72;
@@ -26,15 +27,17 @@
 
    
 
+   
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: 'DM Sans', sans-serif;
       color: var(--text);
       background: var(--soft-blue);
+      background: var(--soft-blue);
       overflow-x: hidden;
       line-height: 1.6;
-  
     }
 
 
@@ -59,9 +62,6 @@
     /* ══════════════════════════════════════════════════════════════════
        HEADER
     ══════════════════════════════════════════════════════════════════ */
-
-
-    
     header {
       position: fixed;
       top: 0;
@@ -74,6 +74,14 @@
       box-shadow: 0 2px 20px rgba(26,110,199,0.08);
     }
 
+    .top-banner {
+      background: linear-gradient(90deg, var(--blue-dark), var(--blue));
+      color: white;
+      text-align: center;
+      padding: 8px 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
 
     .header-inner {
       max-width: 1200px;
@@ -415,7 +423,6 @@
       color: var(--blue-dark);
 
     }
-
     a {
       text-decoration: none;
     }
@@ -880,7 +887,6 @@
     }
 
     .footer-section ul {
-      
       list-style: none;
     }
 
@@ -1012,9 +1018,6 @@
           
         </div>
       </a>
-   
-
-
       <nav>
         <a href="/">
           <span>Home</span>
@@ -1025,11 +1028,9 @@
         <a href="#city-banner">
           <span>Contact</span>
         </a>
-
+        <a href="{{ route('login') }}" class="btn-primary">Login</a>
       </nav>
     </div>
-
-
   </header>
 
   <!-- ══════════════════════════════════════════════════════════════════
@@ -1045,7 +1046,6 @@
       </p>
 
       <div class="hero-ctas">
-
         <a href="#services" class="btn-white">
           Register
         </a>
@@ -1068,7 +1068,6 @@
       </div>
     </div>
   </section>
-
 
   <!-- ══════════════════════════════════════════════════════════════════
        ABOUT SECTION
@@ -1118,7 +1117,22 @@
         </a>
       </div>
 
+        <div class="service-card">
+          <span class="service-icon">📢</span>
+          <h3>Announcements</h3>
+          <p>Stay updated with latest news, advisories, and community announcements.</p>
+          <a href="#announcements" class="service-link">View News ›</a>
+        </div>
 
+        <div class="service-card">
+          <span class="service-icon">🔔</span>
+          <h3>Notifications</h3>
+          <p>Receive real-time notifications about important updates and events.</p>
+          <a href="{{ route('login') }}" class="service-link">Enable Alerts ›</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
       <!-- ══════════════════════════════════════════════════════════════════
        DESCRIPTION SECTION
@@ -1176,7 +1190,8 @@
         <ul>
           <li><a href="{{ route('register') }}">Register</a></li>
           <li><a href="#about">Services</a></li>
-
+          <li><a href="{{ route('contacts.page') }}">Verifier</a></li>
+            
         </ul>
       </div>
 
@@ -1191,7 +1206,6 @@
       </div>
 
     </div>
-
 
   </footer>
   <script>
@@ -1230,14 +1244,14 @@
     });
 
     function closePopup() {
-      document.getElementById('floatingPopup').style.display = 'none';
-      document.body.style.overflow = 'auto'; // enable scroll
+    document.getElementById('floatingPopup').style.display = 'none';
+    document.body.style.overflow = 'auto'; // enable scroll
     }
 
     // Show popup on page load
     document.addEventListener("DOMContentLoaded", function () {
-      document.getElementById('floatingPopup').style.display = 'block';
-      document.body.style.overflow = 'hidden';
+    document.getElementById('floatingPopup').style.display = 'block';
+    document.body.style.overflow = 'hidden';
 
     });
   </script>

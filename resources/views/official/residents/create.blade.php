@@ -221,11 +221,11 @@
 <a href="{{ route($routePrefix . '.residents.index') }}" class="back-link">← Back to Residents</a>
 
 <div class="form-card">
-    <h1 class="form-title">Register New Resident</h1>
-    <p class="form-subtitle">Registered residents are automatically approved.</p>
+    <h1 class="form-title">Register a New Resident</h1>
+    <!-- <p class="form-subtitle">Registered residents are automatically approved.</p> -->
 
     <div class="info-box">
-        ✉️ The resident will receive a welcome email with their login credentials.
+        The resident will receive a welcome email with their login credentials.
     </div>
 
     <form method="POST" action="{{ route($routePrefix . '.residents.store') }}" enctype="multipart/form-data">
@@ -282,18 +282,17 @@
                 </div>
             </div>
 
-            <div>
+             <div>
                 <div class="form-group">
-                    <label for="email">Email Address *</label>
+                    <label for="birthdate">Birthdate *</label>
                     <input 
-                        type="email" 
-                        id="email" 
-                        name="email"
-                        value="{{ old('email') }}"
-                        placeholder="juan@example.com"
+                        type="date" 
+                        id="birthdate" 
+                        name="birthdate"
+                        value="{{ old('birthdate') }}"
                         required
                     >
-                    @error('email')
+                    @error('birthdate')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
@@ -301,18 +300,14 @@
 
             <div>
                 <div class="form-group">
-                    <label for="phone">Phone Number *</label>
-                    <input 
-                        type="tel" 
-                        id="phone" 
-                        name="phone"
-                        value="{{ old('phone') }}"
-                        placeholder="+63 9XX XXX XXXX"
-                        pattern="[0-9\+\-\(\)\s\.]*"
-                        inputmode="numeric"
-                        required
-                    >
-                    @error('phone')
+                    <label for="gender">Gender *</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male" @selected(old('gender') === 'male')>Male</option>
+                        <option value="female" @selected(old('gender') === 'female')>Female</option>
+                        <option value="other" @selected(old('gender') === 'other')>Other</option>
+                    </select>
+                    @error('gender')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
@@ -320,13 +315,31 @@
 
             <div>
                 <div class="form-group">
-                    <label for="father_name">Father</label>
+                    <label for="marital_status">Civil Status</label>
+                    <select id="marital_status" name="marital_status">
+                        <option value="" >Select Civil Status</option>
+                        <option value="single" @selected(old('marital_status') === 'single')>Single</option>
+                        <option value="married" @selected(old('marital_status') === 'married')>Married</option>
+                        <option value="divorced" @selected(old('marital_status') === 'divorced')>Divorced</option>
+                        <option value="widowed" @selected(old('marital_status') === 'widowed')>Widowed</option>
+                        <option value="separated" @selected(old('marital_status') === 'separated')>Separated</option>
+                    </select>
+                    @error('marital_status')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+
+            <div>
+                <div class="form-group">
+                    <label for="father_name">Father's Name</label>
                     <input
                         type="text"
                         id="father_name"
                         name="father_name"
                         value="{{ old('father_name') }}"
-                        placeholder="Enter full name"
+                        placeholder="Enter Father's Full Name"
                     >
                     @error('father_name')
                         <div class="error-message">{{ $message }}</div>
@@ -336,13 +349,13 @@
 
             <div>
                 <div class="form-group">
-                    <label for="mother_name">Mother</label>
+                    <label for="mother_name">Mother's Name</label>
                     <input
                         type="text"
                         id="mother_name"
                         name="mother_name"
                         value="{{ old('mother_name') }}"
-                        placeholder="Enter full name"
+                        placeholder="Enter Mother's Full Name"
                     >
                     @error('mother_name')
                         <div class="error-message">{{ $message }}</div>
@@ -350,9 +363,11 @@
                 </div>
             </div>
 
+
+
             <div>
                 <div class="form-group">
-                    <label for="house_no">House No#</label>
+                    <label for="house_no">House No# & Street Address</label>
                     <input
                         type="text"
                         id="house_no"
@@ -374,7 +389,7 @@
                         id="barangay"
                         name="barangay"
                         value="{{ old('barangay') }}"
-                        placeholder="e.g. Barangay San Juan"
+                        placeholder="e.g. Barangay San Juan I"
                     >
                     @error('barangay')
                         <div class="error-message">{{ $message }}</div>
@@ -409,6 +424,42 @@
                         placeholder="e.g. Filipino"
                     >
                     @error('nationality')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone"
+                        value="{{ old('phone') }}"
+                        placeholder="+63 9XX XXX XXXX"
+                        pattern="[0-9\+\-\(\)\s\.]*"
+                        inputmode="numeric"
+                        required
+                    >
+                    @error('phone')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email"
+                        value="{{ old('email') }}"
+                        placeholder="juan@example.com"
+                        required
+                    >
+                    @error('email')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
@@ -484,7 +535,7 @@
                 </div>
             </div>
 
-            <div class="full">
+            <!-- <div class="full">
                 <div class="form-group">
                     <label for="address">Address *</label>
                     <input 
@@ -499,56 +550,14 @@
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
-            </div>
+            </div> -->
 
-            <div>
-                <div class="form-group">
-                    <label for="birthdate">Birthdate *</label>
-                    <input 
-                        type="date" 
-                        id="birthdate" 
-                        name="birthdate"
-                        value="{{ old('birthdate') }}"
-                        required
-                    >
-                    @error('birthdate')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
+           
 
-            <div>
-                <div class="form-group">
-                    <label for="gender">Gender *</label>
-                    <select id="gender" name="gender" required>
-                        <option value="">Select Gender</option>
-                        <option value="male" @selected(old('gender') === 'male')>Male</option>
-                        <option value="female" @selected(old('gender') === 'female')>Female</option>
-                        <option value="other" @selected(old('gender') === 'other')>Other</option>
-                    </select>
-                    @error('gender')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                </div>
-                
-                <div class="form-group">
-                    <label for="marital_status">Marital Status</label>
-                    <select id="marital_status" name="marital_status">
-                        <option value="">Select Civil Status</option>
-                        <option value="single" @selected(old('marital_status') === 'single')>Single</option>
-                        <option value="married" @selected(old('marital_status') === 'married')>Married</option>
-                        <option value="divorced" @selected(old('marital_status') === 'divorced')>Divorced</option>
-                        <option value="widowed" @selected(old('marital_status') === 'widowed')>Widowed</option>
-                        <option value="separated" @selected(old('marital_status') === 'separated')>Separated</option>
-                    </select>
-                    @error('marital_status')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
+            
         </div>
 
-        <button type="submit" class="submit-btn">✓ Create & Approve Resident</button>
+        <button type="submit" class="submit-btn">✓ Register</button>
     </form>
 </div>
 
@@ -590,7 +599,7 @@
         const passwordField = document.getElementById(fieldId);
         const toggleIcon = document.getElementById('eye-icon-' + fieldId);
         
-        if (passwordField.type === 'password') {
+        if (passwordField.type === 'password') {    
             passwordField.type = 'text';
             // Change to eye-slash (hidden) icon
             toggleIcon.setAttribute('d', 'M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21');

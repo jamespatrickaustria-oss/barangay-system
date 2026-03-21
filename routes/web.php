@@ -7,6 +7,7 @@ use App\Http\Controllers\ResidentController;
 use App\Http\Controllers\OfficialController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,19 @@ Route::get('/pending', function () {
 Route::get('/unauthorized', function () {
     return view('unauthorized');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Verify the contact number
+|--------------------------------------------------------------------------
+*/
+
+// Page (opened from footer link)
+Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.page');
+
+// Actions
+Route::post('/contacts/add', [ContactController::class, 'add'])->name('contacts.add');
+Route::post('/contacts/verify', [ContactController::class, 'verify'])->name('contacts.verify');
 
 /*
 |--------------------------------------------------------------------------
@@ -117,7 +131,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/dashboard/charts', [AdminController::class, 'dashboardCharts'])->name('admin.dashboard.charts');
     
-    // User approvals
+    // User Requests
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users.index');
     Route::get('/users/{user}', [AdminController::class, 'showUser'])->name('admin.users.show');
     Route::post('/users/{user}/approve', [AdminController::class, 'approveUser'])->name('admin.users.approve');

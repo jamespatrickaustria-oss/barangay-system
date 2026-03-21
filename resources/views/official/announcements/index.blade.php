@@ -279,7 +279,7 @@
 </style>
 
 <div class="page-header">
-    <h1 class="page-title">📢 Announcements</h1>
+    <h1 class="page-title">Announcements</h1>
     <a href="{{ route($routePrefix . '.announcements.create') }}" class="create-btn">+ Create Announcement</a>
 </div>
 
@@ -322,18 +322,18 @@
 
             <div class="actions">
                 <a href="{{ route($routePrefix . '.announcements.edit', $announcement->id) }}" class="action-btn edit-btn">
-                    ✏️ Edit
+                    Edit
                 </a>
                 <form method="POST" action="{{ route($routePrefix . '.announcements.toggle', $announcement->id) }}" style="display: inline;">
                     @csrf
                     <button type="submit" class="action-btn toggle-btn {{ !$announcement->is_active ? 'inactive' : '' }}">
-                        {{ $announcement->is_active ? '👁️ Hide' : '👁️ Show' }}
+                        {{ $announcement->is_active ? 'Hide' : 'Show' }}
                     </button>
                 </form>
                 <form method="POST" action="{{ route($routePrefix . '.announcements.destroy', $announcement->id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this announcement?');">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="action-btn delete-btn">🗑️ Delete</button>
+                    <button type="submit" class="action-btn delete-btn">Delete</button>
                 </form>
             </div>
         </div>

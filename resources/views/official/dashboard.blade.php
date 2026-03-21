@@ -522,17 +522,17 @@
 
 <div class="welcome-bar">
     <div class="welcome-left">
-        <h1>Dashboard</h1>
-        <p>Manage residents, announcements, and approvals</p>
+        <h1>DASHBOARD</h1>
     </div>
     <div class="welcome-date">{{ date('l, F d, Y') }}</div>
 </div>
-
+<!-- 
 <div class="action-buttons">
-    <a href="{{ route('official.residents.index') }}" class="action-btn-link">Manage Residents</a>
-    <a href="{{ route('official.announcements.index') }}" class="action-btn-link">Announcements</a>
+    <a href="{{ route('official.announcements.index') }}" class="action-btn-link">Announcements</a>    
+    <a href="{{ route('official.residents.index') }}" class="action-btn-link">Residents</a>
+    
     <a href="{{ route('official.notifications.create') }}" class="action-btn-link secondary">Send Notification</a>
-</div>
+</div> -->
 
 <div class="stats-grid">
     <div class="stat-card">
