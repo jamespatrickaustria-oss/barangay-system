@@ -834,6 +834,51 @@
             font-size: 15px;
         }
 
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -6px 20px rgba(26,110,199,0.1);
+            z-index: 1003;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 6px;
+        }
+
+        .mobile-bottom-link {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px 4px;
+            border-radius: 12px;
+            color: var(--text-light);
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1;
+            transition: all 0.2s;
+            min-height: 52px;
+        }
+
+        .mobile-bottom-link-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .mobile-bottom-link:hover,
+        .mobile-bottom-link.active {
+            color: var(--blue);
+            background: var(--sky);
+        }
+
         /* MAIN CONTENT */
         .main-container {
             max-width: 1200px;
@@ -877,6 +922,7 @@
             .hamburger  { display: flex; }
             .user-name  { display: none; }
             .brand-subtitle { display: none; }
+            .mobile-bottom-nav { display: grid; }
 
             .nav-container {
                 padding: 0 16px;
@@ -889,7 +935,7 @@
             .brand-title    { font-size: 0.9rem; }
 
             .main-container {
-                padding: 20px 16px 100px;
+                padding: 20px 16px 132px;
                 margin-top: 62px;
             }
 
@@ -921,7 +967,7 @@
             }
 
             .main-container {
-                padding: 16px 12px 100px;
+                padding: 16px 12px 132px;
                 margin-top: 58px;
             }
 
@@ -1259,6 +1305,25 @@
                 </div>
             </div>
         </div>
+    </nav>
+
+    <nav class="mobile-bottom-nav" aria-label="Resident quick navigation">
+        <a href="{{ route('resident.dashboard') }}" class="mobile-bottom-link {{ request()->is('resident/dashboard') ? 'active' : '' }}">
+            <span class="mobile-bottom-link-icon">🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="{{ route('resident.online-id') }}" class="mobile-bottom-link {{ request()->is('resident/online-id') ? 'active' : '' }}">
+            <span class="mobile-bottom-link-icon">🪪</span>
+            <span>ID</span>
+        </a>
+        <a href="{{ route('resident.notifications') }}" class="mobile-bottom-link {{ request()->is('resident/notifications') ? 'active' : '' }}">
+            <span class="mobile-bottom-link-icon">🔔</span>
+            <span>Alerts</span>
+        </a>
+        <a href="{{ route('resident.profile') }}" class="mobile-bottom-link {{ request()->is('resident/profile') ? 'active' : '' }}">
+            <span class="mobile-bottom-link-icon">👤</span>
+            <span>Profile</span>
+        </a>
     </nav>
 
     <!-- MAIN CONTENT -->

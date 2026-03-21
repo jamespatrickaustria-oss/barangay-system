@@ -202,13 +202,13 @@
             left: 12px;
             width: auto;
             max-width: none;
-            bottom: 84px;
+            bottom: 132px;
             height: 72vh;
         }
 
         .chat-fab {
             right: 12px;
-            bottom: 12px;
+            bottom: calc(76px + env(safe-area-inset-bottom));
         }
     }
 </style>
