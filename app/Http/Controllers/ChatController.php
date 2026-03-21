@@ -228,6 +228,49 @@ class ChatController extends Controller
         ]);
     }
 
+    public function markMessagesAsRead(Request $request, ChatThread $thread): JsonResponse
+    {
+        // Get messages that are not sent by the current user and mark them as read
+        $thread->messages()
+            ->where('sender_id', '!=', $request->user()->id)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function residentUnreadCount(Request $request): JsonResponse
+    {
+        $resident = $request->user();
+        
+        $thread = ChatThread::where('resident_id', $resident->id)->first();
+        
+        $unreadCount = 0;
+        if ($thread) {
+            $unreadCount = $thread->messages()
+                ->where('sender_id', '!=', $resident->id)
+                ->where('is_read', false)
+                ->count();
+        }
+
+        return response()->json(['unread_count' => $unreadCount]);
+    }
+
+    public function officialUnreadCount(): JsonResponse
+    {
+        $threads = ChatThread::with('messages')->get();
+        
+        $totalUnread = 0;
+        foreach ($threads as $thread) {
+            $totalUnread += $thread->messages()
+                ->where('sender_id', '!=', auth()->id())
+                ->where('is_read', false)
+                ->count();
+        }
+
+        return response()->json(['unread_count' => $totalUnread]);
+    }
+
     private function formatMessage(ChatMessage $message, int $viewerId): array
     {
         return [
@@ -238,6 +281,7 @@ class ChatController extends Controller
             'sender_name' => $message->sender?->getFullName() ?? 'User',
             'sender_role' => $message->sender?->role,
             'is_mine' => $message->sender_id === $viewerId,
+            'is_read' => $message->is_read,
             'created_at' => $message->created_at?->setTimezone('Asia/Manila')->toDateTimeString(),
             'created_at_human' => $message->created_at?->setTimezone('Asia/Manila')->format('M d, Y h:i A'),
         ];

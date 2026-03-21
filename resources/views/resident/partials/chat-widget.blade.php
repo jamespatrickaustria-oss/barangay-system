@@ -13,6 +13,30 @@
         cursor: pointer;
         box-shadow: var(--shadow-lg);
         z-index: 1200;
+        transition: all 0.3s ease;
+    }
+
+    .chat-fab:hover {
+        transform: scale(1.1);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .unread-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .chat-panel {
@@ -193,6 +217,7 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
     </svg>
+    <span class="unread-badge">0</span>
 </button>
 
 <div class="chat-panel" id="chatPanel">
@@ -227,6 +252,7 @@
         const input = document.getElementById('residentChatInput');
         const imageInput = document.getElementById('residentChatImage');
 
+        let currentThreadId = null;
         let lastMessageId = 0;
         let pollTimer = null;
 
@@ -235,7 +261,7 @@
             wrapper.className = `chat-item ${message.is_mine ? 'mine' : ''}`;
 
             const bubble = document.createElement('div');
-            bubble.className = 'chat-bubble';
+            bubble.className = `chat-bubble ${message.is_mine ? 'mine' : ''}`;
 
             if (message.body) {
                 const text = document.createElement('div');
@@ -248,6 +274,9 @@
                 image.src = message.image_url;
                 image.className = 'chat-image';
                 image.alt = 'chat image';
+                image.style.maxWidth = '100%';
+                image.style.borderRadius = '8px';
+                image.style.marginTop = message.body ? '8px' : '0';
                 bubble.appendChild(image);
             }
 
@@ -276,6 +305,7 @@
             }
 
             const data = await response.json();
+            currentThreadId = data.thread_id;
             messageBox.innerHTML = '';
 
             if (!data.messages?.length) {
@@ -286,6 +316,20 @@
 
             data.messages.forEach(renderMessage);
             scrollBottom();
+            
+            // Mark messages as read
+            if (currentThreadId) {
+                fetch(`{{ route('resident.chat.mark-read', ':thread') }}`.replace(':thread', currentThreadId), {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrf,
+                        'Accept': 'application/json',
+                    }
+                });
+            }
+            
+            // Update unread count
+            updateUnreadCount();
         };
 
         const pollMessages = async () => {
@@ -308,6 +352,39 @@
 
             data.messages.forEach(renderMessage);
             scrollBottom();
+            
+            // Mark messages as read
+            if (currentThreadId) {
+                fetch(`{{ route('resident.chat.mark-read', ':thread') }}`.replace(':thread', currentThreadId), {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrf,
+                        'Accept': 'application/json',
+                    }
+                });
+            }
+            
+            updateUnreadCount();
+        };
+
+        const updateUnreadCount = async () => {
+            const response = await fetch('{{ route('resident.chat.unread-count') }}', {
+                headers: { 'Accept': 'application/json' },
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+            const badge = fab?.querySelector('.unread-badge');
+            
+            if (data.unread_count > 0 && badge) {
+                badge.textContent = data.unread_count;
+                badge.style.display = 'flex';
+            } else if (badge) {
+                badge.style.display = 'none';
+            }
         };
 
         const sendMessage = async () => {
@@ -345,6 +422,8 @@
 
             input.value = '';
             imageInput.value = '';
+            
+            updateUnreadCount();
         };
 
         const openPanel = async () => {
@@ -358,6 +437,10 @@
 
         const closePanel = () => {
             panel.classList.remove('open');
+            if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
+            }
         };
 
         fab?.addEventListener('click', openPanel);
@@ -367,6 +450,9 @@
             event.preventDefault();
             await sendMessage();
         });
+
+        // Initial unread count check every 5 seconds
+        setInterval(updateUnreadCount, 5000);
 
         window.addEventListener('beforeunload', () => {
             if (pollTimer) clearInterval(pollTimer);

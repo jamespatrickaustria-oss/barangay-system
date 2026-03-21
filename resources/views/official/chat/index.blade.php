@@ -56,11 +56,34 @@
         padding: 12px 14px;
         border-bottom: 1px solid #e6f2fb;
         cursor: pointer;
+        position: relative;
+        transition: background-color 0.2s ease;
     }
 
     .thread-item:hover,
     .thread-item.active {
         background: #eaf5ff;
+    }
+
+    .unread-indicator {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        display: none;
+    }
+
+    .unread-indicator.show {
+        display: flex;
     }
 
     .thread-name {
@@ -270,6 +293,7 @@
                     <div class="thread-name">${resident.resident_name}</div>
                     <div class="thread-preview">${resident.latest_preview ?? 'No messages yet'}</div>
                     <div class="thread-time">${resident.last_message_at_human ?? ''}</div>
+                    <div class="unread-indicator"></div>
                 `;
                 item.addEventListener('click', async () => {
                     activeResidentId = resident.id;
@@ -370,6 +394,28 @@
             }
 
             data.messages.forEach(appendMessage);
+            
+            
+            // Mark messages as read when loading thread
+            if (activeThreadId) {
+                fetch(`/official/chat/threads/${activeThreadId}/mark-read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrf,
+                        'Accept': 'application/json',
+                    }
+                });
+            }
+            // Mark messages as read
+            if (activeThreadId) {
+                fetch(`/official/chat/threads/${activeThreadId}/mark-read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrf,
+                        'Accept': 'application/json',
+                    }
+                });
+            }
             scrollBottom();
         };
 

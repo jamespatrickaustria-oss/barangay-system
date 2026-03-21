@@ -15,6 +15,7 @@ class ChatMessage extends Model
         'sender_id',
         'body',
         'image_path',
+        'is_read',
     ];
 
     public function thread(): BelongsTo

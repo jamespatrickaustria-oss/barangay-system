@@ -66,6 +66,8 @@ Route::middleware(['auth', 'resident'])->prefix('resident')->group(function () {
     Route::get('/chat/thread', [ChatController::class, 'residentThread'])->name('resident.chat.thread');
     Route::get('/chat/messages', [ChatController::class, 'residentMessages'])->name('resident.chat.messages');
     Route::post('/chat/messages', [ChatController::class, 'residentSend'])->name('resident.chat.send');
+    Route::post('/chat/threads/{thread}/mark-read', [ChatController::class, 'markMessagesAsRead'])->name('resident.chat.mark-read');
+    Route::get('/chat/unread-count', [ChatController::class, 'residentUnreadCount'])->name('resident.chat.unread-count');
 });
 
 /*
@@ -102,6 +104,8 @@ Route::middleware(['auth', 'official'])->prefix('official')->group(function () {
     Route::get('/chat/threads', [ChatController::class, 'officialThreads'])->name('official.chat.threads');
     Route::get('/chat/threads/{thread}/messages', [ChatController::class, 'officialMessages'])->name('official.chat.messages');
     Route::post('/chat/threads/{thread}/messages', [ChatController::class, 'officialSend'])->name('official.chat.send');
+    Route::post('/chat/threads/{thread}/mark-read', [ChatController::class, 'markMessagesAsRead'])->name('official.chat.mark-read');
+    Route::get('/chat/unread-count', [ChatController::class, 'officialUnreadCount'])->name('official.chat.unread-count');
     
     // Notifications
     Route::get('/notifications/create', [OfficialController::class, 'createNotification'])->name('official.notifications.create');

@@ -209,7 +209,18 @@
         .nav-icon {
             font-size: 17px;
             width: 22px;
+            height: 22px;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .nav-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke-width: 2;
         }
 
         .nav-link:hover {
@@ -473,6 +484,11 @@
                 font-size: 13px;
             }
 
+            .nav-icon {
+                width: 20px;
+                height: 20px;
+            }
+
             .topbar-left .page-title {
                 font-size: 16px;
             }
@@ -548,6 +564,11 @@
                 font-size: 13px;
             }
 
+            .nav-icon {
+                width: 18px;
+                height: 18px;
+            }
+
             .topbar-user-dropdown {
                 right: 16px;
             }
@@ -600,6 +621,11 @@
             .nav-link {
                 padding: 9px 12px;
                 font-size: 12px;
+            }
+
+            .nav-icon {
+                width: 16px;
+                height: 16px;
             }
 
             .nav-section-label {
@@ -704,20 +730,43 @@
                     @elseif(auth()->user()->role === 'official')
                         <div class="nav-section-label">MENU</div>
                         <a href="{{ route('official.dashboard') }}" class="nav-link {{ request()->is('official/dashboard') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-3m0 0l7-4 7 4M5 9v7a1 1 0 001 1h12a1 1 0 001-1V9m-9 16l-7-4m0 0V5m7 4l7-4m0 0v14a1 1 0 01-1 1h-12a1 1 0 01-1-1V9m9 16l7-4"></path>
+                                </svg>
+                            </span>
                             <span>Dashboard</span>
                         </a>
+                        <a href="{{ route('official.chat.index') }}" class="nav-link {{ request()->is('official/chat*') ? 'active' : '' }}">
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                </svg>
+                            </span>
+                            <span>Chat</span>
+                        </a>
                         <a href="{{ route('official.notifications.create') }}" class="nav-link {{ request()->is('official/notifications*') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                </svg>
+                            </span>
                             <span>Alerts</span>
                         </a>
-                         <a href="{{ route('official.announcements.index') }}" class="nav-link {{ request()->is('official/announcements*') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
+                        <a href="{{ route('official.announcements.index') }}" class="nav-link {{ request()->is('official/announcements*') ? 'active' : '' }}">
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 001-5.868m-5.423 11.8a1.76 1.76 0 001.141-3.318m6.612-3.956h.008v.008h-.008v-.008zm0 8h.008v.008h-.008v-.008z"></path>
+                                </svg>
+                            </span>
                             <span>Announcements</span>
                         </a>
-                        
                         <a href="{{ route('official.residents.index') }}" class="nav-link {{ request()->is('official/residents*') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zM6 20v-2a9 9 0 0118 0v2"></path>
+                                </svg>
+                            </span>
                             <span>Residents</span>
                         </a>
                         
@@ -725,27 +774,47 @@
                     @elseif(auth()->user()->role === 'admin')
                         <div class="nav-section-label">MENU</div>
                         <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-3m0 0l7-4 7 4M5 9v7a1 1 0 001 1h12a1 1 0 001-1V9m-9 16l-7-4m0 0V5m7 4l7-4m0 0v14a1 1 0 01-1 1h-12a1 1 0 01-1-1V9m9 16l7-4"></path>
+                                </svg>
+                            </span>
                             <span>Dashboard</span>
                         </a>
 
                         <a href="{{ route('admin.announcements.index') }}" class="nav-link {{ request()->is('admin/announcements*') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 001-5.868m-5.423 11.8a1.76 1.76 0 001.141-3.318m6.612-3.956h.008v.008h-.008v-.008zm0 8h.008v.008h-.008v-.008z"></path>
+                                </svg>
+                            </span>
                             <span>Announcements</span>
                         </a>
 
                         <a href="{{ route('admin.officials.index') }}" class="nav-link {{ request()->is('admin/officials*') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </span>
                             <span>Barangay Officials</span>
                         </a>
 
                         <a href="{{ route('admin.residents.index') }}" class="nav-link {{ request()->is('admin/residents*') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zM6 20v-2a9 9 0 0118 0v2"></path>
+                                </svg>
+                            </span>
                             <span>Residents</span>
                         </a>
                         
                         <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->is('admin/users*') ? 'active' : '' }}">
-                            <span class="nav-icon"></span>
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </span>
                             <span>User Requests</span>
                         </a>
 
@@ -758,11 +827,19 @@
                 <div class="nav-section-label">MENU</div>
 
                 <a href="{{ route('homepage') }}" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
-                    <span class="nav-icon"></span>
+                    <span class="nav-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-3m0 0l7-4 7 4M5 9v7a1 1 0 001 1h12a1 1 0 001-1V9m-9 16l-7-4m0 0V5m7 4l7-4m0 0v14a1 1 0 01-1 1h-12a1 1 0 01-1-1V9m9 16l7-4"></path>
+                        </svg>
+                    </span>
                     <span>Homepage</span>
                 </a>
                 <a href="{{ route('contacts.page') }}" class="nav-link {{ request()->is('contacts*') ? 'active' : '' }}">
-                    <span class="nav-icon"></span>
+                    <span class="nav-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m7-4a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </span>
                     <span>Verifier</span>
                 </a>
                 @endguest
