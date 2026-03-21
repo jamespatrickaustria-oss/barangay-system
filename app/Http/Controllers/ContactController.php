@@ -18,11 +18,17 @@ class ContactController extends Controller
     public function add(Request $request)
     {
         $request->validate([
-            // Must be 11 digits, but treat as string so leading 0 is preserved
-            'contact' => 'required|string|regex:/^[0-9]{11}$/',
+            
+            'contact' => 'required|string|regex:/^[0-9]{11}$/|unique:contacts,value',
         ]);
 
-        // Store exactly what the user inputs as string
+        $exists = Contact::where('value', $request->contact)->exists();
+
+        if ($exists) {
+        $record = Contact::where('value', $request->contact)->first();
+        return back()->with('verified', "✓ Already Registered! #{$record->id} - {$record->value}");
+        }
+        
         Contact::create([
             'value' => $request->contact,
         ]);
@@ -39,11 +45,11 @@ class ContactController extends Controller
 
         $contact = $request->contact;
 
-        // Search for exact match in database
+        
         $record = Contact::where('value', $contact)->first();
 
         if ($record) {
-            // Format the message with ID and number
+            
             $message = "✓ Verified! #{$record->id} - {$record->value}";
             return back()->with('verified', $message);
         } else {

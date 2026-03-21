@@ -194,8 +194,6 @@
 
     @if(session('verified'))
         <div class="flash flash-info"> {{ session('verified') }}</div>
-
-        
     @endif
 
     @if(session('error'))
