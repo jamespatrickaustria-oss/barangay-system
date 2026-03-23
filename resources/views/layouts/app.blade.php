@@ -946,7 +946,7 @@
                         <div>{{ session('success') }}</div>
                     </div>
                 @endif
-
+                
                 @if(session('error'))
                     <div class="alert alert-error">
                         <span style="font-size: 16px;">✕</span>
@@ -982,7 +982,6 @@
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
         }
-
         // Close mobile sidebar when clicking on a nav link
         document.addEventListener('DOMContentLoaded', function() {
             const navLinks = document.querySelectorAll('.nav-link');

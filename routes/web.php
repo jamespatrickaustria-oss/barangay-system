@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfilePhotoController;
 use App\Http\Controllers\ResidentController;
@@ -16,16 +17,37 @@ use App\Http\Controllers\ContactController;
 */
 
 Route::get('/', function () {
-    return view('homepage');
-})->name('homepage');
+    if (Auth::check()) {
+        $user = Auth::user();
 
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/verify-official-email', [AuthController::class, 'verifyOfficialEmail'])->name('verify-official-email');
-Route::middleware('auth')->get('/profile-photos/{user}', [ProfilePhotoController::class, 'show'])->name('profile-photos.show');
+        if ($user->role === 'admin') {
+            return redirect('/admin/dashboard');
+        }
+
+        if ($user->role === 'official') {
+            return redirect('/official/dashboard');
+        }
+
+        if ($user->role === 'resident') {
+            return redirect('/resident/dashboard');
+        }
+    }
+
+    return view('homepage');
+})->middleware('prevent-back-history')->name('homepage');
+
+Route::middleware(['guest.redirect', 'prevent-back-history'])->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::get('/verify-official-email', [AuthController::class, 'verifyOfficialEmail'])->name('verify-official-email');
+});
+
+Route::middleware(['auth', 'prevent-back-history'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/profile-photos/{user}', [ProfilePhotoController::class, 'show'])->name('profile-photos.show');
+});
 
 Route::get('/pending', function () {
     return view('pending');
@@ -54,7 +76,7 @@ Route::post('/contacts/verify', [ContactController::class, 'verify'])->name('con
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'resident'])->prefix('resident')->group(function () {
+Route::middleware(['auth', 'resident', 'prevent-back-history'])->prefix('resident')->group(function () {
     Route::get('/dashboard', [ResidentController::class, 'dashboard'])->name('resident.dashboard');
     Route::get('/profile', [ResidentController::class, 'profile'])->name('resident.profile');
     Route::put('/profile', [ResidentController::class, 'updateProfile'])->name('resident.profile.update');
@@ -76,7 +98,7 @@ Route::middleware(['auth', 'resident'])->prefix('resident')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'official'])->prefix('official')->group(function () {
+Route::middleware(['auth', 'official', 'prevent-back-history'])->prefix('official')->group(function () {
     Route::get('/dashboard', [OfficialController::class, 'dashboard'])->name('official.dashboard');
     Route::get('/dashboard/charts', [OfficialController::class, 'dashboardCharts'])->name('official.dashboard.charts');
     
@@ -131,7 +153,7 @@ Route::middleware(['auth', 'official'])->prefix('official')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin', 'prevent-back-history'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/dashboard/charts', [AdminController::class, 'dashboardCharts'])->name('admin.dashboard.charts');
     

@@ -74,6 +74,19 @@
             margin-bottom: 36px;
         }
 
+        .login-seal {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .login-seal img {
+            width: 108px;
+            height: 108px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.12));
+        }
+
         .badge {
             display: inline-block;
             background: var(--blue-light);
@@ -280,6 +293,11 @@
                 padding: 28px 20px;
                 border-radius: 16px;
             }
+
+            .login-seal img {
+                width: 90px;
+                height: 90px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -291,16 +309,29 @@
                 padding: 20px 16px;
                 border-radius: 12px;
             }
+
+            .login-seal img {
+                width: 80px;
+                height: 80px;
+            }
         }
     </style>
 </head>
 <body>
+    @php
+        $sealLogo = file_exists(public_path('images/city_of_general_trias_seal.png'))
+            ? asset('images/city_of_general_trias_seal.png')
+            : asset('images/city_of_general_trias.png');
+    @endphp
+
     <div class="left-panel">
         <div class="right-panel">
             <div class="login-card">
+            <div class="login-seal">
+                <img src="{{ $sealLogo }}" alt="City of General Trias Seal">
+            </div>
             <div class="card-header">
                 <span class="badge">Resident Portal</span>
-                <h2>Welcome Back</h2>
                 <p>Sign in to your account</p>
             </div>
 
@@ -386,7 +417,7 @@
             <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 36px;">
                 <div>
                     <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px; text-decoration: none;">
-                        <img src="{{ file_exists(public_path('images/city_of_general_trias_seal.png')) ? asset('images/city_of_general_trias_seal.png') : asset('images/city_of_general_trias.png') }}" alt="Logo" style="width: 36px; height: 36px; filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));"/>
+                        <img src="{{ $sealLogo }}" alt="Logo" style="width: 36px; height: 36px; filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));"/>
                         <div style="line-height: 1.2;">
                             <strong style="display: block; font-family: 'Plus Jakarta Sans', serif; font-size: 14px; color: white; letter-spacing: 0.01em;">Barangay Management System</strong>
                             <span style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;">City of General Trias</span>
@@ -424,6 +455,14 @@
     </footer>
 
     <script>
+        // Browsers may restore this page from back-forward cache without a request.
+        // Force a reload so middleware can redirect authenticated users to dashboard.
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+
         function togglePassword(fieldId) {
             const passwordField = document.getElementById(fieldId);
             const toggleIcon = document.getElementById('eye-icon-' + fieldId);

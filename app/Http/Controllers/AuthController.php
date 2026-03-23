@@ -129,12 +129,15 @@ class AuthController extends Controller
                 ->with('error', 'The password you entered is incorrect.');
         }
 
-        // Attempt authentication
-        if (!Auth::attempt(['email' => $email, 'password' => $password])) {
+        // Attempt authentication and respect the remember-me checkbox.
+        if (!Auth::attempt(['email' => $email, 'password' => $password], $request->boolean('remember'))) {
             return redirect()->back()
                 ->withInput($request->only('email'))
                 ->with('error', 'Authentication failed. Please try again.');
         }
+
+        // Regenerate session ID after login to persist auth state securely.
+        $request->session()->regenerate();
 
         // Get authenticated user
         $user = Auth::user();

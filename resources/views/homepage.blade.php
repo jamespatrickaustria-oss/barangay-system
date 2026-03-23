@@ -1209,6 +1209,14 @@
 
   </footer>
   <script>
+    // If this page is restored from BFCache, force a fresh request so
+    // authenticated users are redirected by the server to their dashboard.
+    window.addEventListener('pageshow', function (event) {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    });
+
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {

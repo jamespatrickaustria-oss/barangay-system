@@ -20,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'official' => \App\Http\Middleware\OfficialMiddleware::class,
             'resident' => \App\Http\Middleware\ResidentMiddleware::class,
+            'guest.redirect' => \App\Http\Middleware\RedirectIfAuthenticatedToDashboard::class,
+            'nocache' => \App\Http\Middleware\PreventBackHistory::class,
+            'prevent-back-history' => \App\Http\Middleware\PreventBackHistory::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
