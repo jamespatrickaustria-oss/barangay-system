@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Barangay Management System - Login</title>
+    <title>PROJECT CONNECT - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <style>
         :root {
@@ -26,23 +26,15 @@
             --gold:       #e8b84b;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
         body {
-            margin: 0;
-            font-family: 'DM Sans', sans-serif;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            flex-wrap: wrap;
-            min-height: 100vh;
-            color: var(--text);
-            background: linear-gradient(135deg, #f5f7fa 0%, #e8eef3 100%);
-            padding: 40px 20px;
+        font-family: 'DM Sans', sans-serif;
+        color: var(--text);
+        background: var(--soft-blue);
+        background: var(--soft-blue);
+        overflow-x: hidden;
+        line-height: 1.6;
         }
 
         .left-panel {
@@ -67,11 +59,34 @@
             border-radius: 24px;
             padding: 48px;
             box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+            margin-top: 60px;
+            margin-bottom: 30px;
         }
 
+        .back-link {
+
+            margin-left: 10px;
+            font-size: 30px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
         .card-header {
             text-align: center;
             margin-bottom: 36px;
+        }
+
+        .login-seal {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .login-seal img {
+            width: 108px;
+            height: 108px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.12));
         }
 
         .badge {
@@ -271,49 +286,126 @@
             transform: scale(0.99);
         }
 
+        /* ══════════════════════════════════════════════════════════════════
+        FOOTER
+        ══════════════════════════════════════════════════════════════════ */
+        footer {
+        background: var(--text);
+        color: rgba(255, 255, 255, 0.8);
+        padding: 60px 32px 24px;
+        }
+
+        .footer-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 48px;
+        margin-bottom: 48px;
+        }
+
+        .footer-brand h3 {
+        color: white;
+        font-size: 1.4rem;
+        margin-bottom: 12px;
+        font-weight: 700;
+        }
+
+        .footer-brand p {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+        color: white;
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+        font-weight: 700;
+        }
+
+        .footer-section ul {
+        list-style: none;
+        }
+
+        .footer-section ul li {
+        margin-bottom: 12px;
+        }
+
+        .footer-section a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        transition: color 0.2s;
+        font-size: 0.95rem;
+        }
+
+        .footer-section a:hover {
+        color: white;
+        }
+
+        .footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 24px;
+        text-align: center;
+        font-size: 0.9rem;
+        }
+
+
         @media (max-width: 768px) {
-            body {
+
+            .login-card {
                 padding: 24px 16px;
-            }
-
-            .login-card {
-                padding: 28px 20px;
+                width: 90vw;
                 border-radius: 16px;
+                margin-top: 60px;
+                margin-bottom: 30px;
+            }
+
+            .login-seal img {
+                width: 90px;
+                height: 90px;
+            }
+
+            .footer-inner {
+                grid-template-columns: 1fr;
+                gap: 32px;
             }
         }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 16px 12px;
-            }
-
-            .login-card {
-                padding: 20px 16px;
-                border-radius: 12px;
-            }
-        }
+        
     </style>
 </head>
 <body>
+    @php
+        $sealLogo = file_exists(public_path('images/city_of_general_trias_seal.png'))
+            ? asset('images/city_of_general_trias_seal.png')
+            : asset('images/city_of_general_trias.png');
+    @endphp
+
     <div class="left-panel">
         <div class="right-panel">
             <div class="login-card">
+                <a href="{{ route('homepage') }}" class="back-link">
+                    <span>ᐊ</span>
+                </a>
+            <div class="login-seal">
+                <img src="{{ $sealLogo }}" alt="City of General Trias Seal">
+            </div>
             <div class="card-header">
-                <span class="badge">Resident Portal</span>
-                <h2>Welcome Back</h2>
+                <span class="badge">PROJECT CONNECT</span>
                 <p>Sign in to your account</p>
             </div>
 
             @if(session('error'))
                 <div class="alert alert-error">
-                    <span>⚠️</span>
+                    <span>âš ï¸</span>
                     <span>{{ session('error') }}</span>
                 </div>
             @endif
 
             @if(session('success'))
                 <div class="alert alert-success">
-                    <span>✓</span>
+                    <span>âœ“</span>
                     <span>{{ session('success') }}</span>
                 </div>
             @endif
@@ -344,7 +436,7 @@
                             type="password" 
                             id="password" 
                             name="password"
-                            placeholder="••••••••••••"
+                            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                             required
                             class="@error('password') error @enderror"
                         >
@@ -374,56 +466,62 @@
             </div>
 
             <div class="register-link">
-                Don't have an account? <a href="{{ route('register') }}">Register here →</a>
+                Don't have an account? <a href="{{ route('register') }}">Click here to register</a>
             </div>
             </div>
         </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer style="background: linear-gradient(135deg, #0d1b2a 0%, #0a0f18 100%); color: rgba(255,255,255,0.75); padding: 48px 28px 24px; width: 100%;">
-        <div style="max-width: 1200px; margin: 0 auto;">
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 36px;">
-                <div>
-                    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px; text-decoration: none;">
-                        <img src="{{ file_exists(public_path('images/city_of_general_trias_seal.png')) ? asset('images/city_of_general_trias_seal.png') : asset('images/city_of_general_trias.png') }}" alt="Logo" style="width: 36px; height: 36px; filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));"/>
-                        <div style="line-height: 1.2;">
-                            <strong style="display: block; font-family: 'Plus Jakarta Sans', serif; font-size: 14px; color: white; letter-spacing: 0.01em;">Barangay Management System</strong>
-                            <span style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;">City of General Trias</span>
-                        </div>
-                    </div>
-                    <p style="font-size: 13px; line-height: 1.7; max-width: 220px;">Empowering communities through technology-driven governance and transparent service delivery.</p>
-                </div>
-                <div>
-                    <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Services</h4>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Barangay Clearance</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Residency Certificate</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Business Permits</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Indigency Certificate</a>
-                </div>
-                <div>
-                    <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Resources</h4>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">FAQs</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Privacy Policy</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Terms of Use</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Support</a>
-                </div>
-                <div>
-                    <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Government</h4>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">City Hall</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">City Council</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Barangay Officials</a>
-                    <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">DRRMO</a>
-                </div>
-            </div>
-            <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin: 0;">© 2026 City Government of General Trias, Cavite. All rights reserved.</p>
-                <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin: 0;">Powered by the Barangay Management System</p>
-            </div>
-        </div>
-    </footer>
+    <!-- ══════════════════════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+            <h3>PROJECT CONNECT</h3>
+            <p>
+            Providing transparent, efficient, and accessible government services to all residents 
+            of Barangay San Juan I, City of General Trias City, Cavite.
+            </p>
+            <p style="margin-top: 20px; font-size: 0.85rem;">
+            © 2026 PROJECT CONNECT. All rights reserved.
+            </p>
+      </div>
+
+      <div class="footer-section">
+            <h4>Quick Access</h4>
+            <ul>
+            <li><a href="{{ route('register') }}">Register</a></li>
+            <li><a href="#about">Services</a></li>
+            <li><a href="{{ route('contacts.page') }}">Verifier</a></li>
+            
+                
+            </ul>
+      </div>
+
+
+      <div class="footer-section">
+            <h4>Connect</h4>
+            <ul>
+            <li><a href="https://www.facebook.com/profile.php?id=61577772153879">Facebook</a></li>
+            <li><a href="https://maps.app.goo.gl/jb8Hb745vhcvAAjD9">Google Maps</a></li>
+
+            </ul>
+      </div>
+
+    </div>
+
+  </footer>
 
     <script>
+        // Browsers may restore this page from back-forward cache without a request.
+        // Force a reload so middleware can redirect authenticated users to dashboard.
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+
         function togglePassword(fieldId) {
             const passwordField = document.getElementById(fieldId);
             const toggleIcon = document.getElementById('eye-icon-' + fieldId);

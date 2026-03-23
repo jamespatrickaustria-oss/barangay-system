@@ -84,6 +84,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            height: 80px;
         }
 
         .logo-icon {
@@ -258,11 +259,11 @@
         .topbar {
             background: var(--white);
             border-bottom: 1px solid var(--border);
-            height: 64px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 28px;
+            padding: 24px 20px;
             position: sticky;
             top: 0;
             z-index: 50;
@@ -467,12 +468,25 @@
                 --sidebar-width: 220px;
             }
 
+            .mobile-menu-toggle {
+                top: 20px;
+                left: 20px;
+                padding: 8px 10px;
+                font-size: 18px;
+            }
+
+
             .sidebar {
                 width: 220px;
             }
 
             .topbar {
                 padding: 0 20px;
+            }
+
+            .topbar-left .page-title {
+                margin-left: 15px;
+                font-size: 15px;
             }
 
             .content-area {
@@ -522,7 +536,7 @@
 
             .topbar {
                 height: auto;
-                min-height: 64px;
+                height: 80px;
                 padding: 12px 20px 12px 60px;
                 flex-wrap: wrap;
             }
@@ -582,8 +596,8 @@
         /* Small mobile devices */
         @media (max-width: 480px) {
             .mobile-menu-toggle {
-                top: 12px;
-                left: 12px;
+                top: 20px;
+                left: 20px;
                 padding: 8px 10px;
                 font-size: 18px;
             }
@@ -593,6 +607,7 @@
             }
 
             .topbar-left .page-title {
+                margin-left: 15px;
                 font-size: 15px;
             }
 
@@ -688,7 +703,7 @@
     @endphp
     
     <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" onclick="toggleMobileSidebar()">☰</button>
+    <button class="mobile-menu-toggle" onclick="toggleMobileSidebar()">â˜°</button>
     
     <!-- Sidebar Overlay for Mobile -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
@@ -893,7 +908,7 @@
                     @auth
                         @if(auth()->user()->role === 'resident')
                             <button class="notif-btn" onclick="window.location.href='{{ route('resident.notifications') }}'">
-                                🔔
+                                ðŸ””
                                 @php
                                     $unreadCount = App\Models\Notification::where('user_id', auth()->id())
                                         ->where('is_read', false)
@@ -930,7 +945,7 @@
                 <!-- Flash Messages -->
                 @if($errors->any())
                     <div class="alert alert-error">
-                        <span style="font-size: 16px;">⚠️</span>
+                        <span style="font-size: 16px;">âš ï¸</span>
                         <div>
                             <strong>Validation Error</strong>
                             @foreach($errors->all() as $error)
@@ -942,14 +957,14 @@
 
                 @if(session('success'))
                     <div class="alert alert-success">
-                        <span style="font-size: 16px;">✓</span>
+                        <span style="font-size: 16px;">âœ“</span>
                         <div>{{ session('success') }}</div>
                     </div>
                 @endif
 
                 @if(session('error'))
                     <div class="alert alert-error">
-                        <span style="font-size: 16px;">✕</span>
+                        <span style="font-size: 16px;">âœ•</span>
                         <div>{{ session('error') }}</div>
                     </div>
                 @endif
