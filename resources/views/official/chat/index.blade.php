@@ -162,6 +162,76 @@
         gap: 8px;
     }
 
+    .chat-compose-wrap {
+        border-top: 1px solid #c8e4f8;
+        background: #fff;
+    }
+
+    .official-preview {
+        display: none;
+        margin: 10px 10px 0;
+        padding: 10px;
+        border: 1px solid #d9ecfb;
+        border-radius: 12px;
+        background: #f6fbff;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .official-preview.show {
+        display: flex;
+    }
+
+    .official-preview img {
+        width: 74px;
+        height: 74px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 1px solid #c8e4f8;
+        background: #fff;
+    }
+
+    .official-preview-meta {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .official-preview-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #0d1b2a;
+    }
+
+    .official-preview-name {
+        margin-top: 3px;
+        font-size: 12px;
+        color: #5a7a9a;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .official-preview-actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .official-preview-btn {
+        border: 1px solid #c8e4f8;
+        background: #fff;
+        border-radius: 8px;
+        font-size: 11px;
+        padding: 6px 9px;
+        cursor: pointer;
+    }
+
+    .official-preview-btn.send {
+        background: #3a8a3f;
+        border-color: #3a8a3f;
+        color: #fff;
+    }
+
     .chat-compose input[type='text'] {
         flex: 1;
         border: 1px solid #c8e4f8;
@@ -194,8 +264,28 @@
     }
 
     .btn-send {
+        min-width: 108px;
+        width: auto;
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
         background: #3a8a3f;
         color: #fff;
+        transition: background-color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn-send:disabled {
+        background: #9ab5a0;
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+
+    .btn-send-label {
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
     }
 
     .empty-note {
@@ -237,13 +327,29 @@
         <div class="messages-area" id="officialMessages">
             <div class="empty-note">Choose a resident to start chatting.</div>
         </div>
-        <form class="chat-compose" id="officialChatForm">
-            <label class="btn-icon" title="Upload image">📷
-                <input type="file" id="officialChatImage" accept="image/*">
-            </label>
-            <input type="text" id="officialChatInput" maxlength="2000" placeholder="Type a reply...">
-            <button type="submit" class="btn-send">➤</button>
-        </form>
+        <div class="chat-compose-wrap">
+            <div class="official-preview" id="officialImagePreview">
+                <img id="officialPreviewImg" alt="Selected image preview">
+                <div class="official-preview-meta">
+                    <div class="official-preview-title">Image ready to send</div>
+                    <div class="official-preview-name" id="officialPreviewName"></div>
+                </div>
+                <div class="official-preview-actions">
+                    <button type="button" class="official-preview-btn" id="officialPreviewEdit">Edit</button>
+                    <button type="button" class="official-preview-btn" id="officialPreviewRemove">Remove</button>
+                    <button type="button" class="official-preview-btn send" id="officialPreviewSend">Send</button>
+                </div>
+            </div>
+            <form class="chat-compose" id="officialChatForm">
+                <label class="btn-icon" title="Upload image">📷
+                    <input type="file" id="officialChatImage" accept="image/*">
+                </label>
+                <input type="text" id="officialChatInput" maxlength="2000" placeholder="Type a reply...">
+                <button type="submit" class="btn-send" id="officialSendBtn" disabled>
+                    <span class="btn-send-label" id="officialSendLabel">Send</span>
+                </button>
+            </form>
+        </div>
     </section>
 </div>
 
@@ -257,6 +363,14 @@
         const form = document.getElementById('officialChatForm');
         const input = document.getElementById('officialChatInput');
         const imageInput = document.getElementById('officialChatImage');
+        const previewWrap = document.getElementById('officialImagePreview');
+        const previewImg = document.getElementById('officialPreviewImg');
+        const previewName = document.getElementById('officialPreviewName');
+        const previewEdit = document.getElementById('officialPreviewEdit');
+        const previewRemove = document.getElementById('officialPreviewRemove');
+        const previewSend = document.getElementById('officialPreviewSend');
+        const sendButton = document.getElementById('officialSendBtn');
+        const sendLabel = document.getElementById('officialSendLabel');
 
         let residents = [];
         let activeResidentId = null;
@@ -264,6 +378,82 @@
         let lastMessageId = 0;
         let hasLoadedThread = false;
         let residentSearchKeyword = '';
+        let previewObjectUrl = null;
+
+        const getComposeState = () => {
+            const hasText = input.value.trim().length > 0;
+            const hasImage = imageInput.files.length > 0;
+
+            return {
+                hasText,
+                hasImage,
+                hasContent: hasText || hasImage,
+            };
+        };
+
+        const updateSendButtonState = () => {
+            const state = getComposeState();
+
+            if (sendButton) {
+                sendButton.disabled = !state.hasContent;
+            }
+
+            if (!sendLabel || !sendButton) {
+                return;
+            }
+
+            if (state.hasText && state.hasImage) {
+                sendLabel.textContent = 'Send both';
+                sendButton.title = 'Send text and image';
+                return;
+            }
+
+            if (state.hasImage) {
+                sendLabel.textContent = 'Send image';
+                sendButton.title = 'Send image';
+                return;
+            }
+
+            if (state.hasText) {
+                sendLabel.textContent = 'Send text';
+                sendButton.title = 'Send text';
+                return;
+            }
+
+            sendLabel.textContent = 'Send';
+            sendButton.title = 'Add text or image to send';
+        };
+
+        const clearPreview = () => {
+            if (previewObjectUrl) {
+                URL.revokeObjectURL(previewObjectUrl);
+                previewObjectUrl = null;
+            }
+
+            if (previewWrap) previewWrap.classList.remove('show');
+            if (previewImg) previewImg.removeAttribute('src');
+            if (previewName) previewName.textContent = '';
+            imageInput.value = '';
+            updateSendButtonState();
+        };
+
+        const showPreview = (file) => {
+            if (!file || !file.type.startsWith('image/')) {
+                clearPreview();
+                return;
+            }
+
+            if (previewObjectUrl) {
+                URL.revokeObjectURL(previewObjectUrl);
+            }
+
+            previewObjectUrl = URL.createObjectURL(file);
+            if (previewImg) previewImg.src = previewObjectUrl;
+            if (previewName) previewName.textContent = file.name;
+            if (previewWrap) previewWrap.classList.add('show');
+            updateSendButtonState();
+            input.focus();
+        };
 
         const getFilteredResidents = () => {
             if (!residentSearchKeyword) {
@@ -396,16 +586,6 @@
             data.messages.forEach(appendMessage);
             
             
-            // Mark messages as read when loading thread
-            if (activeThreadId) {
-                fetch(`/official/chat/threads/${activeThreadId}/mark-read`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrf,
-                        'Accept': 'application/json',
-                    }
-                });
-            }
             // Mark messages as read
             if (activeThreadId) {
                 fetch(`/official/chat/threads/${activeThreadId}/mark-read`, {
@@ -450,7 +630,10 @@
 
             const body = input.value.trim();
             const hasImage = imageInput.files.length > 0;
-            if (!body && !hasImage) return;
+            if (!body && !hasImage) {
+                input.focus();
+                return;
+            }
 
             const payload = new FormData();
             if (body) payload.append('body', body);
@@ -465,7 +648,14 @@
                 body: payload,
             });
 
-            if (!response.ok) return;
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                const firstValidationError = errorData?.errors
+                    ? Object.values(errorData.errors)[0]?.[0]
+                    : null;
+                alert(firstValidationError || errorData?.message || 'Unable to send message. Please try again.');
+                return;
+            }
 
             const data = await response.json();
 
@@ -476,7 +666,8 @@
             appendMessage(data.message);
             scrollBottom();
             input.value = '';
-            imageInput.value = '';
+            clearPreview();
+            updateSendButtonState();
             await loadResidents();
         };
 
@@ -490,9 +681,38 @@
             renderResidents();
         });
 
+        input?.addEventListener('input', () => {
+            updateSendButtonState();
+        });
+
+        imageInput?.addEventListener('change', () => {
+            const file = imageInput.files?.[0] || null;
+            showPreview(file);
+        });
+
+        previewEdit?.addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        previewRemove?.addEventListener('click', () => {
+            clearPreview();
+        });
+
+        previewSend?.addEventListener('click', async () => {
+            await sendMessage();
+        });
+
+        updateSendButtonState();
+
         loadResidents();
         setInterval(pollMessages, 3000);
         setInterval(loadResidents, 7000);
+
+        window.addEventListener('beforeunload', () => {
+            if (previewObjectUrl) {
+                URL.revokeObjectURL(previewObjectUrl);
+            }
+        });
     })();
 </script>
 @endsection

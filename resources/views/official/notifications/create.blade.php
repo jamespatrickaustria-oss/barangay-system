@@ -226,7 +226,7 @@
 </style>
 
 <div class="form-card">
-    <h1 class="form-title">📢 Send Alert</h1>
+    <h1 class="form-title">Send Alert</h1>
 
     <form method="POST" action="{{ route('official.notifications.store') }}" x-data="{ recipientType: 'all', charCount: 0 }" x-cloak>
         @csrf

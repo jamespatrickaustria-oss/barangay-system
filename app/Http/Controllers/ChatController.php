@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\ChatMessage;
 use App\Models\ChatThread;
 use App\Models\User;
+use App\Services\ImageUploadService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
 {
+    public function __construct(private readonly ImageUploadService $imageUploadService)
+    {
+    }
+
     public function officialIndex()
     {
         return view('official.chat.index');
@@ -115,7 +120,7 @@ class ChatController extends Controller
     {
         $validated = $request->validate([
             'body' => 'nullable|string|max:2000',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'image' => 'nullable|file|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
         ]);
 
         if (!$request->filled('body') && !$request->hasFile('image')) {
@@ -131,7 +136,7 @@ class ChatController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('chat-images', 'public');
+            $imagePath = $this->imageUploadService->store($request->file('image'), 'uploads/chat_images');
         }
 
         $message = ChatMessage::create([
@@ -200,7 +205,7 @@ class ChatController extends Controller
     {
         $validated = $request->validate([
             'body' => 'nullable|string|max:2000',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'image' => 'nullable|file|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
         ]);
 
         if (!$request->filled('body') && !$request->hasFile('image')) {
@@ -209,7 +214,7 @@ class ChatController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('chat-images', 'public');
+            $imagePath = $this->imageUploadService->store($request->file('image'), 'uploads/chat_images');
         }
 
         $message = ChatMessage::create([

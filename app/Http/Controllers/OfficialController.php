@@ -7,16 +7,20 @@ use App\Models\Notification;
 use App\Models\OnlineId;
 use App\Models\Announcement;
 use App\Services\DashboardAnalyticsService;
+use App\Services\ImageUploadService;
 use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class OfficialController extends Controller
 {
+    public function __construct(private readonly ImageUploadService $imageUploadService)
+    {
+    }
+
     /**
      * Show the official dashboard.
      */
@@ -132,7 +136,7 @@ class OfficialController extends Controller
 
         if ($request->hasFile('profile_photo')) {
             $photoFile = $request->file('profile_photo');
-            $profilePhotoPath = $photoFile->store('uploads/profile_photos', 'public');
+            $profilePhotoPath = $this->imageUploadService->store($photoFile, 'uploads/profile_photos');
         }
 
         $accountNumber = User::generateAccountNumber(
@@ -231,10 +235,10 @@ class OfficialController extends Controller
             $existingPhotoPath = $resident->getProfilePhotoStoragePath();
 
             if ($existingPhotoPath) {
-                Storage::disk('public')->delete($existingPhotoPath);
+                $this->imageUploadService->delete($existingPhotoPath);
             }
 
-            $validated['profile_photo'] = $request->file('profile_photo')->store('uploads/profile_photos', 'public');
+            $validated['profile_photo'] = $this->imageUploadService->store($request->file('profile_photo'), 'uploads/profile_photos');
         }
 
         $resident->update($validated);
@@ -276,10 +280,10 @@ class OfficialController extends Controller
                 $existingPhotoPath = $resident->getProfilePhotoStoragePath();
 
                 if ($existingPhotoPath) {
-                    Storage::disk('public')->delete($existingPhotoPath);
+                    $this->imageUploadService->delete($existingPhotoPath);
                 }
 
-                $resident->profile_photo = $validated['profile_photo']->store('uploads/profile_photos', 'public');
+                $resident->profile_photo = $this->imageUploadService->store($validated['profile_photo'], 'uploads/profile_photos');
                 $resident->save();
             });
         } catch (\Throwable $exception) {
@@ -298,7 +302,7 @@ class OfficialController extends Controller
      */
     private function residentPhotoValidationRule(bool $required): string
     {
-        $baseRule = 'file|image|mimes:jpg,jpeg,png,webp|max:5120';
+        $baseRule = 'file|image|mimes:jpg,jpeg,png|max:5120';
 
         return $required ? 'required|' . $baseRule : 'nullable|' . $baseRule;
     }
@@ -423,15 +427,21 @@ class OfficialController extends Controller
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
             'marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
-            'profile_photo' => 'nullable|image|max:2048',
+            'profile_photo' => 'nullable|file|image|mimes:jpg,jpeg,png|max:5120',
         ]);
 
         $user = auth()->user();
 
+        $profilePhotoPath = $user->profile_photo;
+
         if ($request->hasFile('profile_photo')) {
-            $file = $request->file('profile_photo');
-            $filename = $file->store('public/photos');
-            $user->profile_photo = basename($filename);
+            $existingPhotoPath = $user->getProfilePhotoStoragePath();
+
+            if ($existingPhotoPath) {
+                $this->imageUploadService->delete($existingPhotoPath);
+            }
+
+            $profilePhotoPath = $this->imageUploadService->store($request->file('profile_photo'), 'uploads/profile_photos');
         }
 
         $user->update([
@@ -441,6 +451,7 @@ class OfficialController extends Controller
             'phone' => $validated['phone'] ?? null,
             'address' => $validated['address'] ?? null,
             'marital_status' => $validated['marital_status'] ?? null,
+            'profile_photo' => $profilePhotoPath,
         ]);
 
         return redirect()->back()->with('success', 'Profile updated successfully.');
@@ -528,7 +539,7 @@ class OfficialController extends Controller
         $photoPath = null;
 
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('uploads/announcement_photos', 'public');
+            $photoPath = $this->imageUploadService->store($request->file('photo'), 'uploads/announcement_photos');
         }
 
         $announcement = Announcement::create([
@@ -574,16 +585,16 @@ class OfficialController extends Controller
         $photoPath = $announcement->photo_path;
 
         if (!empty($validated['remove_photo']) && $photoPath) {
-            Storage::disk('public')->delete($photoPath);
+            $this->imageUploadService->delete($photoPath);
             $photoPath = null;
         }
 
         if ($request->hasFile('photo')) {
             if ($photoPath) {
-                Storage::disk('public')->delete($photoPath);
+                $this->imageUploadService->delete($photoPath);
             }
 
-            $photoPath = $request->file('photo')->store('uploads/announcement_photos', 'public');
+            $photoPath = $this->imageUploadService->store($request->file('photo'), 'uploads/announcement_photos');
         }
 
         $announcement->update([
@@ -620,7 +631,7 @@ class OfficialController extends Controller
         $announcement = Announcement::findOrFail($id);
 
         if (!empty($announcement->photo_path)) {
-            Storage::disk('public')->delete($announcement->photo_path);
+            $this->imageUploadService->delete($announcement->photo_path);
         }
 
         $announcement->delete();

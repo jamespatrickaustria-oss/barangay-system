@@ -191,7 +191,7 @@
 <a href="{{ route($routePrefix . '.announcements.index') }}" class="back-link">← Back to Announcements</a>
 
 <div class="form-card">
-    <h1 class="form-title">📢 Create Announcement</h1>
+    <h1 class="form-title"> Create Announcement</h1>
     <p class="form-subtitle">Share important updates with all residents</p>
 
     <div class="info-box">
@@ -268,7 +268,7 @@
         </div>
 
         <div class="button-group">
-            <button type="submit" class="submit-btn">📢 Publish Announcement</button>
+            <button type="submit" class="submit-btn">Publish Announcement</button>
             <a href="{{ route($routePrefix . '.announcements.index') }}" class="cancel-btn">Cancel</a>
         </div>
     </form>

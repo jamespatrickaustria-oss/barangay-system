@@ -9,6 +9,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class AnnouncementForm
 {
@@ -33,6 +35,11 @@ class AnnouncementForm
                             ->image()
                             ->disk('public')
                             ->directory('uploads/announcement_photos')
+                            ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                            ->rules(['nullable', 'file', 'image', 'mimes:jpg,jpeg,png', 'max:5120'])
+                            ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+                                return now()->format('YmdHis') . '_' . Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                            })
                             ->maxSize(5120)
                             ->imageEditor()
                             ->columnSpanFull(),

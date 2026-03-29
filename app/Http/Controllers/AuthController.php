@@ -150,6 +150,12 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
+        // Enforce fixed location defaults for resident self-registration.
+        $request->merge([
+            'province' => 'Cavite',
+            'municipality_city' => 'General Trias',
+        ]);
+
         // Validate input
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
@@ -166,9 +172,9 @@ class AuthController extends Controller
             'mother_name' => 'nullable|string|max:255',
             'house_no' => 'nullable|string|max:100',
             'barangay' => 'nullable|string|max:255',
-            'municipality_city' => 'nullable|string|max:255',
+            'province' => 'required|string|in:Cavite',
+            'municipality_city' => 'required|string|in:General Trias',
             'nationality' => 'nullable|string|max:255',
-            'address' => 'nullable|string|max:500',
             'birthdate' => 'nullable|date',
             'gender' => 'nullable|in:male,female,other',
             'marital_status' => 'nullable|in:single,married,divorced,widowed,separated',

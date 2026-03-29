@@ -693,7 +693,7 @@
         <div class="form-step hidden" id="step-2">
             <div class="step-header">
                 <h2>Contact Details</h2>
-                <p>Step 2 of 3 &mdash; Provide your contact and address information</p>
+                <p>Step 2 of 3 &mdash; Provide your contact and location information</p>
             </div>
 
             <div class="form-grid">
@@ -727,35 +727,67 @@
 
                 <div>
                     <div class="form-group">
-                        <label for="barangay">Barangay</label>
-                        <input type="text" id="barangay" name="barangay"
-                               value="{{ old('barangay') }}"
-                               placeholder="e.g. Barangay San Juan"
-                               class="@error('barangay') error @enderror">
+                        <label for="barangay">Barangay <span class="required">*</span></label>
+                        <select id="barangay" name="barangay"
+                                class="@error('barangay') error @enderror">
+                            <option value="">Select Barangay</option>
+                            <option value="1896th" @selected(old('barangay') === '1896th')>1896th (Poblacion)</option>
+                            <option value="Alingaro" @selected(old('barangay') === 'Alingaro')>Alingaro</option>
+                            <option value="Arnaldo" @selected(old('barangay') === 'Arnaldo')>Arnaldo (Poblacion)</option>
+                            <option value="Bacao I" @selected(old('barangay') === 'Bacao I')>Bacao I</option>
+                            <option value="Bacao II" @selected(old('barangay') === 'Bacao II')>Bacao II</option>
+                            <option value="Bagumbayan" @selected(old('barangay') === 'Bagumbayan')>Bagumbayan (Poblacion)</option>
+                            <option value="Biclatan" @selected(old('barangay') === 'Biclatan')>Biclatan</option>
+                            <option value="Buenavista I" @selected(old('barangay') === 'Buenavista I')>Buenavista I</option>
+                            <option value="Buenavista II" @selected(old('barangay') === 'Buenavista II')>Buenavista II</option>
+                            <option value="Buenavista III" @selected(old('barangay') === 'Buenavista III')>Buenavista III</option>
+                            <option value="Corregidor" @selected(old('barangay') === 'Corregidor')>Corregidor (Poblacion)</option>
+                            <option value="Dulongbayan" @selected(old('barangay') === 'Dulongbayan')>Dulongbayan (Poblacion)</option>
+                            <option value="Governor Ferrer" @selected(old('barangay') === 'Governor Ferrer')>Governor Ferrer (Poblacion)</option>
+                            <option value="Javalera" @selected(old('barangay') === 'Javalera')>Javalera</option>
+                            <option value="Manggahan" @selected(old('barangay') === 'Manggahan')>Manggahan</option>
+                            <option value="Navarro" @selected(old('barangay') === 'Navarro')>Navarro</option>
+                            <option value="Panungyanan" @selected(old('barangay') === 'Panungyanan')>Panungyanan</option>
+                            <option value="Pasong Camachile I" @selected(old('barangay') === 'Pasong Camachile I')>Pasong Camachile I</option>
+                            <option value="Pasong Camachile II" @selected(old('barangay') === 'Pasong Camachile II')>Pasong Camachile II</option>
+                            <option value="Pasong Kawayan I" @selected(old('barangay') === 'Pasong Kawayan I')>Pasong Kawayan I</option>
+                            <option value="Pasong Kawayan II" @selected(old('barangay') === 'Pasong Kawayan II')>Pasong Kawayan II</option>
+                            <option value="Pinagtipunan" @selected(old('barangay') === 'Pinagtipunan')>Pinagtipunan</option>
+                            <option value="Prinza" @selected(old('barangay') === 'Prinza')>Prinza</option>
+                            <option value="Sampalucan" @selected(old('barangay') === 'Sampalucan')>Sampalucan (Poblacion)</option>
+                            <option value="Santiago" @selected(old('barangay') === 'Santiago')>Santiago</option>
+                            <option value="San Francisco" @selected(old('barangay') === 'San Francisco')>San Francisco</option>
+                            <option value="San Gabriel" @selected(old('barangay') === 'San Gabriel')>San Gabriel (Poblacion)</option>
+                            <option value="San Juan I" @selected(old('barangay') === 'San Juan I')>San Juan I</option>
+                            <option value="San Juan II" @selected(old('barangay') === 'San Juan II')>San Juan II</option>
+                            <option value="Santa Clara" @selected(old('barangay') === 'Santa Clara')>Santa Clara</option>
+                            <option value="Tapia" @selected(old('barangay') === 'Tapia')>Tapia</option>
+                            <option value="Tejero" @selected(old('barangay') === 'Tejero')>Tejero</option>
+                            <option value="Vibora" @selected(old('barangay') === 'Vibora')>Vibora (Poblacion)</option>
+                        </select>
                         @error('barangay')<div class="error-message">{{ $message }}</div>@enderror
                     </div>
                 </div>
 
                 <div>
                     <div class="form-group">
-                        <label for="municipality_city">Municipality/City</label>
-                        <input type="text" id="municipality_city" name="municipality_city"
-                               value="{{ old('municipality_city') }}"
-                               placeholder="e.g. General Trias"
-                               class="@error('municipality_city') error @enderror">
-                        @error('municipality_city')<div class="error-message">{{ $message }}</div>@enderror
+                        <label for="province">Province</label>
+                        <input type="text" id="province" name="province"
+                               value="{{ old('province', 'Cavite') }}"
+                               readonly
+                               class="@error('province') error @enderror">
+                        @error('province')<div class="error-message">{{ $message }}</div>@enderror
                     </div>
                 </div>
 
-                <div class="full">
+                <div>
                     <div class="form-group">
-                        <label for="address">Address <span class="required">*</span></label>
-                        <input type="text" id="address" name="address"
-                               value="{{ old('address') }}"
-                               placeholder="Street address, Barangay name"
-                               autocomplete="street-address"
-                               class="@error('address') error @enderror">
-                        @error('address')<div class="error-message">{{ $message }}</div>@enderror
+                        <label for="municipality_city">City</label>
+                        <input type="text" id="municipality_city" name="municipality_city"
+                               value="{{ old('municipality_city', 'General Trias') }}"
+                               readonly
+                               class="@error('municipality_city') error @enderror">
+                        @error('municipality_city')<div class="error-message">{{ $message }}</div>@enderror
                     </div>
                 </div>
 
@@ -948,7 +980,6 @@ const stepRules = {
     ],
     2: [
         { id: 'phone_local', label: 'Phone Number', custom: validatePhone },
-        { id: 'address',     label: 'Address' },
     ],
     3: [
         { id: 'email',    label: 'Email Address' },
@@ -1185,7 +1216,7 @@ function togglePassword(fieldId) {
 (function () {
     const step1Keys = ['first_name','middle_name','surname','birthdate','gender',
                        'marital_status','nationality','father_name','mother_name'];
-    const step2Keys = ['phone','address','house_no','barangay','municipality_city'];
+    const step2Keys = ['phone','house_no','barangay','province','municipality_city'];
     const errorKeys = @json($errors->keys());
 
     let target = 3;

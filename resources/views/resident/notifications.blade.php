@@ -383,7 +383,7 @@
 {{-- Tab Navigation --}}
 <div class="tabs-bar">
     <button class="tab-btn active" onclick="switchTab('announcements', this)">
-        📢 Announcements
+        Announcements
     </button>
     <button class="tab-btn" onclick="switchTab('alerts', this)">
         🔔 Alerts

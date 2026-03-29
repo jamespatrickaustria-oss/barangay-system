@@ -42,9 +42,16 @@
                             </button>
                         </label>
                     </div>
-                    <div id="image-preview" class="text-sm text-gray-600"></div>
-                    <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
-                        Send Message
+                    <div id="image-preview" class="hidden items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+                        <img id="image-preview-thumb" src="" alt="Selected image preview" class="w-14 h-14 rounded object-cover border border-gray-200 bg-white">
+                        <div class="flex-1 min-w-0">
+                            <div class="text-xs font-semibold text-gray-700">Image selected</div>
+                            <div id="image-preview-name" class="text-xs text-gray-500 truncate"></div>
+                        </div>
+                        <button type="button" id="remove-image-btn" class="text-xs px-2 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-100">Remove</button>
+                    </div>
+                    <button id="residentModalSendBtn" type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold" disabled>
+                        <span id="residentModalSendLabel">Send</span>
                     </button>
                 </form>
             </div>
@@ -66,6 +73,7 @@
     let currentThreadId = null;
     let pollInterval = null;
     let lastMessageId = 0;
+    let previewImageObjectUrl = null;
 
     // Initialize chat on page load
     document.addEventListener('DOMContentLoaded', function() {
@@ -76,6 +84,10 @@
         const messageForm = document.getElementById('message-form');
         const imageUploadBtn = document.getElementById('image-upload-btn');
         const imageInput = document.getElementById('image-input');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('residentModalSendBtn');
+        const sendLabel = document.getElementById('residentModalSendLabel');
+        const removeImageBtn = document.getElementById('remove-image-btn');
 
         // Show chat container
         chatContainer.style.display = 'block';
@@ -117,13 +129,91 @@
         });
 
         imageInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const preview = document.getElementById('image-preview');
-                preview.innerHTML = `<div class="text-green-600">📷 Image selected: ${file.name}</div>`;
-            }
+            const file = this.files[0] || null;
+            updateImagePreview(file);
+            updateSendButtonState();
+            messageInput.focus();
         });
+
+        messageInput.addEventListener('input', updateSendButtonState);
+
+        removeImageBtn.addEventListener('click', function() {
+            clearSelectedImage();
+            updateSendButtonState();
+            messageInput.focus();
+        });
+
+        updateSendButtonState();
     });
+
+    function clearSelectedImage() {
+        if (previewImageObjectUrl) {
+            URL.revokeObjectURL(previewImageObjectUrl);
+            previewImageObjectUrl = null;
+        }
+
+        const imageInput = document.getElementById('image-input');
+        const preview = document.getElementById('image-preview');
+        const previewThumb = document.getElementById('image-preview-thumb');
+        const previewName = document.getElementById('image-preview-name');
+
+        imageInput.value = '';
+        preview.classList.add('hidden');
+        preview.classList.remove('flex');
+        previewThumb.removeAttribute('src');
+        previewName.textContent = '';
+    }
+
+    function updateImagePreview(file) {
+        const preview = document.getElementById('image-preview');
+        const previewThumb = document.getElementById('image-preview-thumb');
+        const previewName = document.getElementById('image-preview-name');
+
+        if (!file || !file.type.startsWith('image/')) {
+            clearSelectedImage();
+            return;
+        }
+
+        if (previewImageObjectUrl) {
+            URL.revokeObjectURL(previewImageObjectUrl);
+        }
+
+        previewImageObjectUrl = URL.createObjectURL(file);
+        previewThumb.src = previewImageObjectUrl;
+        previewName.textContent = file.name;
+        preview.classList.remove('hidden');
+        preview.classList.add('flex');
+    }
+
+    function updateSendButtonState() {
+        const sendButton = document.getElementById('residentModalSendBtn');
+        const sendLabel = document.getElementById('residentModalSendLabel');
+        const messageInput = document.getElementById('message-input');
+        const imageInput = document.getElementById('image-input');
+
+        const hasText = messageInput.value.trim().length > 0;
+        const hasImage = imageInput.files.length > 0;
+        const hasContent = hasText || hasImage;
+
+        sendButton.disabled = !hasContent;
+
+        if (hasText && hasImage) {
+            sendLabel.textContent = 'Send text + image';
+            return;
+        }
+
+        if (hasImage) {
+            sendLabel.textContent = 'Send image';
+            return;
+        }
+
+        if (hasText) {
+            sendLabel.textContent = 'Send text';
+            return;
+        }
+
+        sendLabel.textContent = 'Send';
+    }
 
     function loadResidentThread() {
         fetch('{{ route("resident.chat.thread") }}', {
@@ -224,6 +314,7 @@
 
         if (!body && !imageInput.files.length) {
             alert('Please type a message or select an image');
+            messageInput.focus();
             return;
         }
 
@@ -244,8 +335,8 @@
                 displayMessage(data.message);
                 lastMessageId = data.message.id;
                 messageInput.value = '';
-                imageInput.value = '';
-                document.getElementById('image-preview').innerHTML = '';
+                clearSelectedImage();
+                updateSendButtonState();
                 document.getElementById('messages-container').scrollTop = document.getElementById('messages-container').scrollHeight;
                 updateUnreadCount();
             }
@@ -309,6 +400,11 @@
 
     #chat-fab {
         animation: fadeIn 0.3s ease-out;
+    }
+
+    #residentModalSendBtn:disabled {
+        background: #93c5fd;
+        cursor: not-allowed;
     }
 
     @keyframes fadeIn {
