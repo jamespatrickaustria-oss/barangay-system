@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 use App\Models\Notification;
 use App\Services\MailService;
@@ -105,7 +106,7 @@ class AuthController extends Controller
         if (!$user) {
             return redirect()->back()
                 ->withInput($request->only('email'))
-                ->with('error', 'User account not found with this email.');
+                ->with('error', 'Wrong email or password.');
         }
 
         // Check if user account is pending approval
@@ -126,14 +127,14 @@ class AuthController extends Controller
         if (!Hash::check($password, $user->password)) {
             return redirect()->back()
                 ->withInput($request->only('email'))
-                ->with('error', 'The password you entered is incorrect.');
+                ->with('error', 'Wrong email or password.');
         }
 
         // Attempt authentication and respect the remember-me checkbox.
         if (!Auth::attempt(['email' => $email, 'password' => $password], $request->boolean('remember'))) {
             return redirect()->back()
                 ->withInput($request->only('email'))
-                ->with('error', 'Authentication failed. Please try again.');
+                ->with('error', 'Wrong email or password.');
         }
 
         // Regenerate session ID after login to persist auth state securely.
@@ -166,7 +167,11 @@ class AuthController extends Controller
                 'email',
                 \Illuminate\Validation\Rule::unique('users', 'email')->whereNull('deleted_at'),
             ],
-            'password' => 'required|min:8|confirmed',
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8)->letters()->mixedCase()->numbers()->symbols(),
+            ],
             'phone' => 'required|string|max:20',
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',

@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class OfficialController extends Controller
 {
@@ -115,7 +116,11 @@ class OfficialController extends Controller
                 'email',
                 \Illuminate\Validation\Rule::unique('users', 'email')->whereNull('deleted_at'),
             ],
-            'password' => 'required|string|min:8|confirmed',
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8)->letters()->mixedCase()->numbers()->symbols(),
+            ],
             'phone' => 'required|string|max:20',
             'profile_photo' => $this->residentPhotoValidationRule(true),
             'father_name' => 'nullable|string|max:255',

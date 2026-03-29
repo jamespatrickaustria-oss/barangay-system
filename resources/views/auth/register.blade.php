@@ -384,6 +384,41 @@
         }
 
         /* Info banner */
+        /* Password rules checklist */
+        #password_rule_list {
+            list-style: none !important;
+            margin: 12px 0 0 0 !important;
+            padding: 0 !important;
+        }
+
+        #password_rule_list li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 8px !important;
+            font-size: 13px;
+            color: var(--text-light);
+            transition: color 0.2s, font-weight 0.2s;
+        }
+
+        #password_rule_list li::before {
+            content: '✖';
+            position: absolute;
+            left: 0;
+            color: #dc3545;
+            font-weight: 700;
+            transition: color 0.2s;
+        }
+
+        #password_rule_list li.passed {
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        #password_rule_list li.passed::before {
+            content: '✔';
+            color: var(--green);
+        }
+
         .info-banner {
             background: #eaf4ff;
             border-left: 4px solid var(--blue);
@@ -848,6 +883,16 @@
                                 </svg>
                             </span>
                         </div>
+                        <div class="hint" style="margin-top: 6px; color: var(--text-light);">
+                            Password must contain at least 8 characters with uppercase, lowercase, number, and special character.
+                        </div>
+                        <ul id="password_rule_list">
+                            <li id="pw_rule_len">At least 8 characters</li>
+                            <li id="pw_rule_lower">At least one lowercase letter (a–z)</li>
+                            <li id="pw_rule_upper">At least one uppercase letter (A–Z)</li>
+                            <li id="pw_rule_number">At least one number (0–9)</li>
+                            <li id="pw_rule_symbol">At least one special character (@ $ % ! *)</li>
+                        </ul>
                         @error('password')<div class="error-message">{{ $message }}</div>@enderror
                     </div>
                 </div>
@@ -1011,17 +1056,21 @@ function validatePhone() {
 function validatePasswords() {
     const pw  = document.getElementById('password');
     const pwc = document.getElementById('password_confirmation');
+    const value = pw.value || '';
+    const rules = evaluatePasswordRules(value);
     let ok = true;
 
-    if (!pw.value) {
+    if (!value) {
         markError('password', 'Password is required.');
         ok = false;
-    } else if (pw.value.length < 8) {
-        markError('password', 'Password must be at least 8 characters.');
+    } else if (!rules.length || !rules.lower || !rules.upper || !rules.number || !rules.symbol) {
+        markError('password', getFirstPasswordRuleMessage(rules));
         ok = false;
     } else {
         clearError('password');
     }
+
+    updatePasswordRuleChecklist();
 
     if (ok) {
         if (!pwc.value) {
@@ -1035,6 +1084,47 @@ function validatePasswords() {
         }
     }
     return ok;
+}
+
+function evaluatePasswordRules(value) {
+    return {
+        length: value.length >= 8,
+        lower: /[a-z]/.test(value),
+        upper: /[A-Z]/.test(value),
+        number: /[0-9]/.test(value),
+        symbol: /[^A-Za-z0-9]/.test(value),
+    };
+}
+
+function getFirstPasswordRuleMessage(rules) {
+    if (!rules.length) return 'Password must be at least 8 characters.';
+    if (!rules.lower) return 'Password must include at least one lowercase letter.';
+    if (!rules.upper) return 'Password must include at least one uppercase letter.';
+    if (!rules.number) return 'Password must include at least one number.';
+    if (!rules.symbol) return 'Password must include at least one special character.';
+    return '';
+}
+
+function updatePasswordRuleChecklist() {
+    const pwField = document.getElementById('password');
+    if (!pwField) return;
+
+    const rules = evaluatePasswordRules(pwField.value || '');
+    const updateRuleClass = (id, passed) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (passed) {
+            el.classList.add('passed');
+        } else {
+            el.classList.remove('passed');
+        }
+    };
+
+    updateRuleClass('pw_rule_len', rules.length);
+    updateRuleClass('pw_rule_lower', rules.lower);
+    updateRuleClass('pw_rule_upper', rules.upper);
+    updateRuleClass('pw_rule_number', rules.number);
+    updateRuleClass('pw_rule_symbol', rules.symbol);
 }
 
 /* ---- Error helpers -------------------------------------------- */
@@ -1177,6 +1267,13 @@ confirmSubmitBtn.addEventListener('click', () => {
     registerForm.dataset.confirmed = 'true';
     registerForm.submit();
 });
+
+const registerPasswordField = document.getElementById('password');
+if (registerPasswordField) {
+    registerPasswordField.addEventListener('input', updatePasswordRuleChecklist);
+    registerPasswordField.addEventListener('blur', updatePasswordRuleChecklist);
+    updatePasswordRuleChecklist();
+}
 
 /* ---- Password visibility toggle ------------------------------- */
 function togglePassword(fieldId) {

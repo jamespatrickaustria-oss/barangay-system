@@ -176,7 +176,7 @@
         The log-in credentials will be sent to the registered email address.
     </div>
 
-    <form method="POST" action="{{ route('admin.officials.store') }}">
+    <form method="POST" action="{{ route('admin.officials.store') }}" id="officialCreateForm">
         @csrf
 
         <div class="form-grid">
@@ -231,6 +231,17 @@
                             </svg>
                         </span>
                     </div>
+                    <div style="margin-top: 6px; color: var(--text-muted); font-size: 12px;">
+                        Use at least 8 characters with uppercase, lowercase, number, and special character (e.g. @ $ % ! *).
+                    </div>
+                    <ul id="password_rule_list" style="margin: 8px 0 0 18px; color: var(--text-muted); font-size: 12px; line-height: 1.5;">
+                        <li id="pw_rule_len">At least 8 characters</li>
+                        <li id="pw_rule_lower">At least one lowercase letter (a-z)</li>
+                        <li id="pw_rule_upper">At least one uppercase letter (A-Z)</li>
+                        <li id="pw_rule_number">At least one number (0-9)</li>
+                        <li id="pw_rule_symbol">At least one special character (e.g. @ $ % ! *)</li>
+                    </ul>
+                    <div class="error-message" id="js_password_error" style="display: none;"></div>
                     @error('password')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
@@ -254,6 +265,7 @@
                             </svg>
                         </span>
                     </div>
+                    <div class="error-message" id="js_password_confirmation_error" style="display: none;"></div>
                     @error('password_confirmation')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
@@ -300,6 +312,101 @@
 </div>
 
 <script>
+    function evaluatePasswordRules(value) {
+        return {
+            length: value.length >= 8,
+            lower: /[a-z]/.test(value),
+            upper: /[A-Z]/.test(value),
+            number: /[0-9]/.test(value),
+            symbol: /[^A-Za-z0-9]/.test(value),
+        };
+    }
+
+    function getFirstPasswordRuleMessage(rules) {
+        if (!rules.length) return 'Password must be at least 8 characters.';
+        if (!rules.lower) return 'Password must include at least one lowercase letter.';
+        if (!rules.upper) return 'Password must include at least one uppercase letter.';
+        if (!rules.number) return 'Password must include at least one number.';
+        if (!rules.symbol) return 'Password must include at least one special character.';
+        return '';
+    }
+
+    function setPasswordError(message) {
+        const el = document.getElementById('js_password_error');
+        if (!el) return;
+        el.textContent = message;
+        el.style.display = message ? 'block' : 'none';
+    }
+
+    function setPasswordConfirmationError(message) {
+        const el = document.getElementById('js_password_confirmation_error');
+        if (!el) return;
+        el.textContent = message;
+        el.style.display = message ? 'block' : 'none';
+    }
+
+    function updatePasswordRuleChecklist() {
+        const pwField = document.getElementById('password');
+        if (!pwField) return;
+
+        const rules = evaluatePasswordRules(pwField.value || '');
+        const styleRule = (id, passed) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.style.color = passed ? '#2c5f35' : 'var(--text-muted)';
+            el.style.fontWeight = passed ? '700' : '500';
+        };
+
+        styleRule('pw_rule_len', rules.length);
+        styleRule('pw_rule_lower', rules.lower);
+        styleRule('pw_rule_upper', rules.upper);
+        styleRule('pw_rule_number', rules.number);
+        styleRule('pw_rule_symbol', rules.symbol);
+    }
+
+    const officialCreateForm = document.getElementById('officialCreateForm');
+    const passwordField = document.getElementById('password');
+    const passwordConfirmationField = document.getElementById('password_confirmation');
+
+    if (passwordField) {
+        passwordField.addEventListener('input', function () {
+            updatePasswordRuleChecklist();
+            const rules = evaluatePasswordRules(passwordField.value || '');
+            setPasswordError(getFirstPasswordRuleMessage(rules));
+            if (rules.length && rules.lower && rules.upper && rules.number && rules.symbol) {
+                setPasswordError('');
+            }
+        });
+
+        passwordField.addEventListener('blur', updatePasswordRuleChecklist);
+        updatePasswordRuleChecklist();
+    }
+
+    if (passwordConfirmationField) {
+        passwordConfirmationField.addEventListener('input', function () {
+            if ((passwordField.value || '') === (passwordConfirmationField.value || '')) {
+                setPasswordConfirmationError('');
+            }
+        });
+    }
+
+    if (officialCreateForm) {
+        officialCreateForm.addEventListener('submit', function (e) {
+            const value = passwordField ? (passwordField.value || '') : '';
+            const rules = evaluatePasswordRules(value);
+            const validPassword = rules.length && rules.lower && rules.upper && rules.number && rules.symbol;
+
+            setPasswordError(validPassword ? '' : getFirstPasswordRuleMessage(rules));
+
+            const matches = passwordField && passwordConfirmationField && passwordField.value === passwordConfirmationField.value;
+            setPasswordConfirmationError(matches ? '' : 'Passwords do not match.');
+
+            if (!validPassword || !matches) {
+                e.preventDefault();
+            }
+        });
+    }
+
     function togglePassword(fieldId) {
         const passwordField = document.getElementById(fieldId);
         const toggleIcon = document.getElementById('eye-icon-' + fieldId);

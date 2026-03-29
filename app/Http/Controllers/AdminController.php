@@ -8,6 +8,7 @@ use App\Services\DashboardAnalyticsService;
 use App\Services\MailService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\OfficialController;
+use Illuminate\Validation\Rules\Password;
 
 class AdminController extends Controller
 {
@@ -198,7 +199,11 @@ class AdminController extends Controller
             'middle_name' => 'nullable|string|max:255',
             'surname' => 'required|string|max:255',
             'email' => ['required', 'email', \Illuminate\Validation\Rule::unique('users', 'email')->whereNull('deleted_at')],
-            'password' => 'required|string|min:8|confirmed',
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8)->letters()->mixedCase()->numbers()->symbols(),
+            ],
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
         ]);
