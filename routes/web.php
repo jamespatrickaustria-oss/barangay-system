@@ -9,6 +9,7 @@ use App\Http\Controllers\OfficialController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\UserActivityLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -156,6 +157,7 @@ Route::middleware(['auth', 'official', 'prevent-back-history'])->prefix('officia
 Route::middleware(['auth', 'admin', 'prevent-back-history'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/dashboard/charts', [AdminController::class, 'dashboardCharts'])->name('admin.dashboard.charts');
+    Route::get('/activity-logs', [UserActivityLogController::class, 'index'])->name('admin.activity-logs');
     
     // User Requests
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users.index');

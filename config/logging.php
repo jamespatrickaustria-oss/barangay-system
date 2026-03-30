@@ -65,6 +65,41 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'user_logs' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/user_logs.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'replace_placeholders' => true,
+        ],
+
+        'admin_logs' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/admin_logs.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'replace_placeholders' => true,
+        ],
+
+        'official_logs' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/official_logs.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'replace_placeholders' => true,
+        ],
+
+        'resident_logs' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/resident_logs.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'replace_placeholders' => true,
+        ],
+
+        'guest_logs' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/guest_logs.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'replace_placeholders' => true,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

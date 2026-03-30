@@ -1400,6 +1400,90 @@
 
   </footer>
 
+    @auth
+        <style>
+            .inactivity-modal {
+                position: fixed;
+                inset: 0;
+                background: rgba(12, 26, 43, 0.55);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 1300;
+                padding: 16px;
+            }
+
+            .inactivity-modal.show {
+                display: flex;
+            }
+
+            .inactivity-modal-card {
+                width: min(420px, 100%);
+                background: #ffffff;
+                border-radius: 14px;
+                border: 1px solid rgba(26, 110, 199, 0.2);
+                box-shadow: 0 12px 34px rgba(12, 26, 43, 0.24);
+                padding: 20px;
+            }
+
+            .inactivity-modal-title {
+                margin: 0 0 8px;
+                font-size: 20px;
+                color: #1a2433;
+                font-weight: 700;
+            }
+
+            .inactivity-modal-text {
+                margin: 0;
+                color: #4b5e72;
+                line-height: 1.5;
+                font-size: 14px;
+            }
+
+            .inactivity-modal-actions {
+                margin-top: 16px;
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .inactivity-btn {
+                border: 1px solid transparent;
+                border-radius: 10px;
+                padding: 9px 16px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            .inactivity-btn.secondary {
+                background: #edf4ff;
+                border-color: rgba(26, 110, 199, 0.25);
+                color: #154f96;
+            }
+
+            .inactivity-btn.primary {
+                background: #1a6ec7;
+                color: #ffffff;
+            }
+        </style>
+
+        <div class="inactivity-modal" id="inactivityWarningModal" role="dialog" aria-modal="true" aria-labelledby="inactivityModalTitle">
+            <div class="inactivity-modal-card">
+                <h3 class="inactivity-modal-title" id="inactivityModalTitle">Inactivity Detected</h3>
+                <p class="inactivity-modal-text">
+                    You have been inactive. For your security, you will be logged out in
+                    <strong><span id="inactivityCountdownSeconds">30</span> seconds</strong>.
+                </p>
+                <div class="inactivity-modal-actions">
+                    <button type="button" class="inactivity-btn secondary" id="stayLoggedInBtn">Stay Logged In</button>
+                    <button type="button" class="inactivity-btn primary" id="logoutNowBtn">Logout Now</button>
+                </div>
+            </div>
+        </div>
+    @endauth
+
     <script>
         // ── Scroll effects ─────────────────────────────────────
         const topNav        = document.getElementById('topNav');
@@ -1475,6 +1559,151 @@
             document.getElementById('hamburger')?.classList.remove('open');
             document.body.style.overflow = '';
         }
+
+        (function() {
+            const warningAtMs = 150000;
+            const logoutAtMs = 180000;
+            const warningWindowSeconds = Math.floor((logoutAtMs - warningAtMs) / 1000);
+
+            const modal = document.getElementById('inactivityWarningModal');
+            if (!modal) {
+                return;
+            }
+
+            const stayLoggedInBtn = document.getElementById('stayLoggedInBtn');
+            const logoutNowBtn = document.getElementById('logoutNowBtn');
+            const countdownEl = document.getElementById('inactivityCountdownSeconds');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+            let warningTimer;
+            let logoutTimer;
+            let countdownTimer;
+            let secondsRemaining = warningWindowSeconds;
+            let warningVisible = false;
+            let lastActivityTs = Date.now();
+
+            const activityEvents = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+
+            function renderCountdown() {
+                if (countdownEl) {
+                    countdownEl.textContent = String(secondsRemaining);
+                }
+            }
+
+            function stopCountdown() {
+                if (countdownTimer) {
+                    clearInterval(countdownTimer);
+                    countdownTimer = null;
+                }
+            }
+
+            function hideWarning() {
+                warningVisible = false;
+                modal.classList.remove('show');
+                stopCountdown();
+            }
+
+            function clearIdleTimers() {
+                if (warningTimer) {
+                    clearTimeout(warningTimer);
+                    warningTimer = null;
+                }
+
+                if (logoutTimer) {
+                    clearTimeout(logoutTimer);
+                    logoutTimer = null;
+                }
+            }
+
+            async function performLogout() {
+                clearIdleTimers();
+                stopCountdown();
+
+                const payload = new URLSearchParams();
+                if (csrfToken) {
+                    payload.append('_token', csrfToken);
+                }
+
+                try {
+                    await fetch('{{ route('logout') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        credentials: 'same-origin',
+                        body: payload.toString(),
+                    });
+                } catch (error) {
+                    // Redirecting to login is sufficient if request fails.
+                } finally {
+                    window.location.assign('{{ route('login') }}');
+                }
+            }
+
+            function showWarning() {
+                warningVisible = true;
+                secondsRemaining = warningWindowSeconds;
+                renderCountdown();
+                modal.classList.add('show');
+
+                stopCountdown();
+                countdownTimer = setInterval(function() {
+                    secondsRemaining -= 1;
+                    if (secondsRemaining <= 0) {
+                        secondsRemaining = 0;
+                        renderCountdown();
+                        stopCountdown();
+                        return;
+                    }
+
+                    renderCountdown();
+                }, 1000);
+            }
+
+            function startIdleTimers() {
+                clearIdleTimers();
+                warningTimer = setTimeout(showWarning, warningAtMs);
+                logoutTimer = setTimeout(performLogout, logoutAtMs);
+            }
+
+            function registerActivity() {
+                const now = Date.now();
+                if (now - lastActivityTs < 400) {
+                    return;
+                }
+
+                lastActivityTs = now;
+                if (warningVisible) {
+                    hideWarning();
+                }
+
+                startIdleTimers();
+            }
+
+            stayLoggedInBtn?.addEventListener('click', function() {
+                hideWarning();
+                startIdleTimers();
+            });
+
+            logoutNowBtn?.addEventListener('click', function() {
+                performLogout();
+            });
+
+            activityEvents.forEach(function(eventName) {
+                document.addEventListener(eventName, registerActivity, { passive: true });
+            });
+
+            window.addEventListener('focus', registerActivity);
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    registerActivity();
+                }
+            });
+
+            startIdleTimers();
+        })();
     </script>
 </body>
 </html>

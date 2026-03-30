@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Notification;
 use App\Services\MailService;
 
+
 class AuthController extends Controller
 {
     /**
