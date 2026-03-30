@@ -2,6 +2,7 @@
     /** @var \App\Models\User $user */
     $birthdate = $user->birthdate ? \Carbon\Carbon::parse($user->birthdate)->format('F d, Y') : 'N/A';
     $photoUrl = $user->profile_photo_url;
+    $defaultPhotoUrl = asset('images/city_of_general_trias_seal.png');
     $issuedAt = optional($onlineId)->issued_at ? optional($onlineId)->issued_at->format('M d, Y') : 'N/A';
     $idNumber = optional($onlineId)->id_number ?? 'N/A';
     $qrAccountNumber = trim((string) ($user->account_number ?? ''));
@@ -158,6 +159,14 @@
         object-fit: cover;
     }
 
+    .digital-id-photo-box img.digital-id-photo-placeholder {
+        width: 82%;
+        height: 82%;
+        object-fit: contain;
+        object-position: center;
+        padding: 6px;
+    }
+
     .digital-id-photo-fallback {
         color: #355f98;
         font-size: 12px;
@@ -224,6 +233,7 @@
     .digital-id-value.mono {
         font-family: Consolas, 'Courier New', monospace;
         letter-spacing: 0.25px;
+        overflow-wrap: anywhere;
     }
 
     .digital-id-bottom-row {
@@ -302,73 +312,239 @@
     }
 
     @media (max-width: 760px) {
-        .digital-id-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 14px 16px;
+        .digital-id-card {
+            border-radius: 14px;
         }
 
-        .digital-id-badge { align-self: flex-start; }
+        .digital-id-header {
+            gap: 8px;
+            padding: 12px 14px;
+        }
 
-        .digital-id-meta-main { font-size: 15px; }
+        .digital-id-badge {
+            padding: 7px 10px;
+            font-size: 9px;
+        }
+
+        .digital-id-meta-main { font-size: 14px; }
+        .digital-id-meta-small { font-size: 9px; }
 
         .digital-id-body {
-            grid-template-columns: 1fr;
-            padding: 16px;
+            grid-template-columns: 120px minmax(0, 1fr);
+            gap: 10px;
+            padding: 12px 14px;
         }
 
         .digital-id-photo-panel {
-            max-width: 230px;
-            margin: 0 auto;
+            padding: 7px;
         }
 
         .digital-id-photo-box {
-            height: 220px;
+            height: 130px;
+            border-width: 1px;
         }
 
-        .digital-id-name { font-size: 20px; }
+        .digital-id-photo-label {
+            margin-top: 5px;
+            font-size: 8px;
+            letter-spacing: 0.55px;
+        }
+
+        .digital-id-name {
+            font-size: 15px;
+            margin: 0 0 8px;
+            padding-bottom: 7px;
+        }
 
         .digital-id-grid {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px 8px;
+        }
+
+        .digital-id-label {
+            font-size: 8px;
+            margin-bottom: 2px;
+            letter-spacing: 0.45px;
+        }
+
+        .digital-id-value {
+            font-size: 10px;
+            line-height: 1.25;
         }
 
         .digital-id-bottom-row {
-            grid-template-columns: 1fr;
+            grid-template-columns: minmax(0, 1fr) 104px;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .digital-id-signature {
+            font-size: 8px;
+            padding-top: 5px;
+            letter-spacing: 0.4px;
         }
 
         .digital-id-qr {
-            justify-self: start;
+            width: 100%;
+            padding: 4px;
+        }
+
+        .digital-id-qr-empty {
+            min-height: 88px;
+            font-size: 9px;
+            padding: 6px;
+        }
+
+        .digital-id-qr-label {
+            margin-top: 4px;
+            font-size: 8px;
+            letter-spacing: 0.45px;
         }
 
         .digital-id-footer {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 6px;
-            font-size: 10px;
+            padding: 8px 14px;
+            gap: 8px;
+            font-size: 9px;
         }
     }
 
     @media (max-width: 480px) {
-        .digital-id-header-left { gap: 8px; }
-
-        .digital-id-seal { width: 38px; height: 38px; }
-
-        .digital-id-meta-main { font-size: 13px; }
-        .digital-id-meta-small { font-size: 9px; }
-
-        .digital-id-body { padding: 12px; gap: 12px; }
-
-        .digital-id-name { font-size: 18px; }
-
-        .digital-id-grid {
-            grid-template-columns: 1fr;
+        .digital-id-header {
+            padding: 10px 12px;
         }
 
-        .digital-id-value { font-size: 12px; }
+        .digital-id-header-left { gap: 6px; }
+
+        .digital-id-seal { width: 34px; height: 34px; }
+
+        .digital-id-meta-main { font-size: 12px; }
+        .digital-id-meta-small { font-size: 8px; }
+
+        .digital-id-badge {
+            font-size: 8px;
+            padding: 6px 8px;
+        }
+
+        .digital-id-body {
+            grid-template-columns: 104px minmax(0, 1fr);
+            padding: 10px 12px;
+            gap: 8px;
+        }
+
+        .digital-id-photo-box {
+            height: 112px;
+        }
+
+        .digital-id-grid {
+            gap: 5px 7px;
+        }
+
+        .digital-id-label { font-size: 7px; }
+        .digital-id-value { font-size: 9px; }
+
+        .digital-id-bottom-row {
+            grid-template-columns: minmax(0, 1fr) 92px;
+            gap: 6px;
+        }
 
         .digital-id-footer {
-            font-size: 10px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+            font-size: 8px;
+            padding: 7px 12px;
+        }
+    }
+
+    @media (max-width: 390px) {
+        .digital-id-header {
+            padding: 9px 10px;
+        }
+
+        .digital-id-body {
+            grid-template-columns: 96px minmax(0, 1fr);
+            padding: 9px 10px;
+            gap: 7px;
+        }
+
+        .digital-id-photo-box {
+            height: 104px;
+        }
+
+        .digital-id-name {
+            font-size: 14px;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+        }
+
+        .digital-id-label { font-size: 6.8px; }
+        .digital-id-value { font-size: 8.6px; }
+
+        .digital-id-bottom-row {
+            grid-template-columns: minmax(0, 1fr) 84px;
+            gap: 5px;
+        }
+
+        .digital-id-footer {
+            padding: 6px 10px;
+            font-size: 7.8px;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .digital-id-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .digital-id-badge {
+            align-self: flex-start;
+        }
+
+        .digital-id-body {
+            grid-template-columns: 1fr;
+            padding: 9px;
+            gap: 7px;
+        }
+
+        .digital-id-photo-panel {
+            max-width: 96px;
+            margin: 0;
+        }
+
+        .digital-id-photo-box {
+            height: 100px;
+        }
+
+        .digital-id-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 4px 6px;
+        }
+
+        .digital-id-bottom-row {
+            grid-template-columns: minmax(0, 1fr) 80px;
+        }
+    }
+
+    @media (max-width: 430px) and (orientation: portrait) {
+        .digital-id-shell {
+            max-width: 390px;
+        }
+
+        .digital-id-card {
+            border-radius: 12px;
+        }
+    }
+
+    @media (max-height: 500px) and (orientation: landscape) {
+        .digital-id-shell {
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .digital-id-card {
+            min-width: 560px;
         }
     }
 </style>
@@ -396,7 +572,7 @@
                     @if($photoUrl)
                         <img src="{{ $photoUrl }}" alt="Profile Photo">
                     @else
-                        <div class="digital-id-photo-fallback">No profile photo</div>
+                        <img src="{{ $defaultPhotoUrl }}" alt="Default resident photo template" class="digital-id-photo-placeholder">
                     @endif
                 </div>
                 <div class="digital-id-photo-label">Resident Photo</div>
