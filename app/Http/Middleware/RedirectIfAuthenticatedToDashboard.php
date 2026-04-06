@@ -31,6 +31,15 @@ class RedirectIfAuthenticatedToDashboard
         }
 
         if ($user->role === 'resident') {
+            if ($user->isResidentAccountExpired()) {
+                Auth::logout();
+
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect('/login')->with('error', 'Your resident account has expired after 1 year. Please contact the barangay office for renewal.');
+            }
+
             return redirect('/resident/dashboard');
         }
 

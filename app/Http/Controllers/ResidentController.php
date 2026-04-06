@@ -63,6 +63,9 @@ class ResidentController extends Controller
             'middle_name' => 'nullable|string|max:255',
             'surname' => 'required|string|max:255',
             'phone' => 'nullable|string',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_relationship' => 'nullable|string|max:100',
+            'emergency_contact_number' => 'nullable|string|max:20',
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
             'house_no' => 'nullable|string|max:100',
@@ -75,20 +78,45 @@ class ResidentController extends Controller
             'marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
         ]);
 
+        if (!empty($validated['phone'])) {
+            $validated['phone'] = trim((string) $validated['phone']);
+
+            validator(
+                ['phone' => $validated['phone']],
+                [
+                    'phone' => [
+                        'nullable',
+                        'string',
+                        'max:20',
+                        \Illuminate\Validation\Rule::unique('users', 'phone')
+                            ->ignore(auth()->id())
+                            ->whereNull('deleted_at'),
+                    ],
+                ]
+            )->validate();
+        }
+
+        if (empty($validated['nationality'])) {
+            $validated['nationality'] = 'Filipino';
+        }
+
         $user = auth()->user();
 
         $user->first_name = $validated['first_name'];
         $user->middle_name = $validated['middle_name'] ?? null;
         $user->surname = $validated['surname'];
-        $user->phone = $request->phone;
+        $user->phone = $validated['phone'] ?? null;
+        $user->emergency_contact_name = $validated['emergency_contact_name'] ?? null;
+        $user->emergency_contact_relationship = $validated['emergency_contact_relationship'] ?? null;
+        $user->emergency_contact_number = $validated['emergency_contact_number'] ?? null;
         $user->father_name = $validated['father_name'] ?? null;
         $user->mother_name = $validated['mother_name'] ?? null;
         $user->house_no = $validated['house_no'] ?? null;
         $user->barangay = $validated['barangay'] ?? null;
         $user->municipality_city = $validated['municipality_city'] ?? null;
-        $user->nationality = $validated['nationality'] ?? null;
+        $user->nationality = $validated['nationality'];
         $user->address = $request->address;
-        $user->birthdate = $request->birthdate;
+        $user->birthdate = $validated['birthdate'] ?? null;
         $user->gender = $request->gender;
         $user->marital_status = $request->marital_status;
         $user->save();

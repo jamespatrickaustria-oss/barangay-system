@@ -102,11 +102,23 @@
 </div>
 
 <div class="resident-id-page-wrapper">
-    <button class="resident-id-print-button" onclick="window.print()">Print My ID</button>
+    <button id="residentIdFlipButton" class="resident-id-print-button" type="button" onclick="toggleResidentIdCardFromButton()">Flip to Back</button>
 
     @include('partials.digital-id-card', [
         'user' => $onlineId->user,
         'onlineId' => $onlineId,
+        'showInlineFlipControls' => false,
     ])
 </div>
+
+<script>
+    function toggleResidentIdCardFromButton() {
+        toggleResidentDigitalIdCard();
+
+        const flipButton = document.getElementById('residentIdFlipButton');
+        if (!flipButton) return;
+
+        flipButton.textContent = isResidentDigitalIdCardFlipped() ? 'Flip to Front' : 'Flip to Back';
+    }
+</script>
 @endsection

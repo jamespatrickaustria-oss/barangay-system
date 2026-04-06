@@ -1,11 +1,9 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Barangay Management System - Register</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+﻿@extends('layouts.auth')
+
+@section('title', 'Register')
+@section('subtitle', 'Create your resident account')
+
+@section('styles')
     <style>
         :root {
             --blue:       #1a6ec7;
@@ -57,6 +55,20 @@
             border-radius: 24px;
             padding: 48px;
             box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+        }
+
+        /* Use the shared outer auth card as the only visual card container. */
+        .login-card {
+            max-width: 960px;
+            padding: 34px 30px;
+        }
+
+        .register-card {
+            max-width: 100%;
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
         }
 
         /* Step Progress Indicator */
@@ -537,9 +549,9 @@
             .password-toggle { min-width: 44px; min-height: 44px; right: 6px; }
         }
     </style>
-</head>
-<body>
-<div class="left-panel">
+@endsection
+
+@section('content')
 <div class="register-card">
 
     <!-- Step Progress Indicator -->
@@ -680,7 +692,7 @@
                     <div class="form-group">
                         <label for="nationality">Nationality</label>
                         <input type="text" id="nationality" name="nationality"
-                               value="{{ old('nationality') }}"
+                               value="{{ old('nationality', 'Filipino') }}"
                                placeholder="e.g. Filipino"
                                class="@error('nationality') error @enderror">
                         @error('nationality')<div class="error-message">{{ $message }}</div>@enderror
@@ -746,6 +758,56 @@
                                    autocomplete="tel-national">
                         </div>
                         @error('phone')<div class="error-message">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="emergency_contact_name">Emergency Contact Name</label>
+                        <input type="text" id="emergency_contact_name" name="emergency_contact_name"
+                               value="{{ old('emergency_contact_name') }}"
+                               placeholder="e.g. Maria Dela Cruz"
+                               class="@error('emergency_contact_name') error @enderror">
+                        @error('emergency_contact_name')<div class="error-message">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="emergency_contact_relationship">Emergency Contact Relationship</label>
+                        <select id="emergency_contact_relationship" name="emergency_contact_relationship"
+                                class="@error('emergency_contact_relationship') error @enderror">
+                            <option value="">Select Relationship</option>
+                            <option value="Mother" @selected(old('emergency_contact_relationship') === 'Mother')>Mother</option>
+                            <option value="Father" @selected(old('emergency_contact_relationship') === 'Father')>Father</option>
+                            <option value="Spouse" @selected(old('emergency_contact_relationship') === 'Spouse')>Spouse</option>
+                            <option value="Sibling" @selected(old('emergency_contact_relationship') === 'Sibling')>Sibling</option>
+                            <option value="Guardian" @selected(old('emergency_contact_relationship') === 'Guardian')>Guardian</option>
+                            <option value="Child" @selected(old('emergency_contact_relationship') === 'Child')>Child</option>
+                            <option value="Relative" @selected(old('emergency_contact_relationship') === 'Relative')>Relative</option>
+                            <option value="Friend" @selected(old('emergency_contact_relationship') === 'Friend')>Friend</option>
+                            <option value="Other" @selected(old('emergency_contact_relationship') === 'Other')>Other</option>
+                        </select>
+                        @error('emergency_contact_relationship')<div class="error-message">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="emergency_contact_number">Emergency Contact Number</label>
+                        <div class="phone-wrapper" id="emergency_contact_wrapper">
+                            <span class="phone-prefix">+63</span>
+                            <input type="hidden" id="emergency_contact_number" name="emergency_contact_number" value="{{ old('emergency_contact_number') }}">
+                            <input type="tel" id="emergency_contact_number_local"
+                                   value="{{ preg_replace('/^\\+63\\s*/', '', old('emergency_contact_number')) }}"
+                                   placeholder="9XX XXX XXXX"
+                                   maxlength="12"
+                                   inputmode="numeric"
+                                   pattern="[0-9\s]*"
+                                   autocomplete="tel-national"
+                                   class="@error('emergency_contact_number') error @enderror">
+                        </div>
+                        @error('emergency_contact_number')<div class="error-message">{{ $message }}</div>@enderror
                     </div>
                 </div>
 
@@ -942,51 +1004,6 @@
 
     </form>
 </div>
-</div>
-
-<!-- FOOTER -->
-<footer style="background: linear-gradient(135deg, #0d1b2a 0%, #0a0f18 100%); color: rgba(255,255,255,0.75); padding: 48px 28px 24px; width: 100%;">
-    <div style="max-width: 1200px; margin: 0 auto;">
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 36px;">
-            <div>
-                <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px; text-decoration: none;">
-                    <img src="{{ file_exists(public_path('images/city_of_general_trias_seal.png')) ? asset('images/city_of_general_trias_seal.png') : asset('images/city_of_general_trias.png') }}" alt="Logo" style="width: 36px; height: 36px; filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.3));"/>
-                    <div style="line-height: 1.2;">
-                        <strong style="display: block; font-family: 'Plus Jakarta Sans', serif; font-size: 14px; color: white; letter-spacing: 0.01em;">Barangay Management System</strong>
-                        <span style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;">City of General Trias</span>
-                    </div>
-                </div>
-                <p style="font-size: 13px; line-height: 1.7; max-width: 220px;">Empowering communities through technology-driven governance and transparent service delivery.</p>
-            </div>
-            <div>
-                <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Services</h4>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Barangay Clearance</a>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Residency Certificate</a>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Business Permits</a>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Indigency Certificate</a>
-            </div>
-            <div>
-                <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Resources</h4>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">FAQs</a>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Privacy Policy</a>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Terms of Use</a>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Support</a>
-            </div>
-            <div>
-                <h4 style="font-size: 13px; font-weight: 700; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px;">Government</h4>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">City Hall</a>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">City Council</a>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">Barangay Officials</a>
-                <a href="#" style="display: block; font-size: 13px; color: rgba(255,255,255,.6); text-decoration: none; margin-bottom: 10px; transition: color .2s;">DRRMO</a>
-            </div>
-        </div>
-        <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-            <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin: 0;">© 2026 City Government of General Trias, Cavite. All rights reserved.</p>
-            <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin: 0;">Powered by the Barangay Management System</p>
-        </div>
-    </div>
-</footer>
-
 
 <!-- Confirm Modal -->
 <div class="confirm-overlay hidden" id="registerConfirmOverlay"
@@ -1244,6 +1261,18 @@ function assemblePhone() {
     document.getElementById('phone_full').value = '+63' + local;
 }
 
+function assembleEmergencyContactNumber() {
+    const localInput = document.getElementById('emergency_contact_number_local');
+    const hiddenInput = document.getElementById('emergency_contact_number');
+
+    if (!localInput || !hiddenInput) {
+        return;
+    }
+
+    const local = (localInput.value || '').trim().replace(/\s/g, '');
+    hiddenInput.value = local ? '+63' + local : '';
+}
+
 /* ---- Confirm modal + form submit ------------------------------ */
 const registerForm     = document.getElementById('residentRegisterForm');
 const confirmOverlay   = document.getElementById('registerConfirmOverlay');
@@ -1253,6 +1282,7 @@ const confirmSubmitBtn = document.getElementById('confirmRegisterSubmit');
 registerForm.addEventListener('submit', function (e) {
     if (registerForm.dataset.confirmed === 'true') {
         assemblePhone();
+        assembleEmergencyContactNumber();
         return;
     }
     e.preventDefault();
@@ -1264,6 +1294,7 @@ cancelConfirmBtn.addEventListener('click', () => confirmOverlay.classList.add('h
 
 confirmSubmitBtn.addEventListener('click', () => {
     assemblePhone();
+    assembleEmergencyContactNumber();
     registerForm.dataset.confirmed = 'true';
     registerForm.submit();
 });
@@ -1308,6 +1339,16 @@ function togglePassword(fieldId) {
 })();
 @endif
 
+@if(old('emergency_contact_number'))
+(function () {
+    const raw = "{{ addslashes(old('emergency_contact_number')) }}";
+    const input = document.getElementById('emergency_contact_number_local');
+    if (input) {
+        input.value = raw.startsWith('+63') ? raw.substring(3) : raw;
+    }
+})();
+@endif
+
 /* ---- Jump to the step that has server-side errors ------------- */
 @if($errors->any())
 (function () {
@@ -1332,5 +1373,4 @@ function togglePassword(fieldId) {
 })();
 @endif
 </script>
-</body>
-</html>
+@endsection

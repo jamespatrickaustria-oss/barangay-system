@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\ChatThread;
 use App\Models\ChatMessage;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Carbon;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -36,6 +37,9 @@ class User extends Authenticatable implements FilamentUser
         'profile_photo',
         'resident_id_number',
         'phone',
+        'emergency_contact_name',
+        'emergency_contact_relationship',
+        'emergency_contact_number',
         'father_name',
         'mother_name',
         'house_no',
@@ -141,6 +145,32 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Get resident account expiry timestamp (1 year after approval).
+     */
+    public function residentAccountExpiresAt(): ?Carbon
+    {
+        if (!$this->isResident() || !$this->isApproved() || !$this->approved_at) {
+            return null;
+        }
+
+        return $this->approved_at->copy()->addYear();
+    }
+
+    /**
+     * Determine if a resident account is expired.
+     */
+    public function isResidentAccountExpired(): bool
+    {
+        $expiresAt = $this->residentAccountExpiresAt();
+
+        if (!$expiresAt) {
+            return false;
+        }
+
+        return now()->greaterThanOrEqualTo($expiresAt);
+    }
+
+    /**
      * Get the full name of the user.
      */
     public function getFullName(): string
@@ -243,45 +273,26 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * Generate a unique account number based on name initials and birthdate.
-     *
-     * Format: {initials}{YYYYMMDD}[optional suffix]
-     * Example: Juan Dela Cruz, 2004-05-12 → JDC20040512
+     * Generate a unique account number in the format GNT-27-YYYY-000001.
      */
     public static function generateAccountNumber(string $firstName, ?string $middleName, string $surname, ?string $birthdate): string
     {
-        // Build initials from first letter of each name part
-        $initials = strtoupper(substr($firstName, 0, 1));
-        if (!empty($middleName)) {
-            $initials .= strtoupper(substr($middleName, 0, 1));
-        }
-        $initials .= strtoupper(substr($surname, 0, 1));
+        $year = now()->format('Y');
+        $prefix = 'GNT-27-' . $year . '-';
 
-        // Format birthdate as YYYYMMDD, fallback to current date if not provided
-        $dateStr = $birthdate
-            ? \Carbon\Carbon::parse($birthdate)->format('Ymd')
-            : now()->format('Ymd');
+        $lastAccountNumber = static::withTrashed()
+            ->where('account_number', 'like', $prefix . '%')
+            ->orderByDesc('account_number')
+            ->value('account_number');
 
-        $base = $initials . $dateStr;
+        $nextSequence = 1;
 
-        // Ensure uniqueness by appending a suffix letter if the base already exists
-        $candidate = $base;
-        $suffix = 'A';
-        while (static::withTrashed()->where('account_number', $candidate)->exists()) {
-            $candidate = $base . $suffix;
-            $suffix = chr(ord($suffix) + 1);
-            // After Z, use AA, AB, etc. via a numeric fallback
-            if ($suffix > 'Z') {
-                $candidate = $base . random_int(10, 99);
-                // Keep trying until we find a unique one
-                while (static::withTrashed()->where('account_number', $candidate)->exists()) {
-                    $candidate = $base . random_int(10, 99);
-                }
-                break;
-            }
+        if (!empty($lastAccountNumber)) {
+            $lastSequence = (int) substr($lastAccountNumber, strrpos($lastAccountNumber, '-') + 1);
+            $nextSequence = $lastSequence + 1;
         }
 
-        return $candidate;
+        return $prefix . str_pad((string) $nextSequence, 6, '0', STR_PAD_LEFT);
     }
 
     /**

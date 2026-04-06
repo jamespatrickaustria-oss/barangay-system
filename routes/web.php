@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\UserActivityLogController;
+use App\Http\Controllers\Auth\ForgotPasswordOtpController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,15 @@ Route::middleware(['guest.redirect', 'prevent-back-history'])->group(function ()
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/verify-official-email', [AuthController::class, 'verifyOfficialEmail'])->name('verify-official-email');
+});
+
+Route::middleware('guest')->group(function () {
+    Route::get('/forgot-password', [ForgotPasswordOtpController::class, 'showForgotForm'])->name('password.forgot');
+    Route::post('/forgot-password', [ForgotPasswordOtpController::class, 'sendOtp'])->name('password.otp.send');
+    Route::get('/verify-otp', [ForgotPasswordOtpController::class, 'showVerifyForm'])->name('password.otp.verify');
+    Route::post('/verify-otp', [ForgotPasswordOtpController::class, 'verifyOtp'])->name('password.otp.check');
+    Route::get('/reset-password', [ForgotPasswordOtpController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [ForgotPasswordOtpController::class, 'resetPassword'])->name('password.update');
 });
 
 Route::middleware(['auth', 'prevent-back-history'])->group(function () {

@@ -28,6 +28,11 @@ class AuthController extends Controller
             return redirect('/login')->with('error', 'Your account was rejected. Please contact the barangay office.');
         }
 
+        if ($user->isResidentAccountExpired()) {
+            Auth::logout();
+            return redirect('/login')->with('error', 'Your resident account has expired after 1 year. Please contact the barangay office for renewal.');
+        }
+
         // Admin can proceed as long as status is approved.
         if ($user->role === 'admin') {
             return redirect('/admin/dashboard');
@@ -124,6 +129,13 @@ class AuthController extends Controller
                 ->with('error', 'Your account has been rejected. Please contact the barangay office for more information.');
         }
 
+        // Resident accounts are valid for 1 year from approval date.
+        if ($user->isResidentAccountExpired()) {
+            return redirect()->back()
+                ->withInput($request->only('email'))
+                ->with('error', 'Your resident account has expired after 1 year. Please contact the barangay office for renewal.');
+        }
+
         // Check password
         if (!Hash::check($password, $user->password)) {
             return redirect()->back()
@@ -174,6 +186,9 @@ class AuthController extends Controller
                 Password::min(8)->letters()->mixedCase()->numbers()->symbols(),
             ],
             'phone' => 'required|string|max:20',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_relationship' => 'nullable|string|max:100',
+            'emergency_contact_number' => 'nullable|string|max:20',
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
             'house_no' => 'nullable|string|max:100',
@@ -185,6 +200,24 @@ class AuthController extends Controller
             'gender' => 'nullable|in:male,female,other',
             'marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
         ]);
+
+        $validated['phone'] = trim((string) ($validated['phone'] ?? ''));
+
+        validator(
+            ['phone' => $validated['phone']],
+            [
+                'phone' => [
+                    'required',
+                    'string',
+                    'max:20',
+                    \Illuminate\Validation\Rule::unique('users', 'phone')->whereNull('deleted_at'),
+                ],
+            ]
+        )->validate();
+
+        if (empty($validated['nationality'])) {
+            $validated['nationality'] = 'Filipino';
+        }
 
         // Generate unique account number from name initials + birthdate
         $accountNumber = User::generateAccountNumber(
@@ -202,12 +235,15 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
+            'emergency_contact_name' => $validated['emergency_contact_name'] ?? null,
+            'emergency_contact_relationship' => $validated['emergency_contact_relationship'] ?? null,
+            'emergency_contact_number' => $validated['emergency_contact_number'] ?? null,
             'father_name' => $validated['father_name'] ?? null,
             'mother_name' => $validated['mother_name'] ?? null,
             'house_no' => $validated['house_no'] ?? null,
             'barangay' => $validated['barangay'] ?? null,
             'municipality_city' => $validated['municipality_city'] ?? null,
-            'nationality' => $validated['nationality'] ?? null,
+            'nationality' => $validated['nationality'],
             'address' => $validated['address'] ?? null,
             'birthdate' => $validated['birthdate'] ?? null,
             'gender' => $validated['gender'] ?? null,

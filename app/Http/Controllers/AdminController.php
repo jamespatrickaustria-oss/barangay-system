@@ -134,19 +134,38 @@ class AdminController extends Controller
             $user->ensureResidentAccountNumber();
 
             if (!OnlineId::where('user_id', $user->id)->exists()) {
-                OnlineId::create([
+                $onlineId = OnlineId::create([
                     'user_id'   => $user->id,
                     'id_number' => OnlineId::generateIdNumber(),
                     'issued_at' => now(),
                 ]);
+
+                if (empty($user->resident_id_number)) {
+                    $user->resident_id_number = $onlineId->id_number;
+                    $user->save();
+                }
+            } elseif (empty($user->resident_id_number)) {
+                $existingOnlineId = OnlineId::where('user_id', $user->id)->first();
+
+                if ($existingOnlineId) {
+                    $user->resident_id_number = $existingOnlineId->id_number;
+                    $user->save();
+                }
             }
 
-            MailService::send(
+            $emailSent = MailService::send(
                 $user->email,
                 $user->getFullName(),
                 'Your Account Has Been Approved',
                 MailService::modernAccountApprovedEmail($user->getFullName(), url('/login'))
             );
+
+            if (!$emailSent) {
+                logger()->error('Failed to send resident approval email.', [
+                    'resident_user_id' => $user->id,
+                    'approved_by_user_id' => $authUser->id,
+                ]);
+            }
         }
 
         return redirect()->back()->with('success', 'User approved successfully.');
@@ -207,6 +226,22 @@ class AdminController extends Controller
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
         ]);
+
+        if (!empty($validated['phone'])) {
+            validator(
+                ['phone' => trim((string) $validated['phone'])],
+                [
+                    'phone' => [
+                        'nullable',
+                        'string',
+                        'max:20',
+                        \Illuminate\Validation\Rule::unique('users', 'phone')->whereNull('deleted_at'),
+                    ],
+                ]
+            )->validate();
+
+            $validated['phone'] = trim((string) $validated['phone']);
+        }
 
         $plain = $request->password;
 

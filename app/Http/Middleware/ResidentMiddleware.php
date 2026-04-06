@@ -30,6 +30,11 @@ class ResidentMiddleware
             return redirect('/login')->with('error', 'Your account has been rejected. Please contact the barangay office.');
         }
 
+        if ($user->isResidentAccountExpired()) {
+            auth()->logout();
+            return redirect('/login')->with('error', 'Your resident account has expired after 1 year. Please contact the barangay office for renewal.');
+        }
+
         return $next($request);
     }
 }

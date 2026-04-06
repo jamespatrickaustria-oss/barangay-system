@@ -278,7 +278,7 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route($routePrefix . '.residents.update', $resident->id) }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route($routePrefix . '.residents.update', $resident->id) }}" enctype="multipart/form-data" id="residentEditForm">
         @csrf
         @method('PUT')
 
@@ -467,7 +467,7 @@
                         type="text"
                         id="nationality"
                         name="nationality"
-                        value="{{ old('nationality', $resident->nationality) }}"
+                        value="{{ old('nationality', $resident->nationality ?? 'Filipino') }}"
                         placeholder="e.g. Filipino"
                     >
                     @error('nationality')
@@ -478,8 +478,88 @@
 
             <div>
                 <div class="form-group">
+                    <label for="emergency_contact_name">Emergency Contact Name</label>
+                    <input
+                        type="text"
+                        id="emergency_contact_name"
+                        name="emergency_contact_name"
+                        value="{{ old('emergency_contact_name', $resident->emergency_contact_name) }}"
+                        placeholder="Enter full name"
+                    >
+                    @error('emergency_contact_name')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="emergency_contact_relationship">Emergency Contact Relationship</label>
+                    <input
+                        type="text"
+                        id="emergency_contact_relationship"
+                        name="emergency_contact_relationship"
+                        value="{{ old('emergency_contact_relationship', $resident->emergency_contact_relationship) }}"
+                        placeholder="e.g. Mother, Father, Spouse, Sibling"
+                    >
+                    @error('emergency_contact_relationship')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label for="emergency_contact_number">Emergency Contact Number</label>
+                    <div style="display:flex;align-items:stretch;border:2px solid var(--border);border-radius:12px;overflow:hidden;background:white;" id="emergency_contact_wrapper">
+                        <span style="display:flex;align-items:center;padding:0 14px;background:var(--blue-light);font-weight:700;color:var(--text);border-right:2px solid var(--border);white-space:nowrap;flex-shrink:0;">+63</span>
+                        <input
+                            type="hidden"
+                            id="emergency_contact_number"
+                            name="emergency_contact_number"
+                            value="{{ old('emergency_contact_number', $resident->emergency_contact_number) }}"
+                        >
+                        <input
+                            type="tel"
+                            id="emergency_contact_number_local"
+                            value="{{ preg_replace('/^\\+63\\s*/', '', old('emergency_contact_number', $resident->emergency_contact_number)) }}"
+                            placeholder="9XX XXX XXXX"
+                            maxlength="12"
+                            inputmode="numeric"
+                            pattern="[0-9\s]*"
+                            style="border:none;outline:none;flex:1;min-width:0;"
+                        >
+                    </div>
+                    @error('emergency_contact_number')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
                     <label for="phone">Phone Number</label>
                     <input 
+
+<script>
+    const residentEditForm = document.getElementById('residentEditForm');
+
+    function assembleResidentEmergencyContactNumber() {
+        const localInput = document.getElementById('emergency_contact_number_local');
+        const hiddenInput = document.getElementById('emergency_contact_number');
+
+        if (!localInput || !hiddenInput) {
+            return;
+        }
+
+        const local = (localInput.value || '').trim().replace(/\s/g, '');
+        hiddenInput.value = local ? '+63' + local : '';
+    }
+
+    if (residentEditForm) {
+        residentEditForm.addEventListener('submit', assembleResidentEmergencyContactNumber);
+    }
+</script>
                         type="tel" 
                         id="phone" 
                         name="phone"

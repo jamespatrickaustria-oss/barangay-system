@@ -218,17 +218,15 @@ class UserApprovalResource extends Resource
 
                         // Generate resident ID and create online ID if resident is being approved
                         if (!$record->resident_id_number) {
-                            $residentIdNumber = 'RES-' . Str::upper(Str::random(8)) . '-' . $record->id;
-                            $record->update(['resident_id_number' => $residentIdNumber]);
-
-                            // Create OnlineId record
-                            \App\Models\OnlineId::firstOrCreate(
+                            $onlineId = \App\Models\OnlineId::firstOrCreate(
                                 ['user_id' => $record->id],
                                 [
                                     'id_number' => \App\Models\OnlineId::generateIdNumber(),
                                     'issued_at' => now(),
                                 ]
                             );
+
+                            $record->update(['resident_id_number' => $onlineId->id_number]);
                         }
 
                         // Send notification to the approved user
@@ -239,17 +237,18 @@ class UserApprovalResource extends Resource
                             'message' => 'Your registration has been approved by ' . $currentUser->getFullName() . '. You can now access the system as a Resident.',
                         ]);
 
-                        // Send email notification (optional)
-                        try {
-                            \App\Services\MailService::send(
-                                $record->email,
-                                $record->getFullName(),
-                                'Registration Approved',
-                                'Your registration has been approved. You can now log in to the system.'
-                            );
-                        } catch (\Exception $e) {
-                            // Log email failure but don't stop the approval process
-                            logger()->error('Failed to send approval email: ' . $e->getMessage());
+                        $emailSent = \App\Services\MailService::send(
+                            $record->email,
+                            $record->getFullName(),
+                            'Your Account Has Been Approved',
+                            \App\Services\MailService::modernAccountApprovedEmail($record->getFullName(), url('/login'))
+                        );
+
+                        if (!$emailSent) {
+                            logger()->error('Failed to send resident approval email.', [
+                                'resident_user_id' => $record->id,
+                                'approved_by_user_id' => $currentUser->id,
+                            ]);
                         }
                     })
                     ->visible(fn (User $record) => $record->status === 'pending' && $record->role === 'resident')

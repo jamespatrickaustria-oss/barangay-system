@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OnlineId extends Model
 {
+    private const ID_PREFIX = 'GNT-27-';
+
+    private const SEQUENCE_LENGTH = 6;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -39,14 +43,27 @@ class OnlineId extends Model
     }
 
     /**
-     * Generate a new ID number in the format BRY-YYYY-XXXXX.
+     * Generate a new ID number in the format GNT-27-YYYY-000001.
      */
     public static function generateIdNumber(): string
     {
-        $year = date('Y');
-        $count = static::whereYear('created_at', $year)->count() + 1;
-        $formattedCount = str_pad($count, 5, '0', STR_PAD_LEFT);
-        
-        return "BRY-{$year}-{$formattedCount}";
+        $year = now()->format('Y');
+        $prefix = static::ID_PREFIX . $year . '-';
+
+        $lastIdNumber = static::query()
+            ->where('id_number', 'like', $prefix . '%')
+            ->orderByDesc('id_number')
+            ->value('id_number');
+
+        $nextSequence = 1;
+
+        if (!empty($lastIdNumber)) {
+            $lastSequence = (int) substr($lastIdNumber, strrpos($lastIdNumber, '-') + 1);
+            $nextSequence = $lastSequence + 1;
+        }
+
+        $formattedCount = str_pad((string) $nextSequence, static::SEQUENCE_LENGTH, '0', STR_PAD_LEFT);
+
+        return $prefix . $formattedCount;
     }
 }

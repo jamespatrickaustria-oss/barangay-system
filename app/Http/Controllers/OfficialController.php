@@ -122,6 +122,9 @@ class OfficialController extends Controller
                 Password::min(8)->letters()->mixedCase()->numbers()->symbols(),
             ],
             'phone' => 'required|string|max:20',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_relationship' => 'nullable|string|max:100',
+            'emergency_contact_number' => 'nullable|string|max:20',
             'profile_photo' => $this->residentPhotoValidationRule(true),
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
@@ -134,6 +137,24 @@ class OfficialController extends Controller
             'gender' => 'nullable|in:male,female,other',
             'marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
         ]);
+
+        $validated['phone'] = trim((string) ($validated['phone'] ?? ''));
+
+        validator(
+            ['phone' => $validated['phone']],
+            [
+                'phone' => [
+                    'required',
+                    'string',
+                    'max:20',
+                    \Illuminate\Validation\Rule::unique('users', 'phone')->whereNull('deleted_at'),
+                ],
+            ]
+        )->validate();
+
+        if (empty($validated['nationality'])) {
+            $validated['nationality'] = 'Filipino';
+        }
 
         $plainPassword = $request->password;
 
@@ -158,13 +179,16 @@ class OfficialController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
+            'emergency_contact_name' => $validated['emergency_contact_name'] ?? null,
+            'emergency_contact_relationship' => $validated['emergency_contact_relationship'] ?? null,
+            'emergency_contact_number' => $validated['emergency_contact_number'] ?? null,
             'profile_photo' => $profilePhotoPath,
             'father_name' => $validated['father_name'] ?? null,
             'mother_name' => $validated['mother_name'] ?? null,
             'house_no' => $validated['house_no'] ?? null,
             'barangay' => $validated['barangay'] ?? null,
             'municipality_city' => $validated['municipality_city'] ?? null,
-            'nationality' => $validated['nationality'] ?? null,
+            'nationality' => $validated['nationality'],
             'address' => $validated['address'] ?? null,
             'birthdate' => $validated['birthdate'] ?? null,
             'gender' => $validated['gender'] ?? null,
@@ -174,11 +198,16 @@ class OfficialController extends Controller
             'account_number' => $accountNumber,
         ]);
 
-        OnlineId::create([
+        $onlineId = OnlineId::create([
             'user_id' => $user->id,
             'id_number' => OnlineId::generateIdNumber(),
             'issued_at' => now(),
         ]);
+
+        if (empty($user->resident_id_number)) {
+            $user->resident_id_number = $onlineId->id_number;
+            $user->save();
+        }
 
         Notification::create([
             'user_id' => $user->id,
@@ -223,6 +252,9 @@ class OfficialController extends Controller
             'middle_name' => 'nullable|string|max:255',
             'surname' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_relationship' => 'nullable|string|max:100',
+            'emergency_contact_number' => 'nullable|string|max:20',
             'profile_photo' => $this->residentPhotoValidationRule(false),
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
@@ -235,6 +267,28 @@ class OfficialController extends Controller
             'gender' => 'nullable|in:male,female,other',
             'marital_status' => 'nullable|in:single,married,divorced,widowed,separated',
         ]);
+
+        if (array_key_exists('phone', $validated) && $validated['phone'] !== null && $validated['phone'] !== '') {
+            $validated['phone'] = trim((string) $validated['phone']);
+
+            validator(
+                ['phone' => $validated['phone']],
+                [
+                    'phone' => [
+                        'nullable',
+                        'string',
+                        'max:20',
+                        \Illuminate\Validation\Rule::unique('users', 'phone')
+                            ->ignore($resident->id)
+                            ->whereNull('deleted_at'),
+                    ],
+                ]
+            )->validate();
+        }
+
+        if (empty($validated['nationality'])) {
+            $validated['nationality'] = 'Filipino';
+        }
 
         if ($request->hasFile('profile_photo')) {
             $existingPhotoPath = $resident->getProfilePhotoStoragePath();
@@ -325,19 +379,38 @@ class OfficialController extends Controller
         $resident->save();
 
         if (!OnlineId::where('user_id', $resident->id)->exists()) {
-            OnlineId::create([
+            $onlineId = OnlineId::create([
                 'user_id' => $resident->id,
                 'id_number' => OnlineId::generateIdNumber(),
                 'issued_at' => now(),
             ]);
+
+            if (empty($resident->resident_id_number)) {
+                $resident->resident_id_number = $onlineId->id_number;
+                $resident->save();
+            }
+        } else {
+            $onlineId = OnlineId::where('user_id', $resident->id)->first();
+
+            if ($onlineId && empty($resident->resident_id_number)) {
+                $resident->resident_id_number = $onlineId->id_number;
+                $resident->save();
+            }
         }
 
-        MailService::send(
+        $emailSent = MailService::send(
             $resident->email,
             $resident->getFullName(),
             'Your Account Has Been Approved',
             MailService::modernAccountApprovedEmail($resident->getFullName(), url('/login'))
         );
+
+        if (!$emailSent) {
+            logger()->error('Failed to send resident approval email.', [
+                'resident_user_id' => $resident->id,
+                'approved_by_user_id' => optional(auth()->user())->id,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Resident approved successfully.');
     }
@@ -401,6 +474,11 @@ class OfficialController extends Controller
             ]
         );
 
+        if (empty($resident->resident_id_number)) {
+            $resident->resident_id_number = $onlineId->id_number;
+            $resident->save();
+        }
+
         if (is_null($onlineId->issued_at)) {
             $onlineId->issued_at = now();
             $onlineId->save();
@@ -436,6 +514,24 @@ class OfficialController extends Controller
         ]);
 
         $user = auth()->user();
+
+        if (array_key_exists('phone', $validated) && $validated['phone'] !== null && $validated['phone'] !== '') {
+            $validated['phone'] = trim((string) $validated['phone']);
+
+            validator(
+                ['phone' => $validated['phone']],
+                [
+                    'phone' => [
+                        'nullable',
+                        'string',
+                        'max:20',
+                        \Illuminate\Validation\Rule::unique('users', 'phone')
+                            ->ignore($user->id)
+                            ->whereNull('deleted_at'),
+                    ],
+                ]
+            )->validate();
+        }
 
         $profilePhotoPath = $user->profile_photo;
 

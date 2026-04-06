@@ -139,13 +139,16 @@
     .table-card {
         background: white;
         border-radius: 16px;
-        overflow: hidden;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
         box-shadow: 0 2px 12px rgba(26, 111, 204, 0.08);
         margin-bottom: 20px;
     }
 
     table {
         width: 100%;
+        min-width: 860px;
         border-collapse: collapse;
     }
 
@@ -249,7 +252,7 @@
     .actions-cell {
         display: flex;
         gap: 6px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
     }
 
     .action-btn {
@@ -265,6 +268,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        white-space: nowrap;
     }
 
     .approve-btn {
