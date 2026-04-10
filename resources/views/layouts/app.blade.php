@@ -79,7 +79,7 @@
         }
 
         .sidebar-logo {
-            padding: 24px 20px;
+            padding: 19px 20px;
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -182,6 +182,7 @@
             flex-direction: column;
             gap: 4px;
             overflow-y: auto;
+            height: 80%;
         }
 
         .nav-section-label {
@@ -243,6 +244,7 @@
             font-size: 11px;
             color: var(--text-muted);
             text-align: center;
+            margin-bottom: 30px;
         }
 
         /* MAIN CONTENT */
@@ -256,13 +258,14 @@
 
         /* TOPBAR */
         .topbar {
+            
             background: var(--white);
             border-bottom: 1px solid var(--border);
-            height: 64px;
+            height: 81px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 28px;
+            padding: 24px 20px;
             position: sticky;
             top: 0;
             z-index: 50;
@@ -469,6 +472,7 @@
 
             .sidebar {
                 width: 220px;
+                height: 100%;
             }
 
             .topbar {
@@ -590,6 +594,7 @@
 
             .topbar {
                 padding: 10px 16px 10px 56px;
+                height: 75px;
             }
 
             .topbar-left .page-title {

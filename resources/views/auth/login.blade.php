@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
-@section('title', 'Login')
-@section('subtitle', 'Sign in to your account')
+@section('title', 'Log In')
+@section('subtitle', 'Log in to your account')
 
 @section('styles')
 <style>
@@ -201,9 +201,9 @@
         <a href="{{ route('password.forgot') }}" class="forgot-link">Forgot password?</a>
     </div>
 
-    <button type="submit" class="btn-primary">Sign In</button>
+    <button type="submit" class="btn-primary">Log In</button>
 
-    <p class="login-tip">Tip: Use your registered email address to avoid login errors.</p>
+    <p class="login-tip">Tip: Use your registered email address to avoid log in errors.</p>
 </form>
 @endsection
 
@@ -213,7 +213,7 @@
 </div>
 
 <div class="register-link">
-    Don't have an account? <a href="{{ route('register') }}">Create one now</a>
+    Don't have an account? <a href="{{ route('register') }}">Click here to register</a>
 </div>
 @endsection
 

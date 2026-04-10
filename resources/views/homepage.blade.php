@@ -7,7 +7,7 @@
   <title>PROJECT CONNECT</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="icon" type="image/x-icon" href="{{ asset('images/city_of_general_trias_seal.png') }}">
-  <link rel="icon" type="image/x-icon" href="{{ asset('images/city_of_general_trias_seal.png') }}">
+  
   <style>
     :root {
       --blue:       #1a6ec7;
@@ -59,6 +59,9 @@
       z-index: 9999;
       
     }
+	.service-card {
+    display: none !important;
+}
     /* ══════════════════════════════════════════════════════════════════
        HEADER
     ══════════════════════════════════════════════════════════════════ */
@@ -301,6 +304,8 @@
     }
 
     .stat-card {
+      width: 500px;
+      margin: 0 auto;
       text-align: center;
       padding: 24px;
       background: rgba(255, 255, 255, 0.1);
@@ -917,6 +922,8 @@
     ══════════════════════════════════════════════════════════════════ */
     @media (max-width: 768px) {
 
+
+
       .floatingPopup {
       width: 300px;
       position: fixed;
@@ -944,6 +951,17 @@
         padding: 60px 20px;
       
       }
+
+      .stat-card {
+      width: 350px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
       .city-hall {
       width: 95%;
       padding: 12px 28px; 
@@ -1028,7 +1046,6 @@
         <a href="#city-banner">
           <span>Contact</span>
         </a>
-        <a href="{{ route('login') }}" class="btn-primary">Login</a>
       </nav>
     </div>
   </header>
@@ -1061,10 +1078,10 @@
           <span class="stat-value">100K</span>
           <span class="stat-label">Registered Residents</span>
         </div>
-        <div class="stat-card">
+        <!-- <div class="stat-card">
           <span class="stat-value">24/7</span>
           <span class="stat-label">Free Wi-Fi Access</span>
-        </div>
+        </div> -->
       </div>
     </div>
   </section>
@@ -1117,19 +1134,7 @@
         </a>
       </div>
 
-        <div class="service-card">
-          <span class="service-icon">📢</span>
-          <h3>Announcements</h3>
-          <p>Stay updated with latest news, advisories, and community announcements.</p>
-          <a href="#announcements" class="service-link">View News ›</a>
-        </div>
-
-        <div class="service-card">
-          <span class="service-icon">🔔</span>
-          <h3>Notifications</h3>
-          <p>Receive real-time notifications about important updates and events.</p>
-          <a href="{{ route('login') }}" class="service-link">Enable Alerts ›</a>
-        </div>
+        
       </div>
     </div>
   </section>
@@ -1208,6 +1213,9 @@
     </div>
 
   </footer>
+
+
+  
   <script>
     // If this page is restored from BFCache, force a fresh request so
     // authenticated users are redirected by the server to their dashboard.

@@ -32,7 +32,7 @@
             justify-content: center;
             color: var(--text);
             background: linear-gradient(135deg, #f5f7fa 0%, #e8eef3 100%);
-            padding: 40px 20px;
+         
         }
 
         .left-panel {
@@ -346,7 +346,14 @@
         .form-grid .full { grid-column: 1 / -1; }
 
         /* Navigation buttons */
-        .nav-buttons { display: flex; gap: 12px; margin-top: 28px; }
+        .nav-buttons {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            gap: 12px;
+            margin-top: 10px;
+            width: 100%;
+        }
 
         .btn-primary {
             flex: 1;
@@ -360,7 +367,6 @@
             font-family: inherit;
             cursor: pointer;
             transition: opacity 0.2s, transform 0.1s;
-            min-height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -382,7 +388,6 @@
             font-family: inherit;
             cursor: pointer;
             transition: background 0.2s, border-color 0.2s, color 0.2s;
-            min-height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -506,7 +511,7 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            body { padding: 24px 16px; }
+            
             .register-card { padding: 28px 20px; border-radius: 16px; }
             .step-circle { width: 36px; height: 36px; font-size: 13px; }
             .step-label  { font-size: 11px; }
@@ -515,14 +520,18 @@
             .form-grid .full { grid-column: 1; }
             .form-group input,
             .form-group select { padding: 12px 14px; font-size: 16px; border-radius: 10px; min-height: 44px; }
-            .nav-buttons { flex-direction: column-reverse; }
-            .btn-back { flex: 1; }
+            /* .nav-buttons { flex-direction: column-reverse; }
+            .btn-back { flex: 1; } */
             .confirm-actions { flex-direction: column; }
             .confirm-btn, .cancel-btn { width: 100%; }
+
+
+            .nav-buttons { flex-direction: column-reverse; }
+            .btn-back { flex: 1; }
         }
 
         @media (max-width: 480px) {
-            body { padding: 16px 12px; }
+            
             .register-card { padding: 20px 16px; border-radius: 12px; }
             .step-progress { padding-bottom: 20px; margin-bottom: 24px; }
             .step-label { display: none; }
@@ -752,62 +761,12 @@
                             <span class="phone-prefix">+63</span>
                             <input type="tel" id="phone_local"
                                    placeholder="9XX XXX XXXX"
-                                   maxlength="12"
+                                   maxlength="10"
                                    inputmode="numeric"
                                    pattern="[0-9\s]*"
                                    autocomplete="tel-national">
                         </div>
                         @error('phone')<div class="error-message">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-
-                <div>
-                    <div class="form-group">
-                        <label for="emergency_contact_name">Emergency Contact Name</label>
-                        <input type="text" id="emergency_contact_name" name="emergency_contact_name"
-                               value="{{ old('emergency_contact_name') }}"
-                               placeholder="e.g. Maria Dela Cruz"
-                               class="@error('emergency_contact_name') error @enderror">
-                        @error('emergency_contact_name')<div class="error-message">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-
-                <div>
-                    <div class="form-group">
-                        <label for="emergency_contact_relationship">Emergency Contact Relationship</label>
-                        <select id="emergency_contact_relationship" name="emergency_contact_relationship"
-                                class="@error('emergency_contact_relationship') error @enderror">
-                            <option value="">Select Relationship</option>
-                            <option value="Mother" @selected(old('emergency_contact_relationship') === 'Mother')>Mother</option>
-                            <option value="Father" @selected(old('emergency_contact_relationship') === 'Father')>Father</option>
-                            <option value="Spouse" @selected(old('emergency_contact_relationship') === 'Spouse')>Spouse</option>
-                            <option value="Sibling" @selected(old('emergency_contact_relationship') === 'Sibling')>Sibling</option>
-                            <option value="Guardian" @selected(old('emergency_contact_relationship') === 'Guardian')>Guardian</option>
-                            <option value="Child" @selected(old('emergency_contact_relationship') === 'Child')>Child</option>
-                            <option value="Relative" @selected(old('emergency_contact_relationship') === 'Relative')>Relative</option>
-                            <option value="Friend" @selected(old('emergency_contact_relationship') === 'Friend')>Friend</option>
-                            <option value="Other" @selected(old('emergency_contact_relationship') === 'Other')>Other</option>
-                        </select>
-                        @error('emergency_contact_relationship')<div class="error-message">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-
-                <div>
-                    <div class="form-group">
-                        <label for="emergency_contact_number">Emergency Contact Number</label>
-                        <div class="phone-wrapper" id="emergency_contact_wrapper">
-                            <span class="phone-prefix">+63</span>
-                            <input type="hidden" id="emergency_contact_number" name="emergency_contact_number" value="{{ old('emergency_contact_number') }}">
-                            <input type="tel" id="emergency_contact_number_local"
-                                   value="{{ preg_replace('/^\\+63\\s*/', '', old('emergency_contact_number')) }}"
-                                   placeholder="9XX XXX XXXX"
-                                   maxlength="12"
-                                   inputmode="numeric"
-                                   pattern="[0-9\s]*"
-                                   autocomplete="tel-national"
-                                   class="@error('emergency_contact_number') error @enderror">
-                        </div>
-                        @error('emergency_contact_number')<div class="error-message">{{ $message }}</div>@enderror
                     </div>
                 </div>
 
@@ -868,17 +827,6 @@
 
                 <div>
                     <div class="form-group">
-                        <label for="province">Province</label>
-                        <input type="text" id="province" name="province"
-                               value="{{ old('province', 'Cavite') }}"
-                               readonly
-                               class="@error('province') error @enderror">
-                        @error('province')<div class="error-message">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-
-                <div>
-                    <div class="form-group">
                         <label for="municipality_city">City</label>
                         <input type="text" id="municipality_city" name="municipality_city"
                                value="{{ old('municipality_city', 'General Trias') }}"
@@ -888,6 +836,71 @@
                     </div>
                 </div>
 
+                <div>
+                    <div class="form-group">
+                        <label for="province">Province</label>
+                        <input type="text" id="province" name="province"
+                               value="{{ old('province', 'Cavite') }}"
+                               readonly
+                               class="@error('province') error @enderror">
+                        @error('province')<div class="error-message">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
+
+                <div>
+                    <div class="form-group">
+                        <label for="emergency_contact_name">Emergency Contact Name</label>
+                        <input type="text" id="emergency_contact_name" name="emergency_contact_name"
+                               value="{{ old('emergency_contact_name') }}"
+                               placeholder="e.g. Maria Dela Cruz"
+                               class="@error('emergency_contact_name') error @enderror">
+                        @error('emergency_contact_name')<div class="error-message">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="emergency_contact_relationship">Emergency Contact Relationship</label>
+                        <select id="emergency_contact_relationship" name="emergency_contact_relationship"
+                                class="@error('emergency_contact_relationship') error @enderror">
+                            <option value="">Select Relationship</option>
+                            <option value="Mother" @selected(old('emergency_contact_relationship') === 'Mother')>Mother</option>
+                            <option value="Father" @selected(old('emergency_contact_relationship') === 'Father')>Father</option>
+                            <option value="Spouse" @selected(old('emergency_contact_relationship') === 'Spouse')>Spouse</option>
+                            <option value="Sibling" @selected(old('emergency_contact_relationship') === 'Sibling')>Sibling</option>
+                            <option value="Guardian" @selected(old('emergency_contact_relationship') === 'Guardian')>Guardian</option>
+                            <option value="Child" @selected(old('emergency_contact_relationship') === 'Child')>Child</option>
+                            <option value="Relative" @selected(old('emergency_contact_relationship') === 'Relative')>Relative</option>
+                            <option value="Friend" @selected(old('emergency_contact_relationship') === 'Friend')>Friend</option>
+                            <option value="Other" @selected(old('emergency_contact_relationship') === 'Other')>Other</option>
+                        </select>
+                        @error('emergency_contact_relationship')<div class="error-message">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
+                
+
+                <div>
+                    <div class="form-group">
+                        <label for="emergency_contact_number">Emergency Contact Number</label>
+                        <div class="phone-wrapper" id="emergency_contact_wrapper">
+                            <span class="phone-prefix">+63</span>
+                            <input type="hidden" id="emergency_contact_number" name="emergency_contact_number" value="{{ old('emergency_contact_number') }}">
+                            <input type="tel" id="emergency_contact_number_local"
+                                   value="{{ preg_replace('/^\\+63\\s*/', '', old('emergency_contact_number')) }}"
+                                   placeholder="9XX XXX XXXX"
+                                   maxlength="10"
+                                   inputmode="numeric"
+                                   pattern="[0-9\s]*"
+                                   autocomplete="tel-national"
+                                   class="@error('emergency_contact_number') error @enderror">
+                        </div>
+                        @error('emergency_contact_number')<div class="error-message">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
+                
             </div>
 
             <div class="nav-buttons">
@@ -899,7 +912,7 @@
                 </button>
                 <button type="button" class="btn-primary" onclick="goToStep(3)">
                     Next &mdash; Account Details
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg width="18" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
                     </svg>
                 </button>

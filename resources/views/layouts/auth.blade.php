@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Barangay Management System - @yield('title')</title>
+    <title>PROJECT CONNECT - @yield('title')</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet"/>
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/city_of_general_trias_seal.png') }}">
     <style>
         :root {
             --blue: #0f5ea8;
@@ -38,11 +39,12 @@
             flex-wrap: wrap;
             min-height: 100vh;
             color: var(--text);
+            padding-top: 32px;
             background:
                 radial-gradient(circle at 12% 15%, rgba(15, 94, 168, 0.17), rgba(15, 94, 168, 0) 38%),
                 radial-gradient(circle at 88% 6%, rgba(47, 125, 74, 0.16), rgba(47, 125, 74, 0) 32%),
                 linear-gradient(130deg, #f5f9fe 0%, #e8f1f8 52%, #edf7f0 100%);
-            padding: 42px 20px 20px;
+            
         }
 
         .left-panel {
@@ -367,9 +369,6 @@
         }
 
         @media (max-width: 768px) {
-            body {
-                padding: 24px 16px;
-            }
 
             .login-card {
                 padding: 28px 20px;
@@ -418,13 +417,14 @@
         }
 
         @media (max-width: 480px) {
-            body {
-                padding: 16px 12px;
-            }
+
+ 
 
             .login-card {
                 padding: 20px 16px;
                 border-radius: 16px;
+                margin: 20px;
+                
             }
 
             .login-seal img {
@@ -468,7 +468,7 @@
 
                 <div class="card-header">
                     <span class="badge">Resident Portal</span>
-                    <h2>@yield('title')</h2>
+                    <!-- <h3>@yield('title')</h3> -->
                     <p>@yield('subtitle')</p>
                 </div>
 
@@ -508,39 +508,32 @@
             <div class="site-footer-grid">
                 <div>
                     <div class="footer-brand">
-                        <img src="{{ $sealLogo }}" alt="Logo"/>
+                        <!-- <img src="{{ asset('images/city_of_general_trias_seal.png')}}" alt="Logo"/> -->
                         <div>
-                            <strong>Barangay Management System</strong>
+                            <strong>PROJECT CONNECT</strong>
                             <span>City of General Trias</span>
                         </div>
                     </div>
-                    <p class="footer-summary">Empowering communities through technology-driven governance and transparent service delivery.</p>
+                    <p class="footer-summary">Providing transparent, efficient, and accessible government services to all residents of Barangay San Juan I, City of General Trias City, Cavite.</p>
+
+                    
                 </div>
                 <div>
-                    <h4 class="footer-heading">Services</h4>
-                    <a href="#" class="footer-link">Barangay Clearance</a>
-                    <a href="#" class="footer-link">Residency Certificate</a>
-                    <a href="#" class="footer-link">Business Permits</a>
-                    <a href="#" class="footer-link">Indigency Certificate</a>
+                    <h4 class="footer-heading">Quick Access</h4>
+                    <a href="{{ route('register') }}" class="footer-link">Register</a>
+                    <a href="#about" class="footer-link">Services</a>
+                    <a href="{{ route('contacts.page') }}" class="footer-link">Verifier</a>
                 </div>
                 <div>
-                    <h4 class="footer-heading">Resources</h4>
-                    <a href="#" class="footer-link">FAQs</a>
-                    <a href="#" class="footer-link">Privacy Policy</a>
-                    <a href="#" class="footer-link">Terms of Use</a>
-                    <a href="#" class="footer-link">Support</a>
+                    <h4 class="footer-heading">Connect</h4>
+                    <a href="https://www.facebook.com/profile.php?id=61577772153879" class="footer-link">Facebook</a>
+                    <a href="https://maps.app.goo.gl/jb8Hb745vhcvAAjD9" class="footer-link">Google Maps</a>
                 </div>
-                <div>
-                    <h4 class="footer-heading">Government</h4>
-                    <a href="#" class="footer-link">City Hall</a>
-                    <a href="#" class="footer-link">City Council</a>
-                    <a href="#" class="footer-link">Barangay Officials</a>
-                    <a href="#" class="footer-link">DRRMO</a>
-                </div>
+
             </div>
             <div class="footer-bottom">
                 <p>(c) 2026 City Government of General Trias, Cavite. All rights reserved.</p>
-                <p>Powered by the Barangay Management System</p>
+                
             </div>
         </div>
     </footer>

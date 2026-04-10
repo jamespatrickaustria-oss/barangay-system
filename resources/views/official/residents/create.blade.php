@@ -477,7 +477,7 @@
                             id="emergency_contact_number_local"
                             value="{{ preg_replace('/^\\+63\\s*/', '', old('emergency_contact_number')) }}"
                             placeholder="9XX XXX XXXX"
-                            maxlength="12"
+                            maxlength="10"
                             inputmode="numeric"
                             pattern="[0-9\s]*"
                             style="border:none;outline:none;flex:1;min-width:0;"
