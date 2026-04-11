@@ -103,51 +103,11 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $email = $request->email;
-        $password = $request->password;
-
-        // Check if user exists
-        $user = User::where('email', $email)->first();
-        
-        if (!$user) {
-            return redirect()->back()
-                ->withInput($request->only('email'))
-                ->with('error', 'Wrong email or password.');
-        }
-
-        // Check if user account is pending approval
-        if ($user->status === 'pending') {
-            return redirect()->back()
-                ->withInput($request->only('email'))
-                ->with('error', 'Your account is still pending approval. Please wait for authorization from an administrator.');
-        }
-
-        // Check if user account is rejected
-        if ($user->status === 'rejected') {
-            return redirect()->back()
-                ->withInput($request->only('email'))
-                ->with('error', 'Your account has been rejected. Please contact the barangay office for more information.');
-        }
-
-        // Resident accounts are valid for 1 year from approval date.
-        if ($user->isResidentAccountExpired()) {
-            return redirect()->back()
-                ->withInput($request->only('email'))
-                ->with('error', 'Your resident account has expired after 1 year. Please contact the barangay office for renewal.');
-        }
-
-        // Check password
-        if (!Hash::check($password, $user->password)) {
-            return redirect()->back()
-                ->withInput($request->only('email'))
-                ->with('error', 'Wrong email or password.');
-        }
-
         // Attempt authentication and respect the remember-me checkbox.
-        if (!Auth::attempt(['email' => $email, 'password' => $password], $request->boolean('remember'))) {
+        if (!Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             return redirect()->back()
                 ->withInput($request->only('email'))
-                ->with('error', 'Wrong email or password.');
+                ->with('error', 'Invalid email or password. Please try again.');
         }
 
         // Regenerate session ID after login to persist auth state securely.

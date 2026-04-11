@@ -353,18 +353,148 @@
         letter-spacing: 0.75px;
     }
 
-    @media (max-width: 932px) {
+    @media (max-width: 992px) {
         .digital-id-shell {
-            --id-scale: min(1, calc((100vw - 32px) / (var(--id-base-width) * 1px)));
-            height: calc(var(--id-base-height) * 1px * var(--id-scale));
+            height: auto;
+            padding: 8px;
+            display: block;
+        }
+
+        .digital-id-scene {
+            width: 100%;
+            height: auto;
+            perspective: none;
+            transform: none;
+        }
+
+        .digital-id-flipper {
+            height: auto;
+            transform: none !important;
+        }
+
+        .digital-id-face {
+            position: relative;
+            inset: auto;
+            border-radius: 14px;
+        }
+
+        .digital-id-front,
+        .digital-id-back {
+            transform: none;
+        }
+
+        .digital-id-back {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .digital-id-flipper.is-flipped .digital-id-front {
+            display: none;
+        }
+
+        .digital-id-flipper.is-flipped .digital-id-back {
+            display: flex;
+        }
+
+        .digital-id-header {
+            padding: 12px 14px;
+            gap: 10px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .digital-id-header-left {
+            width: 100%;
+        }
+
+        .digital-id-seal {
+            width: 46px;
+            height: 46px;
+        }
+
+        .digital-id-title-main {
+            font-size: 16px;
+        }
+
+        .digital-id-chip {
+            font-size: 10px;
+            padding: 5px 9px;
+        }
+
+        .digital-id-body,
+        .digital-id-back-content {
+            min-height: 0;
+            padding: 14px;
+        }
+
+        .digital-id-body {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .digital-id-photo-box {
+            max-width: 280px;
+        }
+
+        .digital-id-photo-box img {
+            height: 250px;
+        }
+
+        .digital-id-grid {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .digital-id-signature-row {
+            gap: 12px;
+        }
+
+        .digital-id-signature,
+        .digital-id-signature-row .digital-id-field,
+        .digital-id-action {
+            width: 100%;
+            min-width: 0 !important;
+        }
+
+        .digital-id-back-content {
+            grid-template-columns: 1fr;
+        }
+
+        .digital-id-qr {
+            justify-self: start;
+            width: 100%;
+            max-width: 220px;
+        }
+
+        .digital-id-qr img,
+        .digital-id-qr-empty {
+            width: 100%;
+            height: auto;
+            min-height: 180px;
         }
     }
 
-    @media (max-width: 640px) and (orientation: portrait) {
+    @media (max-width: 640px) {
         .digital-id-shell {
-            padding: 12px;
-            --id-scale: min(1, calc((100vw - 24px) / (var(--id-base-width) * 1px)));
-            height: calc(var(--id-base-height) * 1px * var(--id-scale));
+            padding: 4px;
+        }
+
+        .digital-id-title-top,
+        .digital-id-title-sub {
+            font-size: 10px;
+        }
+
+        .digital-id-title-main {
+            font-size: 14px;
+        }
+
+        .digital-id-label {
+            font-size: 9px;
+        }
+
+        .digital-id-value,
+        .digital-id-panel-text {
+            font-size: 13px;
         }
     }
 
@@ -392,7 +522,7 @@
                             <p class="digital-id-title-sub">Official Resident Identification Card</p>
                         </div>
                     </div>
-                    <span class="digital-id-chip">Front Side</span>
+                    <span class="digital-id-chip"> {{ $idNumber }}</span>
                 </div>
 
                 <div class="digital-id-body">
@@ -412,10 +542,7 @@
                                 <p class="digital-id-value">{{ $fullName }}</p>
                             </div>
 
-                            <div class="digital-id-field">
-                                <p class="digital-id-label">ID Number</p>
-                                <p class="digital-id-value">{{ $idNumber }}</p>
-                            </div>
+                        
 
                             <div class="digital-id-field">
                                 <p class="digital-id-label">Account Number</p>
@@ -446,7 +573,14 @@
                                 <p class="digital-id-label">Issued Date</p>
                                 <p class="digital-id-value">{{ $issuedDate }}</p>
                             </div>
+
+                            <div class="digital-id-field" >
+                                <p class="digital-id-label">Valid Until</p>
+                                <p class="digital-id-value">{{ $validUntil }}</p>
+                            </div>
                         </div>
+                                
+
 
                         <div class="digital-id-signature-row">
                             <div class="digital-id-signature">
@@ -454,10 +588,6 @@
                                 <div class="digital-id-signature-text">Signature</div>
                             </div>
 
-                            <div class="digital-id-field" style="min-width: 170px;">
-                                <p class="digital-id-label">Valid Until</p>
-                                <p class="digital-id-value">{{ $validUntil }}</p>
-                            </div>
 
                             @if($showInlineFlipControls)
                                 <button type="button" class="digital-id-action" onclick="toggleResidentDigitalIdCard()">Flip to Back</button>
@@ -477,7 +607,7 @@
                             <p class="digital-id-title-sub">Emergency and return information</p>
                         </div>
                     </div>
-                    <span class="digital-id-chip">Back Side</span>
+                    <span class="digital-id-chip"> {{ $idNumber }}</span>
                 </div>
 
                 <div class="digital-id-back-content">
