@@ -208,11 +208,15 @@
             @csrf
             
                <div class="input-row">
-                   <input type="text" id="contact" name="contact" placeholder="Enter valid number">
+                   <input type="text" 
+                    id="contact" 
+                    maxlength="14"
+                    name="contact" 
+                    placeholder="Enter valid number">
 
                 </div>
                 <div style="margin: 0 auto; padding-top: 10px;">
-                <button class="btn btn-add" formaction="{{ route('contacts.add') }}">Add</button>
+                <!-- <button class="btn btn-add" formaction="{{ route('contacts.add') }}">Add</button> -->
                 <button class="btn btn-verify" formaction="{{ route('contacts.verify') }}">Verify</button>
                 </div>
      
@@ -234,8 +238,7 @@
                 @forelse($contacts as $num)
                 <tr>
                     <td>#{{ $num->id }}</td>
-                    <td>{{ $num->value }}</td>
-                    <!-- <td>{{ $num->created_at }}</td> -->
+                    <td>{{ $num->phone }}</td>  
                 </tr>
                 @empty
                 <tr>
@@ -255,8 +258,8 @@
     const input = document.getElementById('contact');
 
     input.addEventListener('input', function() {
-        if (this.value.length > 11) {
-            this.value = this.value.slice(0, 11);
+        if (this.value.length > 13) {
+            this.value = this.value.slice(0, 13);
         }
     });
 </script>
