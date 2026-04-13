@@ -58,6 +58,8 @@ class ResidentController extends Controller
      */
     public function updateProfile(Request $request)
     {
+        abort_unless(in_array(auth()->user()->role, ['admin', 'official'], true), 403, 'Resident details are read-only.');
+
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',

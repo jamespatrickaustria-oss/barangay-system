@@ -5,6 +5,7 @@
 @section('content')
 @php
     $profilePhotoUrl = auth()->user()->profile_photo_url;
+    $canEditResidentDetails = in_array(auth()->user()->role, ['admin', 'official'], true);
 @endphp
 <style>
     .page-header {
@@ -178,6 +179,14 @@
         cursor: not-allowed;
     }
 
+    .form-group input:disabled,
+    .form-group select:disabled {
+        background: var(--gray-100);
+        color: var(--gray-600);
+        cursor: not-allowed;
+        opacity: 1;
+    }
+
     .readonly-note {
         font-size: 12px;
         color: var(--text-light);
@@ -229,6 +238,14 @@
 
     .save-btn:active {
         transform: scale(0.99);
+    }
+
+    .save-btn:disabled {
+        background: var(--gray-300);
+        color: var(--gray-600);
+        cursor: not-allowed;
+        transform: none;
+        opacity: 1;
     }
 
     .success-message {
@@ -358,6 +375,13 @@
     <div class="right-card">
         <h2 class="section-header">Personal Information</h2>
 
+        @unless($canEditResidentDetails)
+            <div class="success-message" style="background: var(--gray-50); border-color: var(--gray-200); color: var(--gray-700);">
+                <span style="font-size: 20px;">i</span>
+                <span>Resident details are view-only for resident accounts. Admin and Official users can edit these fields from the resident management pages.</span>
+            </div>
+        @endunless
+
         <form method="POST" action="{{ route('resident.profile.update') }}" id="residentProfileForm">
             @csrf
             @method('PUT')
@@ -372,6 +396,7 @@
                             name="first_name"
                             value="{{ old('first_name', auth()->user()->first_name) }}"
                             required
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('first_name')
                             <div class="error-message">{{ $message }}</div>
@@ -387,6 +412,7 @@
                             id="middle_name" 
                             name="middle_name"
                             value="{{ old('middle_name', auth()->user()->middle_name) }}"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('middle_name')
                             <div class="error-message">{{ $message }}</div>
@@ -403,6 +429,7 @@
                             name="surname"
                             value="{{ old('surname', auth()->user()->surname) }}"
                             required
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('surname')
                             <div class="error-message">{{ $message }}</div>
@@ -420,6 +447,7 @@
                             value="{{ old('phone', auth()->user()->phone) }}"
                             pattern="[0-9\+\-\(\)\s\.]*"
                             inputmode="numeric"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('phone')
                             <div class="error-message">{{ $message }}</div>
@@ -436,6 +464,7 @@
                             name="father_name"
                             value="{{ old('father_name', auth()->user()->father_name) }}"
                             placeholder="Enter full name"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('father_name')
                             <div class="error-message">{{ $message }}</div>
@@ -452,6 +481,7 @@
                             name="mother_name"
                             value="{{ old('mother_name', auth()->user()->mother_name) }}"
                             placeholder="Enter full name"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('mother_name')
                             <div class="error-message">{{ $message }}</div>
@@ -467,6 +497,7 @@
                             id="email" 
                             value="{{ auth()->user()->email }}"
                             readonly
+                            @disabled(! $canEditResidentDetails)
                         >
                         <p class="readonly-note">📧 Email address cannot be changed</p>
                     </div>
@@ -480,6 +511,7 @@
                             id="address" 
                             name="address"
                             value="{{ old('address', auth()->user()->address) }}"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('address')
                             <div class="error-message">{{ $message }}</div>
@@ -496,6 +528,7 @@
                             name="house_no"
                             value="{{ old('house_no', auth()->user()->house_no) }}"
                             placeholder="e.g. 123-B"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('house_no')
                             <div class="error-message">{{ $message }}</div>
@@ -512,6 +545,7 @@
                             name="barangay"
                             value="{{ old('barangay', auth()->user()->barangay) }}"
                             placeholder="e.g. Barangay San Juan"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('barangay')
                             <div class="error-message">{{ $message }}</div>
@@ -528,6 +562,7 @@
                             name="municipality_city"
                             value="{{ old('municipality_city', auth()->user()->municipality_city) }}"
                             placeholder="e.g. General Trias"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('municipality_city')
                             <div class="error-message">{{ $message }}</div>
@@ -544,6 +579,7 @@
                             name="nationality"
                             value="{{ old('nationality', auth()->user()->nationality ?? 'Filipino') }}"
                             placeholder="e.g. Filipino"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('nationality')
                             <div class="error-message">{{ $message }}</div>
@@ -560,6 +596,7 @@
                             name="emergency_contact_name"
                             value="{{ old('emergency_contact_name', auth()->user()->emergency_contact_name) }}"
                             placeholder="Enter full name"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('emergency_contact_name')
                             <div class="error-message">{{ $message }}</div>
@@ -576,6 +613,7 @@
                             name="emergency_contact_relationship"
                             value="{{ old('emergency_contact_relationship', auth()->user()->emergency_contact_relationship) }}"
                             placeholder="e.g. Mother, Father, Spouse, Sibling"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('emergency_contact_relationship')
                             <div class="error-message">{{ $message }}</div>
@@ -593,6 +631,7 @@
                                     id="emergency_contact_number"
                                     name="emergency_contact_number"
                                     value="{{ old('emergency_contact_number', auth()->user()->emergency_contact_number) }}"
+                                    @disabled(! $canEditResidentDetails)
                                 >
                                 <input
                                     type="tel"
@@ -603,6 +642,7 @@
                                     inputmode="numeric"
                                     pattern="[0-9\s]*"
                                     style="border:none;outline:none;flex:1;min-width:0;"
+                                    @disabled(! $canEditResidentDetails)
                                 >
                             </div>
                         @error('emergency_contact_number')
@@ -619,6 +659,7 @@
                             id="birthdate" 
                             name="birthdate"
                             value="{{ old('birthdate', optional(auth()->user()->birthdate)->format('Y-m-d')) }}"
+                            @disabled(! $canEditResidentDetails)
                         >
                         @error('birthdate')
                             <div class="error-message">{{ $message }}</div>
@@ -630,6 +671,7 @@
                     <div class="form-group">
                         <label for="gender">Gender</label>
                         <select id="gender" name="gender">
+                            @disabled(! $canEditResidentDetails)
                             <option value="">Select Gender</option>
                             <option value="male" @selected(old('gender', auth()->user()->gender) === 'male')>Male</option>
                             <option value="female" @selected(old('gender', auth()->user()->gender) === 'female')>Female</option>
@@ -645,6 +687,7 @@
                     <div class="form-group">
                         <label for="marital_status">Marital Status</label>
                         <select id="marital_status" name="marital_status">
+                            @disabled(! $canEditResidentDetails)
                             <option value="">Select Marital Status</option>
                             <option value="single" @selected(old('marital_status', auth()->user()->marital_status) === 'single')>Single</option>
                             <option value="married" @selected(old('marital_status', auth()->user()->marital_status) === 'married')>Married</option>
@@ -660,7 +703,8 @@
             </div>
 
             <div class="form-footer">
-                <button type="submit" class="save-btn">💾 Update Profile</button>
+                @if($canEditResidentDetails)
+                    <button type="submit" class="save-btn">💾 Update Profile</button>
             </div>
         </form>
     </div>
@@ -683,6 +727,23 @@
 
     if (residentProfileForm) {
         residentProfileForm.addEventListener('submit', assembleResidentEmergencyContactNumber);
+    }
+
+    const residentDetailInputs = residentProfileForm
+        ? residentProfileForm.querySelectorAll('input, select, textarea, button')
+        : [];
+
+    if (!{{ $canEditResidentDetails ? 'true' : 'false' }}) {
+        residentDetailInputs.forEach((element) => {
+            if (element.tagName === 'BUTTON') {
+                element.disabled = true;
+                return;
+            }
+
+            if (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA') {
+                element.disabled = true;
+            }
+        });
     }
 </script>
 
