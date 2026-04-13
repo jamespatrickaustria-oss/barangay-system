@@ -503,7 +503,7 @@
                     </div>
                 </div>
 
-                <div class="full">
+                <!-- <div class="full">
                     <div class="form-group">
                         <label for="address">Address</label>
                         <input 
@@ -517,7 +517,7 @@
                             <div class="error-message">{{ $message }}</div>
                         @enderror
                     </div>
-                </div>
+                </div> -->
 
                 <div>
                     <div class="form-group">
