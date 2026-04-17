@@ -7,6 +7,9 @@
     $profilePhotoUrl = auth()->user()->profile_photo_url;
     $canEditResidentDetails = in_array(auth()->user()->role, ['admin', 'official'], true);
 @endphp
+
+
+
 <style>
     .page-header {
         margin-bottom: 32px;
@@ -346,7 +349,7 @@
 
 @if(session('success'))
     <div class="success-message">
-        <span style="font-size: 20px;">✓</span>
+        <span style="font-size: 20px;">âœ“</span>
         <span>{{ session('success') }}</span>
     </div>
 @endif
@@ -499,7 +502,7 @@
                             readonly
                             @disabled(! $canEditResidentDetails)
                         >
-                        <p class="readonly-note">📧 Email address cannot be changed</p>
+                        <p class="readonly-note">ðŸ“§ Email address cannot be changed</p>
                     </div>
                 </div>
 
@@ -670,8 +673,7 @@
                 <div>
                     <div class="form-group">
                         <label for="gender">Gender</label>
-                        <select id="gender" name="gender">
-                            @disabled(! $canEditResidentDetails)
+                        <select id="gender" name="gender" @disabled(! $canEditResidentDetails)>
                             <option value="">Select Gender</option>
                             <option value="male" @selected(old('gender', auth()->user()->gender) === 'male')>Male</option>
                             <option value="female" @selected(old('gender', auth()->user()->gender) === 'female')>Female</option>
@@ -686,8 +688,7 @@
                 <div>
                     <div class="form-group">
                         <label for="marital_status">Marital Status</label>
-                        <select id="marital_status" name="marital_status">
-                            @disabled(! $canEditResidentDetails)
+                        <select id="marital_status" name="marital_status" @disabled(! $canEditResidentDetails)>
                             <option value="">Select Marital Status</option>
                             <option value="single" @selected(old('marital_status', auth()->user()->marital_status) === 'single')>Single</option>
                             <option value="married" @selected(old('marital_status', auth()->user()->marital_status) === 'married')>Married</option>
@@ -704,7 +705,9 @@
 
             <div class="form-footer">
                 @if($canEditResidentDetails)
-                    <button type="submit" class="save-btn">💾 Update Profile</button>
+                    <button type="submit" class="save-btn">ðŸ’¾ Update Profile</button>
+                @else
+                @endif
             </div>
         </form>
     </div>
@@ -748,3 +751,15 @@
 </script>
 
 @endsection
+        if (!localInput || !hiddenInput) {
+            return;
+        }
+
+        const local = (localInput.value || '').trim().replace(/\s/g, '');
+        hiddenInput.value = local ? '+63' + local : '';
+    }
+
+    if (residentProfileForm) {
+        residentProfileForm.addEventListener('submit', assembleResidentEmergencyContactNumber);
+    }
+</script>

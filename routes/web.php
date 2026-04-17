@@ -68,11 +68,31 @@ Route::get('/unauthorized', function () {
     return view('unauthorized');
 });
 
+
+
+/*
+|--------------------------------------------------------------------------
+| Captive Portal
+|--------------------------------------------------------------------------
+*/
+//From onegentri footer
+Route::get('/portal', function () {
+    return view('captive.homepage');
+})->name('captive.homepage');
+
+//From submit button in captive portal homepage
+Route::post('/portal', function () {
+    return view('captive.homepage');
+})->name('captive.homepage');
+
+
 /*
 |--------------------------------------------------------------------------
 | Verify the contact number
 |--------------------------------------------------------------------------
 */
+
+
 
 // Page (opened from footer link)
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.page');

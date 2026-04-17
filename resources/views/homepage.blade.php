@@ -1196,6 +1196,7 @@
           <li><a href="{{ route('register') }}">Register</a></li>
           <li><a href="#about">Services</a></li>
           <li><a href="{{ route('contacts.page') }}">Verifier</a></li>
+          <li><a href="{{ route('captive.homepage') }}">Captive Portal</a></li>
             
         </ul>
       </div>

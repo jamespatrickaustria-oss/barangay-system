@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title> PROJECT CONNECT - @yield('title') </title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('images/city_of_general_trias_seal.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/city_of_general_trias_seal.png') }}">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+
     
+
+
     <style>
         :root {
             --blue:       #1a6ec7;
@@ -1271,6 +1275,8 @@
                                     <span class="dropdown-item-icon">👤</span>
                                     My Profile
                                 </a>
+
+                                
                                 <a href="{{ route('resident.online-id') }}" class="dropdown-item">
                                     <span class="dropdown-item-icon">🪪</span>
                                     My Online ID
