@@ -1063,7 +1063,7 @@
       </p>
 
       <div class="hero-ctas">
-        <a href="#services" class="btn-white">
+        <a href="{{ route('register') }}" class="btn-white">
           Register
         </a>
 

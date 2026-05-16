@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="icon" type="image/x-icon" href="{{ asset('images/city_of_general_trias_seal.png') }}">
-    <title>ONE1GENTRI - Captive Portal</title>
+    <title>LINKED - Captive Portal</title>
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -68,18 +68,18 @@
         }
 
         .logo-icon {
-            width: 150px;
-            height: 150px;
+            width: 200px;
+            height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .logo-icon img {
-            width: 150px;
-            height: 150px;
-            object-fit: contain;
-
+            width: 200px;
+            height: auto;
+            object-fit: contain;   
+             
         }
 
         .logo-text {
@@ -227,10 +227,10 @@
         <div class="logo-wrap">
             <div class="logo-icon">
                 
-                <img src="{{ asset('images/city_of_general_trias_seal.png') }}" alt="Logo Here">
+                <img src="{{ asset('images/linked_logo.png') }}" alt="Linked Logo">
             </div>
             <div class="logo-text">
-                <h1> LINKED </h1>
+                <!-- <h1> LINKED </h1> -->
                 <p>Public Free Wi-Fi</p>
             </div>
         </div>
