@@ -1360,7 +1360,9 @@
         @yield('content')
     </main>
 
-    @include('resident.partials.chat-widget')
+    @unless(View::hasSection('hide_chat_widget'))
+        @include('resident.partials.chat-widget')
+    @endunless
 
     <!-- ══════════════════════════════════════════════════════════════════
        FOOTER

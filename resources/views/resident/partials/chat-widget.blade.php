@@ -367,6 +367,24 @@
         let lastMessageId = 0;
         let pollTimer = null;
         let previewObjectUrl = null;
+        let isSendingMessage = false;
+        let currentMessageToken = null;
+
+        const createMessageToken = () => {
+            if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                return window.crypto.randomUUID();
+            }
+
+            return `msg_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+        };
+
+        const ensureMessageToken = () => {
+            if (!currentMessageToken) {
+                currentMessageToken = createMessageToken();
+            }
+
+            return currentMessageToken;
+        };
 
         const getComposeState = () => {
             const hasText = input.value.trim().length > 0;
@@ -382,11 +400,23 @@
         const updateSendButtonState = () => {
             const state = getComposeState();
 
+            if (!state.hasContent) {
+                currentMessageToken = null;
+            } else {
+                ensureMessageToken();
+            }
+
             if (sendButton) {
-                sendButton.disabled = !state.hasContent;
+                sendButton.disabled = !state.hasContent || isSendingMessage;
             }
 
             if (!sendLabel || !sendButton) {
+                return;
+            }
+
+            if (isSendingMessage) {
+                sendLabel.textContent = 'Sending...';
+                sendButton.title = 'Sending message';
                 return;
             }
 
@@ -575,8 +605,13 @@
         };
 
         const sendMessage = async () => {
+            if (isSendingMessage) {
+                return;
+            }
+
             const body = input.value.trim();
             const hasImage = imageInput.files.length > 0;
+            const messageToken = ensureMessageToken();
 
             if (!body && !hasImage) {
                 input.focus();
@@ -586,38 +621,48 @@
             const formData = new FormData();
             if (body) formData.append('body', body);
             if (hasImage) formData.append('image', imageInput.files[0]);
+            formData.append('client_message_id', messageToken);
 
-            const response = await fetch('{{ route('resident.chat.send') }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrf,
-                    'Accept': 'application/json',
-                },
-                body: formData,
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                const firstValidationError = errorData?.errors
-                    ? Object.values(errorData.errors)[0]?.[0]
-                    : null;
-                alert(firstValidationError || errorData?.message || 'Unable to send message. Please try again.');
-                return;
-            }
-
-            const data = await response.json();
-            if (messageBox.querySelector('.chat-empty')) {
-                messageBox.innerHTML = '';
-            }
-
-            renderMessage(data.message);
-            scrollBottom();
-
-            input.value = '';
-            clearPreview();
+            isSendingMessage = true;
             updateSendButtonState();
-            
-            updateUnreadCount();
+
+            try {
+                const response = await fetch('{{ route('resident.chat.send') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrf,
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    const firstValidationError = errorData?.errors
+                        ? Object.values(errorData.errors)[0]?.[0]
+                        : null;
+                    alert(firstValidationError || errorData?.message || 'Unable to send message. Please try again.');
+                    return;
+                }
+
+                const data = await response.json();
+                if (messageBox.querySelector('.chat-empty')) {
+                    messageBox.innerHTML = '';
+                }
+
+                renderMessage(data.message);
+                scrollBottom();
+
+                input.value = '';
+                clearPreview();
+                currentMessageToken = null;
+                updateSendButtonState();
+
+                updateUnreadCount();
+            } finally {
+                isSendingMessage = false;
+                updateSendButtonState();
+            }
         };
 
         const openPanel = async () => {
