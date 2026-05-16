@@ -10,6 +10,7 @@
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    @vite(['resources/css/app.css','resources/js/app.js'])
     
     <style>
         :root {
@@ -200,7 +201,7 @@
             gap: 10px;
             padding: 10px 14px;
             border-radius: var(--radius);
-            color: var(--text-muted);
+            color: var(--text);
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
@@ -225,17 +226,18 @@
         }
 
         .nav-link:hover {
-            background: var(--blue-light);
-            color: var(--blue);
+            background: #f2f4f7;
+            color: var(--text);
         }
 
         .nav-link.active {
-            background: var(--blue);
-            color: var(--white);
+            background: #f2f4f7;
+            color: var(--text);
         }
 
         .nav-link.active:hover {
-            background: var(--blue-dark);
+            background: #e9edf2;
+            color: var(--text);
         }
 
         .sidebar-footer {
@@ -737,7 +739,8 @@
                         <a href="{{ route('official.dashboard') }}" class="nav-link {{ request()->is('official/dashboard') ? 'active' : '' }}">
                             <span class="nav-icon">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-3m0 0l7-4 7 4M5 9v7a1 1 0 001 1h12a1 1 0 001-1V9m-9 16l-7-4m0 0V5m7 4l7-4m0 0v14a1 1 0 01-1 1h-12a1 1 0 01-1-1V9m9 16l7-4"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 10.5L12 3l9 7.5"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5.25 9.75v10.5A1.5 1.5 0 006.75 21.75h10.5a1.5 1.5 0 001.5-1.5V9.75"></path>
                                 </svg>
                             </span>
                             <span>Dashboard</span>
@@ -761,7 +764,9 @@
                         <a href="{{ route('official.announcements.index') }}" class="nav-link {{ request()->is('official/announcements*') ? 'active' : '' }}">
                             <span class="nav-icon">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 001-5.868m-5.423 11.8a1.76 1.76 0 001.141-3.318m6.612-3.956h.008v.008h-.008v-.008zm0 8h.008v.008h-.008v-.008z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3.75 10.5l14.25-6v15l-14.25-6z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3.75 10.5v3"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18 9.75a3 3 0 010 4.5"></path>
                                 </svg>
                             </span>
                             <span>Announcements</span>
@@ -774,6 +779,16 @@
                             </span>
                             <span>Residents</span>
                         </a>
+
+                        <a href="{{ route('official.carousel-settings.index') }}" class="nav-link {{ request()->is('official/settings*') ? 'active' : '' }}">
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.591 1.058c1.527-.917 3.315.871 2.398 2.398a1.724 1.724 0 001.058 2.591c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.058 2.591c.917 1.527-.871 3.315-2.398 2.398a1.724 1.724 0 00-2.591 1.058c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.591-1.058c-1.527.917-3.315-.871-2.398-2.398a1.724 1.724 0 00-1.058-2.591c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.058-2.591C4.42 8.206 6.208 6.418 7.735 7.335a1.724 1.724 0 002.591-1.058z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </span>
+                            <span>Settings</span>
+                        </a>
                         
 
                     @elseif(auth()->user()->role === 'admin')
@@ -781,7 +796,8 @@
                         <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}">
                             <span class="nav-icon">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-3m0 0l7-4 7 4M5 9v7a1 1 0 001 1h12a1 1 0 001-1V9m-9 16l-7-4m0 0V5m7 4l7-4m0 0v14a1 1 0 01-1 1h-12a1 1 0 01-1-1V9m9 16l7-4"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 10.5L12 3l9 7.5"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5.25 9.75v10.5A1.5 1.5 0 006.75 21.75h10.5a1.5 1.5 0 001.5-1.5V9.75"></path>
                                 </svg>
                             </span>
                             <span>Dashboard</span>
@@ -790,7 +806,9 @@
                         <a href="{{ route('admin.announcements.index') }}" class="nav-link {{ request()->is('admin/announcements*') ? 'active' : '' }}">
                             <span class="nav-icon">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 001-5.868m-5.423 11.8a1.76 1.76 0 001.141-3.318m6.612-3.956h.008v.008h-.008v-.008zm0 8h.008v.008h-.008v-.008z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3.75 10.5l14.25-6v15l-14.25-6z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3.75 10.5v3"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18 9.75a3 3 0 010 4.5"></path>
                                 </svg>
                             </span>
                             <span>Announcements</span>
@@ -799,7 +817,10 @@
                         <a href="{{ route('admin.officials.index') }}" class="nav-link {{ request()->is('admin/officials*') ? 'active' : '' }}">
                             <span class="nav-icon">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 19.5v-1.875A3.375 3.375 0 0011.625 14.25h-3.75A3.375 3.375 0 004.5 17.625V19.5"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 10.5a3 3 0 100-6 3 3 0 000 6z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16.5 10.5a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.5 19.5v-1.125A2.625 2.625 0 0016.875 15.75"></path>
                                 </svg>
                             </span>
                             <span>Barangay Officials</span>
@@ -830,6 +851,16 @@
                                 </svg>
                             </span>
                             <span>Activity Logs</span>
+                        </a>
+
+                        <a href="{{ route('admin.carousel-settings.index') }}" class="nav-link {{ request()->is('admin/settings*') ? 'active' : '' }}">
+                            <span class="nav-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.591 1.058c1.527-.917 3.315.871 2.398 2.398a1.724 1.724 0 001.058 2.591c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.058 2.591c.917 1.527-.871 3.315-2.398 2.398a1.724 1.724 0 00-2.591 1.058c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.591-1.058c-1.527.917-3.315-.871-2.398-2.398a1.724 1.724 0 00-1.058-2.591c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.058-2.591C4.42 8.206 6.208 6.418 7.735 7.335a1.724 1.724 0 002.591-1.058z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </span>
+                            <span>Settings</span>
                         </a>
 
                         

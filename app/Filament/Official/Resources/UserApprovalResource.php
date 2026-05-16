@@ -3,6 +3,7 @@
 namespace App\Filament\Official\Resources;
 
 use App\Models\User;
+use BackedEnum;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -30,7 +31,7 @@ class UserApprovalResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Users';
 
-    protected static string $navigationIcon = Heroicon::OutlineCheckCircle;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlineCheckCircle;
 
     protected static ?int $navigationSort = 0;
 

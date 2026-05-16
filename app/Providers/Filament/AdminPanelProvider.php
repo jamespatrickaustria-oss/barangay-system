@@ -32,7 +32,6 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('admin')
-            ->responsive()
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('16rem')
             ->collapsedSidebarWidth('4rem')
@@ -55,6 +54,11 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Admin\Resources\Users\UserResource::class,
                 \App\Filament\Admin\Resources\Residents\ResidentResource::class,
                 \App\Filament\Admin\Resources\Announcements\AnnouncementResource::class,
+                \App\Filament\Admin\Resources\CarouselSlides\CarouselSlideResource::class,
+                \App\Filament\Admin\Resources\CarouselSettings\CarouselSettingResource::class,
+            ])
+            ->clusters([
+                \App\Filament\Clusters\SettingsCluster::class,
             ])
             ->widgets([
                 AccountWidget::class,

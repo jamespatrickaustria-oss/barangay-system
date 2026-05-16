@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PROJECT CONNECT</title>
-  <title>PROJECT CONNECT</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="icon" type="image/x-icon" href="{{ asset('images/city_of_general_trias_seal.png') }}">
   
@@ -60,7 +59,7 @@
       
     }
 	.service-card {
-    display: none !important;
+  display: block;
 }
     /* ══════════════════════════════════════════════════════════════════
        HEADER
@@ -195,7 +194,7 @@
       margin-top: 50px;
       background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 45%, #1a8fc7 100%);
       color: white;
-      padding: 80px 32px;
+      padding: 96px 32px 80px;
       position: relative;
       overflow: hidden;
       
@@ -212,20 +211,48 @@
       border-radius: 50%;
     }
 
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: -14%;
+      bottom: -36%;
+      width: 580px;
+      height: 580px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.14), transparent 68%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
     .hero-inner {
-      max-width: 1200px;
+      max-width: 1240px;
       margin: 0 auto;
-      text-align: center;
       position: relative;
       z-index: 2;
     }
 
+    .hero-layout {
+      display: grid;
+      grid-template-columns: minmax(300px, 1fr) minmax(420px, 1.08fr);
+      align-items: center;
+      gap: clamp(28px, 4vw, 52px);
+      margin-bottom: 30px;
+    }
+
+    .hero-copy {
+      text-align: left;
+    }
+
+    .hero-media {
+      width: 100%;
+    }
+
     .hero-title {
-      font-family: ''DM Sans', sans-serif';
+      font-family: 'DM Sans', sans-serif;
       font-size: clamp(2rem, 5vw, 3.5rem);
       font-weight: 700;
       line-height: 1.2;
       margin-bottom: 16px;
+      letter-spacing: -0.02em;
     }
 
     .hero-subtitle {
@@ -237,18 +264,222 @@
 
     .hero-description {
       font-size: 1.1rem;
-      line-height: 1.8;
-      max-width: 800px;
-      margin: 0 auto 40px;
-      opacity: 0.95;
+      line-height: 1.75;
+      max-width: 640px;
+      margin: 0 0 34px;
+      opacity: 0.94;
+    }
+
+    .hero-welcome {
+      width: fit-content;
+      margin: 0 0 24px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .hero-carousel {
+      max-width: 1040px;
+      margin: 0 0 18px;
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 30px 70px rgba(4, 16, 35, 0.38);
+      background: #0b223d;
+      isolation: isolate;
+    }
+
+    .hero-carousel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.14), transparent 55%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-carousel-track {
+      display: flex;
+      height: clamp(240px, 40vw, 500px);
+      transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+      will-change: transform;
+      position: relative;
+      z-index: 0;
+    }
+
+    .hero-slide {
+      position: relative;
+      min-width: 100%;
+      height: 100%;
+      user-select: none;
+    }
+
+    .hero-slide::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(5, 16, 34, 0.1), rgba(5, 16, 34, 0.58));
+      pointer-events: none;
+    }
+
+    .hero-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+      transform: scale(1);
+      transition: transform 7s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    .hero-slide.active img {
+      transform: scale(1.06);
+    }
+
+    .hero-slide-caption {
+      position: absolute;
+      left: 20px;
+      bottom: 20px;
+      width: min(520px, calc(100% - 40px));
+      padding: 16px 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: linear-gradient(145deg, rgba(10, 30, 55, 0.8), rgba(11, 39, 70, 0.62));
+      backdrop-filter: blur(10px);
+      text-align: left;
+      z-index: 2;
+    }
+
+    .hero-slide-caption h3 {
+      margin: 0;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-weight: 700;
+      line-height: 1.3;
+      color: #ffffff;
+    }
+
+    .hero-slide-caption p {
+      margin: 6px 0 0;
+      color: rgba(255, 255, 255, 0.94);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+
+    .hero-carousel-controls {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      z-index: 3;
+    }
+
+    /* carousel indicators removed */
+
+    .hero-carousel-btn {
+      width: 48px;
+      height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: rgba(10, 34, 63, 0.64);
+      color: white;
+      padding: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 1.15rem;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-carousel-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: white;
+      transform: translateY(-1px);
+    }
+
+    .hero-carousel-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* counter chip removed */
+
+    .hero-carousel-progress {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 3;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      overflow: hidden;
+    }
+
+    .hero-carousel-progress-fill {
+      width: 100%;
+      height: 100%;
+      transform: scaleX(0);
+      transform-origin: left center;
+      background: linear-gradient(90deg, #fbbf24, #ffffff);
+    }
+
+    @keyframes heroProgress {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-carousel {
+        border-radius: 14px;
+      }
+
+      .hero-carousel-track {
+        height: clamp(220px, 58vw, 340px);
+      }
+
+      .hero-slide-caption {
+        left: 12px;
+        bottom: 58px;
+        width: calc(100% - 24px);
+        padding: 12px 14px;
+      }
+
+      .hero-carousel-controls {
+        right: 12px;
+        bottom: 10px;
+        gap: 8px;
+      }
+
+      .hero-carousel-btn {
+        width: 40px;
+        height: 40px;
+      }
+
+      /* mobile counter chip removed */
     }
 
     .hero-ctas {
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 16px;
       flex-wrap: wrap;
-      margin-bottom: 60px;
+      margin-bottom: 0;
     }
 
     .btn-white {
@@ -298,19 +529,21 @@
     .stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 32px;
-      max-width: 900px;
-      margin: 0 auto;
+      gap: 20px;
+      max-width: 100%;
+      margin: 0;
     }
 
     .stat-card {
-      width: 500px;
-      margin: 0 auto;
+      width: 100%;
+      margin: 0;
       text-align: center;
       padding: 24px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 24px rgba(6, 20, 40, 0.2);
     }
 
     .stat-value {
@@ -338,8 +571,10 @@
     ══════════════════════════════════════════════════════════════════ */
     .about {
       margin-top: 0px;
-      padding: 10px 32px;
-      background: var(--soft-blue);
+      padding: 40px 32px 60px;
+      background:
+        radial-gradient(80% 120% at 15% 10%, rgba(26, 110, 199, 0.08), transparent 55%),
+        var(--soft-blue);
     }
 
     .about-inner {
@@ -349,23 +584,18 @@
 
     .about-card {
       padding: 40px 32px;
-      background: var(--off-white);
+      background: linear-gradient(160deg, #ffffff, #f7fbff);
       border-radius: 16px;
       text-align: center;
-      border: 2px solid transparent;
+      border: 1px solid rgba(26, 110, 199, 0.16);
       transition: all 0.3s;
+      box-shadow: 0 12px 30px rgba(15, 55, 98, 0.08);
     }
 
     .about-card:hover {
       border-color: var(--blue);
       box-shadow: 0 8px 24px rgba(26,110,199,0.1);
       transform: translateY(-4px);
-    }
-
-    .about-icon {
-      font-size: 3rem;
-
-      margin-bottom: 20px;
     }
 
     .about-card h3 {
@@ -384,18 +614,78 @@
     .city-banner {
       margin-top: 50px;
       margin-bottom: 50px;
-      padding: 30px;
-      background: linear-gradient(135deg, var(--green), var(--green));
+      padding: 36px;
+      background: linear-gradient(135deg, var(--green), #2f8a48);
       border-radius: 16px;
-      text-align: center;
       color: white;
-      align-content: center;
-    
     }
 
-    .city-banner h3 {
-      font-size: 1.8rem;
-      margin-bottom: 8px;
+    .city-banner-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .city-banner-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .city-banner-heading h3 {
+      font-size: 1.6rem;
+      margin: 0;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .city-banner-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 6px;
+    }
+
+    .city-card {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      padding: 16px 18px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .city-card:hover {
+      transform: translateY(-6px);
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+
+    .city-card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .city-card-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+    .city-card-text { font-size: 0.95rem; color: rgba(255,255,255,0.95); }
+
+    @media (max-width: 768px) {
+      .city-banner-inner { display: block; }
+      .city-banner-heading { text-align: center; }
+      .city-banner-grid { grid-template-columns: 1fr; }
+      .city-card { justify-content: center; text-align: center; }
+      .city-card-icon { width: 48px; height: 48px; }
     }
 
     .city-banner p {
@@ -480,7 +770,7 @@
     ══════════════════════════════════════════════════════════════════ */
     .services {
       padding: 100px 32px;
-      background: var(--off-white);
+      background: linear-gradient(180deg, #f8fcff 0%, #ffffff 100%);
     }
 
     .services-inner {
@@ -498,10 +788,11 @@
       background: white;
       padding: 40px 32px;
       border-radius: 16px;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(26, 110, 199, 0.12);
       transition: all 0.3s;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 10px 24px rgba(13, 55, 99, 0.08);
     }
 
     .service-card::before {
@@ -567,7 +858,7 @@
     ══════════════════════════════════════════════════════════════════ */
     .announcements {
       padding: 100px 32px;
-      background: white;
+      background: linear-gradient(180deg, #ffffff 0%, #f6fbff 100%);
     }
 
     .announcements-inner {
@@ -585,10 +876,12 @@
       grid-template-columns: 80px 1fr;
       gap: 24px;
       padding: 32px;
-      background: var(--off-white);
+      background: #ffffff;
       border-radius: 12px;
       border-left: 4px solid var(--blue);
+      border: 1px solid rgba(26, 110, 199, 0.11);
       transition: all 0.3s;
+      box-shadow: 0 12px 24px rgba(13, 55, 99, 0.07);
     }
 
     .announcement-card:hover {
@@ -657,7 +950,7 @@
     ══════════════════════════════════════════════════════════════════ */
     .quick-links {
       padding: 80px 32px;
-      background: var(--blue-dark);
+      background: linear-gradient(135deg, #0f3d74 0%, #1a6ec7 55%, #228cb8 100%);
       color: white;
     }
 
@@ -681,13 +974,14 @@
 
     .quick-link-card {
       padding: 24px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.14);
       border-radius: 12px;
       text-align: center;
       text-decoration: none;
       color: white;
       transition: all 0.3s;
-      border: 2px solid transparent;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      backdrop-filter: blur(6px);
     }
 
     .quick-link-card:hover {
@@ -713,7 +1007,9 @@
     ══════════════════════════════════════════════════════════════════ */
     .contact {
       padding: 100px 32px;
-      background: var(--off-white);
+      background:
+        radial-gradient(70% 120% at 85% 0%, rgba(26, 110, 199, 0.08), transparent 60%),
+        var(--off-white);
     }
 
     .contact-inner {
@@ -952,6 +1248,41 @@
       
       }
 
+      .hero-layout {
+        grid-template-columns: 1fr;
+        gap: 22px;
+        margin-bottom: 20px;
+      }
+
+      .hero-copy {
+        text-align: center;
+      }
+
+      .hero-welcome {
+        font-size: 0.95rem;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-description {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-ctas {
+        justify-content: center;
+      }
+
+      .hero-carousel-controls {
+        right: 12px;
+        bottom: 10px;
+      }
+
+      .hero-carousel-btn {
+        width: 40px;
+        height: 40px;
+      }
+
       .stat-card {
       width: 350px;
       margin: 0 auto;
@@ -971,6 +1302,8 @@
 
       .stats {
         grid-template-columns: 1fr;
+        max-width: 420px;
+        margin: 0 auto;
       }
 
       .about,
@@ -1006,6 +1339,44 @@
 </head>
 <body>
 
+  @php
+    $carouselSlides = collect($slides ?? [])->keyBy('slot');
+
+    $carouselSlides = collect(range(1, 7))->map(function (int $slot) use ($carouselSlides): array {
+      $slide = $carouselSlides->get($slot);
+
+      $fallback = asset('images/carousel/slide' . $slot . '.svg');
+
+      $imageUrl = $fallback;
+      $title = null;
+      $description = null;
+      $enabled = true;
+      $linkUrl = null;
+      $openInNewTab = false;
+
+      if ($slide) {
+        $enabled = $slide['enabled'] ?? true;
+        $linkUrl = $slide['link_url'] ?? null;
+        $openInNewTab = $slide['open_in_new_tab'] ?? false;
+        if ($enabled && !empty($slide['image_url'])) {
+          $imageUrl = $slide['image_url'];
+        }
+        $title = $slide['title'] ?? null;
+        $description = $slide['description'] ?? null;
+      }
+
+      return [
+        'slot' => $slot,
+        'image_url' => $imageUrl,
+        'title' => $title,
+        'description' => $description,
+        'enabled' => $enabled,
+        'link_url' => $linkUrl,
+        'open_in_new_tab' => $openInNewTab,
+      ];
+    })->filter(fn($s) => (bool) ($s['enabled'] ?? true))->values();
+  @endphp
+
   <!-- ══════════════════════════════════════════════════════════════════
        MODAL - DATA PRIVACY NOTICE
   ══════════════════════════════════════════════════════════════════ -->
@@ -1016,7 +1387,6 @@
         information in accordance with the Data Privacy Act of 2012.
       </p> <br>
       <button class="btn btn-primary" onclick="closePopup()" style="float:right;">OK</button>
-    </div>
     </div>
 
 
@@ -1055,33 +1425,72 @@
   ══════════════════════════════════════════════════════════════════ -->
   <section class="hero">
     <div class="hero-inner">
-      <h1 class="hero-title">PROJECT CONNECT</h1>
-      <p class="hero-subtitle">Serving the Community of General Trias with Excellence</p>
-      <p class="hero-description">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, 
-        sunt in culpa qui officia deserunt mollit anim id est laborum.
-      </p>
+      <div class="hero-layout">
+        <div class="hero-copy">
+          <h1 class="hero-title">PROJECT CONNECT</h1>
+          <p class="hero-subtitle">Serving the Community of General Trias with Excellence</p>
+          <p class="hero-welcome">Welcome to San Juan I Barangay Information System.</p>
+          <p class="hero-description">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, 
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
 
-      <div class="hero-ctas">
-        <a href="#services" class="btn-white">
-          Register
-        </a>
+          <div class="hero-ctas">
+            <a href="{{ route('register') }}" class="btn-white">
+              Register
+            </a>
 
-        
-        <a href="{{ route('login') }}" class="btn-outline">
-          Log In
-        </a>
-      </div>
-
-      <div class="stats">
-        <div class="stat-card">
-          <span class="stat-value">100K</span>
-          <span class="stat-label">Registered Residents</span>
+            <a href="{{ route('login') }}" class="btn-outline">
+              Log In
+            </a>
+          </div>
         </div>
-        <!-- <div class="stat-card">
-          <span class="stat-value">24/7</span>
-          <span class="stat-label">Free Wi-Fi Access</span>
-        </div> -->
+
+        <div class="hero-media">
+          <div class="hero-carousel" id="heroCarousel">
+            <div class="hero-carousel-track">
+              @foreach ($carouselSlides as $index => $slide)
+                <div class="hero-slide {{ $index === 0 ? 'active' : '' }}" data-index="{{ $index }}" aria-hidden="{{ $index === 0 ? 'false' : 'true' }}">
+                  @if (!empty($slide['link_url']))
+                    <a href="{{ $slide['link_url'] }}" {{ !empty($slide['open_in_new_tab']) ? 'target="_blank" rel="noopener noreferrer"' : '' }}>
+                      <img src="{{ $slide['image_url'] }}" alt="Homepage slide {{ $index + 1 }}" loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
+                    </a>
+                  @else
+                    <img src="{{ $slide['image_url'] }}" alt="Homepage slide {{ $index + 1 }}" loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
+                  @endif
+                  @if (!empty($slide['title']) || !empty($slide['description']))
+                    <div class="hero-slide-caption">
+                      @if (!empty($slide['title']))
+                        <h3>{{ $slide['title'] }}</h3>
+                      @endif
+                      @if (!empty($slide['description']))
+                        <p>{{ $slide['description'] }}</p>
+                      @endif
+                    </div>
+                  @endif
+                </div>
+              @endforeach
+            </div>
+            <div class="hero-carousel-controls" aria-label="Carousel navigation">
+              <button type="button" class="hero-carousel-btn" data-carousel="prev" aria-label="Previous slide">&#10094;</button>
+              <button type="button" class="hero-carousel-btn" data-carousel="next" aria-label="Next slide">&#10095;</button>
+            </div>
+            <div class="hero-carousel-progress" aria-hidden="true">
+              <span class="hero-carousel-progress-fill" id="heroCarouselProgress"></span>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat-card">
+              <span class="stat-value">100K</span>
+              <span class="stat-label">Registered Residents</span>
+            </div>
+            <!-- <div class="stat-card">
+              <span class="stat-value">24/7</span>
+              <span class="stat-label">Free Wi-Fi Access</span>
+            </div> -->
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -1094,44 +1503,50 @@
 
       <div class="about-grid">
         <div class="about-card" >
-          <div class="about-icon">📝</div>
           <h3>REGISTER </h3>
-          <p>Enter your personal information</p>
+          <p>Submit your personal information to create your resident account.</p>
         </div>
 
         <div class="about-card">
-          <div class="about-icon">✅</div>
           <h3>VERIFICATION</h3>
-          <p>Wait for approval</p>
+          <p>All accounts are subject to review and approval by barangay administrators.</p>
         </div>
 
         <div class="about-card">
-          <div class="about-icon">🆓</div>
           <h3>FREE WI-FI ACCESS</h3>
-          <p>Get 1-day free wi-fi access</p>
+          <p>Approved users are entitled to one-day free Wi-Fi access.</p>
         </div>
       </div>
 
       <div class="city-banner" id="city-banner">
-        <div class="about-icon" style="font-size: 4rem; margin-bottom: 16px; text-align:center;">🏛️</div>
-        <h3 style="text-align: center; margin-bottom: 50px;">San Juan I Barangay Hall</h3>
+        <div class="city-banner-inner">
+          <div class="city-banner-heading">
+            <h3>San Juan I Barangay Hall</h3>
+            <p class="muted" style="margin:0; opacity:0.95;">Connect with us and find our location</p>
+          </div>
 
-        
-      
-        <a href="https://www.facebook.com/profile.php?id=61577772153879" >
-        <div class="city-hall" title="Redirect to Facebook">
-          Facebook<br> 
-          Barangay San Juan I - City of General Trias Cavite
-        </div>
-        </a>
-        <br>
+          <div class="city-banner-grid">
+            <a class="city-card" href="https://www.facebook.com/profile.php?id=61577772153879" target="_blank" rel="noopener noreferrer" title="Barangay San Juan I Facebook">
+              <div class="city-card-icon" style="background:#1877F2;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M22 12.073C22 6.507 17.523 2 12 2S2 6.507 2 12.073C2 17.09 5.657 21.128 10.438 21.951v-6.99H7.898v-2.96h2.54V9.845c0-2.507 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.242 0-1.63.772-1.63 1.562v1.875h2.773l-.443 2.96h-2.33v6.99C18.343 21.128 22 17.09 22 12.073z"/></svg>
+              </div>
+              <div>
+                <div class="city-card-title">Facebook</div>
+                <div class="city-card-text">Barangay San Juan I - City of General Trias Cavite</div>
+              </div>
+            </a>
 
-        <a href="https://maps.app.goo.gl/jb8Hb745vhcvAAjD9" >
-        <div class="city-hall" title="Redirect to Google Maps">
-          Google Maps<br> 
-          Block 6 Lot 4, Pennsylvania Executive Village, City of General Trias, Cavite, 4107
+            <a class="city-card" href="https://maps.app.goo.gl/jb8Hb745vhcvAAjD9" target="_blank" rel="noopener noreferrer" title="Open Google Maps">
+              <div class="city-card-icon" style="background: linear-gradient(180deg,#fbbf24,#ff7a5a);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+              </div>
+              <div>
+                <div class="city-card-title">Google Maps</div>
+                <div class="city-card-text">Block 6 Lot 4, Pennsylvania Executive Village, City of General Trias, Cavite, 4107</div>
+              </div>
+            </a>
+          </div>
         </div>
-        </a>
       </div>
 
         
@@ -1270,6 +1685,179 @@
     document.body.style.overflow = 'hidden';
 
     });
+
+    (function () {
+      const carousel = document.getElementById('heroCarousel');
+      if (!carousel) {
+        return;
+      }
+
+      const track = carousel.querySelector('.hero-carousel-track');
+      const slides = Array.from(carousel.querySelectorAll('.hero-slide'));
+      const progressFill = carousel.querySelector('#heroCarouselProgress');
+      if (slides.length === 0) {
+        return;
+      }
+
+      let currentIndex = 0;
+      let autoplayTimer = null;
+      let startX = 0;
+      let isDragging = false;
+      const totalSlides = slides.length;
+
+      // Carousel settings from server
+      const carouselSettings = @json($carouselSettings ?? null);
+      const autoplayEnabled = carouselSettings ? Boolean(carouselSettings.autoplay_enabled) : true;
+      const autoplaySpeed = carouselSettings ? Number(carouselSettings.autoplay_speed) || 4000 : 4000;
+      const pauseOnHover = carouselSettings ? Boolean(carouselSettings.pause_on_hover) : true;
+      const loop = carouselSettings ? Boolean(carouselSettings.loop) : true;
+      carousel.style.setProperty('--hero-progress-duration', `${autoplaySpeed}ms`);
+
+
+      const updateSlides = () => {
+        slides.forEach((slide, index) => {
+          const isActive = index === currentIndex;
+          slide.classList.toggle('active', isActive);
+          slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+        });
+      };
+
+
+      const syncControlState = () => {
+        if (loop) {
+          return;
+        }
+        if (prevButton) {
+          prevButton.disabled = currentIndex === 0;
+        }
+        if (nextButton) {
+          nextButton.disabled = currentIndex === slides.length - 1;
+        }
+      };
+
+      const restartProgress = (shouldRun = true) => {
+        if (!progressFill) {
+          return;
+        }
+        progressFill.style.animation = 'none';
+        void progressFill.offsetWidth;
+
+        if (!shouldRun) {
+          progressFill.style.transform = 'scaleX(0)';
+          return;
+        }
+
+        progressFill.style.animation = `heroProgress ${autoplaySpeed}ms linear forwards`;
+      };
+
+      const goToSlide = (index) => {
+        if (loop) {
+          currentIndex = (index + slides.length) % slides.length;
+        } else {
+          currentIndex = Math.max(0, Math.min(index, slides.length - 1));
+        }
+        if (track) {
+          track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+        updateSlides();
+        syncControlState();
+      };
+
+      const nextSlide = () => goToSlide(currentIndex + 1);
+      const prevSlide = () => goToSlide(currentIndex - 1);
+
+      const restartAutoplay = () => {
+        if (autoplayTimer) {
+          clearInterval(autoplayTimer);
+        }
+        if (!autoplayEnabled) {
+          restartProgress(false);
+          return;
+        }
+        autoplayTimer = setInterval(() => {
+          nextSlide();
+          restartProgress();
+        }, autoplaySpeed);
+        restartProgress();
+      };
+
+      const nextButton = carousel.querySelector('[data-carousel="next"]');
+      const prevButton = carousel.querySelector('[data-carousel="prev"]');
+      carousel.tabIndex = 0;
+
+      if (nextButton) {
+        nextButton.addEventListener('click', () => {
+          nextSlide();
+          restartAutoplay();
+        });
+      }
+
+      if (prevButton) {
+        prevButton.addEventListener('click', () => {
+          prevSlide();
+          restartAutoplay();
+        });
+      }
+
+      // indicators removed: direct indicator click handlers are no longer needed
+
+      carousel.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          nextSlide();
+          restartAutoplay();
+        }
+
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          prevSlide();
+          restartAutoplay();
+        }
+      });
+
+      carousel.addEventListener('touchstart', (event) => {
+        startX = event.touches[0].clientX;
+        isDragging = true;
+      }, { passive: true });
+
+      carousel.addEventListener('touchend', (event) => {
+        if (!isDragging) {
+          return;
+        }
+
+        const endX = event.changedTouches[0].clientX;
+        const deltaX = endX - startX;
+        isDragging = false;
+
+        if (Math.abs(deltaX) > 40) {
+          if (deltaX < 0) {
+            nextSlide();
+          } else {
+            prevSlide();
+          }
+          restartAutoplay();
+        }
+      }, { passive: true });
+
+      if (pauseOnHover) {
+        carousel.addEventListener('mouseenter', () => {
+          clearInterval(autoplayTimer);
+          if (progressFill) {
+            progressFill.style.animationPlayState = 'paused';
+          }
+        });
+
+        carousel.addEventListener('mouseleave', () => {
+          if (progressFill) {
+            progressFill.style.animationPlayState = 'running';
+          }
+          restartAutoplay();
+        });
+      }
+
+      goToSlide(0);
+      restartAutoplay();
+    })();
   </script>
 </body>
 </html>

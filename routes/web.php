@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfilePhotoController;
 use App\Http\Controllers\ResidentController;
@@ -9,8 +12,10 @@ use App\Http\Controllers\OfficialController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CarouselSettingsController;
 use App\Http\Controllers\UserActivityLogController;
 use App\Http\Controllers\Auth\ForgotPasswordOtpController;
+use App\Models\CarouselSlide;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +40,59 @@ Route::get('/', function () {
         }
     }
 
-    return view('homepage');
+    $fallbackSlides = collect(range(1, 7))->map(function (int $slot): array {
+        return [
+            'slot' => $slot,
+            'image_url' => asset('images/carousel/slide' . $slot . '.svg'),
+            'title' => null,
+            'description' => null,
+        ];
+    });
+
+    $slides = $fallbackSlides;
+
+    if (Schema::hasTable('carousel_slides')) {
+        $dbSlides = CarouselSlide::query()
+            ->orderBy('slot')
+            ->get()
+            ->keyBy('slot');
+
+        if ($dbSlides->isNotEmpty()) {
+            $slides = collect(range(1, 7))->map(function (int $slot) use ($dbSlides, $fallbackSlides): array {
+                $fallbackSlide = $fallbackSlides->firstWhere('slot', $slot);
+                $slide = $dbSlides->get($slot);
+
+                if (!$slide) {
+                    return $fallbackSlide;
+                }
+
+                $imageUrl = $fallbackSlide['image_url'];
+                if (!empty($slide->image_path) && Storage::disk('public')->exists($slide->image_path)) {
+                    $imageUrl = Storage::disk('public')->url($slide->image_path);
+                }
+
+                return [
+                    'slot' => $slot,
+                    'image_url' => $imageUrl,
+                    'title' => $slide->title,
+                    'description' => $slide->description,
+                    'enabled' => (bool) ($slide->enabled ?? true),
+                    'link_url' => $slide->link_url,
+                    'open_in_new_tab' => (bool) ($slide->open_in_new_tab ?? false),
+                ];
+            });
+        }
+    }
+
+    $carouselSettings = null;
+    if (Schema::hasTable('carousel_settings')) {
+        $carouselSettings = DB::table('carousel_settings')->orderBy('id')->limit(1)->first();
+    }
+
+    return view('homepage', [
+        'slides' => $slides,
+        'carouselSettings' => $carouselSettings,
+    ]);
 })->middleware('prevent-back-history')->name('homepage');
 
 Route::middleware(['guest.redirect', 'prevent-back-history'])->group(function () {
@@ -112,6 +169,20 @@ Route::middleware(['auth', 'resident', 'prevent-back-history'])->prefix('residen
 Route::middleware(['auth', 'official', 'prevent-back-history'])->prefix('official')->group(function () {
     Route::get('/dashboard', [OfficialController::class, 'dashboard'])->name('official.dashboard');
     Route::get('/dashboard/charts', [OfficialController::class, 'dashboardCharts'])->name('official.dashboard.charts');
+
+    // Carousel Settings CRUD
+    Route::prefix('/settings/carousel')->group(function () {
+        Route::get('/', [CarouselSettingsController::class, 'index'])->name('official.carousel-settings.index');
+        Route::get('/create', [CarouselSettingsController::class, 'create'])->name('official.carousel-settings.create');
+        Route::post('/', [CarouselSettingsController::class, 'store'])->name('official.carousel-settings.store');
+        Route::put('/settings', [CarouselSettingsController::class, 'updateSettings'])->name('official.carousel-settings.update-settings');
+        Route::put('/batch', [CarouselSettingsController::class, 'updateCarousel'])->name('official.carousel-settings.batch-update');
+        Route::post('/images/reorder', [CarouselSettingsController::class, 'reorderImages'])->name('official.carousel-settings.images.reorder');
+        Route::delete('/images/{carouselImage}', [CarouselSettingsController::class, 'deleteImage'])->name('official.carousel-settings.images.delete');
+        Route::get('/{carouselSlide}/edit', [CarouselSettingsController::class, 'edit'])->name('official.carousel-settings.edit');
+        Route::put('/{carouselSlide}', [CarouselSettingsController::class, 'update'])->name('official.carousel-settings.update');
+        Route::delete('/{carouselSlide}', [CarouselSettingsController::class, 'destroy'])->name('official.carousel-settings.destroy');
+    });
     
     // Resident management
     Route::get('/residents', [OfficialController::class, 'residents'])->name('official.residents.index');
@@ -168,6 +239,20 @@ Route::middleware(['auth', 'admin', 'prevent-back-history'])->prefix('admin')->g
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/dashboard/charts', [AdminController::class, 'dashboardCharts'])->name('admin.dashboard.charts');
     Route::get('/activity-logs', [UserActivityLogController::class, 'index'])->name('admin.activity-logs');
+
+    // Carousel Settings CRUD
+    Route::prefix('/settings/carousel')->group(function () {
+        Route::get('/', [CarouselSettingsController::class, 'index'])->name('admin.carousel-settings.index');
+        Route::get('/create', [CarouselSettingsController::class, 'create'])->name('admin.carousel-settings.create');
+        Route::post('/', [CarouselSettingsController::class, 'store'])->name('admin.carousel-settings.store');
+        Route::put('/settings', [CarouselSettingsController::class, 'updateSettings'])->name('admin.carousel-settings.update-settings');
+        Route::put('/batch', [CarouselSettingsController::class, 'updateCarousel'])->name('admin.carousel-settings.batch-update');
+        Route::post('/images/reorder', [CarouselSettingsController::class, 'reorderImages'])->name('admin.carousel-settings.images.reorder');
+        Route::delete('/images/{carouselImage}', [CarouselSettingsController::class, 'deleteImage'])->name('admin.carousel-settings.images.delete');
+        Route::get('/{carouselSlide}/edit', [CarouselSettingsController::class, 'edit'])->name('admin.carousel-settings.edit');
+        Route::put('/{carouselSlide}', [CarouselSettingsController::class, 'update'])->name('admin.carousel-settings.update');
+        Route::delete('/{carouselSlide}', [CarouselSettingsController::class, 'destroy'])->name('admin.carousel-settings.destroy');
+    });
     
     // User Requests
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users.index');
