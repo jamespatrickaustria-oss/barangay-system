@@ -13,6 +13,7 @@ class ChatMessage extends Model
     protected $fillable = [
         'chat_thread_id',
         'sender_id',
+        'client_message_id',
         'body',
         'image_path',
         'is_read',

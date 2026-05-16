@@ -32,7 +32,6 @@ class OfficialPanelProvider extends PanelProvider
         return $panel
             ->id('official')
             ->path('official')
-            ->responsive()
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('16rem')
             ->collapsedSidebarWidth('4rem')
@@ -54,6 +53,11 @@ class OfficialPanelProvider extends PanelProvider
                 \App\Filament\Official\Resources\UserApprovalResource::class,
                 \App\Filament\Official\Resources\Residents\ResidentResource::class,
                 \App\Filament\Official\Resources\Announcements\AnnouncementResource::class,
+                \App\Filament\Official\Resources\CarouselSlides\CarouselSlideResource::class,
+                \App\Filament\Official\Resources\CarouselSettings\CarouselSettingResource::class,
+            ])
+            ->clusters([
+                \App\Filament\Clusters\SettingsCluster::class,
             ])
             ->widgets([
                 AccountWidget::class,

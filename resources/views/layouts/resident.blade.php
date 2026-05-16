@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" href="{{ asset('images/city_of_general_trias_seal.png') }}">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    @vite(['resources/css/app.css','resources/js/app.js'])
+    
 
 
     
@@ -1365,7 +1367,9 @@
         @yield('content')
     </main>
 
-    @include('resident.partials.chat-widget')
+    @unless(View::hasSection('hide_chat_widget'))
+        @include('resident.partials.chat-widget')
+    @endunless
 
     <!-- ══════════════════════════════════════════════════════════════════
        FOOTER

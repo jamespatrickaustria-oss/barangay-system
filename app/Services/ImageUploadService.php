@@ -58,6 +58,8 @@ class ImageUploadService
             self::BASE_DIRECTORY . '/profile_photos',
             self::BASE_DIRECTORY . '/announcement_photos',
             self::BASE_DIRECTORY . '/chat_images',
+            self::BASE_DIRECTORY . '/chat-images',
+            self::BASE_DIRECTORY . '/carousel',
         ];
     }
 }

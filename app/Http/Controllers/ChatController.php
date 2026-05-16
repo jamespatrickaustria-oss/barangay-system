@@ -8,6 +8,9 @@ use App\Models\User;
 use App\Services\ImageUploadService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
@@ -121,6 +124,7 @@ class ChatController extends Controller
         $validated = $request->validate([
             'body' => 'nullable|string|max:2000',
             'image' => 'nullable|file|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'client_message_id' => 'required|uuid',
         ]);
 
         if (!$request->filled('body') && !$request->hasFile('image')) {
@@ -134,25 +138,7 @@ class ChatController extends Controller
             ['last_message_at' => now()]
         );
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $this->imageUploadService->store($request->file('image'), 'uploads/chat_images');
-        }
-
-        $message = ChatMessage::create([
-            'chat_thread_id' => $thread->id,
-            'sender_id' => $resident->id,
-            'body' => $validated['body'] ?? null,
-            'image_path' => $imagePath,
-        ]);
-
-        $thread->update(['last_message_at' => now()]);
-
-        $message->load('sender:id,first_name,middle_name,surname,role');
-
-        return response()->json([
-            'message' => $this->formatMessage($message, $resident->id),
-        ]);
+        return $this->storeOutgoingMessage($request, $thread, $resident, $validated);
     }
 
     public function officialThreads(): JsonResponse
@@ -206,31 +192,113 @@ class ChatController extends Controller
         $validated = $request->validate([
             'body' => 'nullable|string|max:2000',
             'image' => 'nullable|file|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'client_message_id' => 'required|uuid',
         ]);
 
         if (!$request->filled('body') && !$request->hasFile('image')) {
             return response()->json(['message' => 'Message text or image is required.'], 422);
         }
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $this->imageUploadService->store($request->file('image'), 'uploads/chat_images');
+        return $this->storeOutgoingMessage($request, $thread, $request->user(), $validated);
+    }
+
+    private function storeOutgoingMessage(Request $request, ChatThread $thread, User $sender, array $validated): JsonResponse
+    {
+        if (!Schema::hasColumn('chat_messages', 'client_message_id')) {
+            return $this->storeOutgoingMessageWithoutTokenColumn($request, $thread, $sender, $validated);
         }
 
-        $message = ChatMessage::create([
-            'chat_thread_id' => $thread->id,
-            'sender_id' => $request->user()->id,
-            'body' => $validated['body'] ?? null,
-            'image_path' => $imagePath,
-        ]);
+        return DB::transaction(function () use ($request, $thread, $sender, $validated) {
+            $lockedThread = ChatThread::query()
+                ->whereKey($thread->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $thread->update(['last_message_at' => now()]);
+            $existingMessage = $lockedThread->messages()
+                ->where('client_message_id', $validated['client_message_id'])
+                ->with('sender:id,first_name,middle_name,surname,role')
+                ->first();
 
-        $message->load('sender:id,first_name,middle_name,surname,role');
+            if ($existingMessage) {
+                return response()->json([
+                    'message' => $this->formatMessage($existingMessage, $sender->id),
+                ]);
+            }
 
-        return response()->json([
-            'message' => $this->formatMessage($message, $request->user()->id),
-        ]);
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = $this->imageUploadService->store($request->file('image'), 'uploads/chat-images');
+            }
+
+            $message = ChatMessage::create([
+                'chat_thread_id' => $lockedThread->id,
+                'sender_id' => $sender->id,
+                'client_message_id' => $validated['client_message_id'],
+                'body' => $validated['body'] ?? null,
+                'image_path' => $imagePath,
+            ]);
+
+            $lockedThread->update(['last_message_at' => now()]);
+
+            $message->load('sender:id,first_name,middle_name,surname,role');
+
+            return response()->json([
+                'message' => $this->formatMessage($message, $sender->id),
+            ]);
+        });
+    }
+
+    private function storeOutgoingMessageWithoutTokenColumn(Request $request, ChatThread $thread, User $sender, array $validated): JsonResponse
+    {
+        $submissionKey = $this->chatSubmissionKey($thread->id, $sender->id, $validated['client_message_id']);
+        $responseKey = $submissionKey . ':response';
+
+        $cachedResponse = Cache::get($responseKey);
+        if (is_array($cachedResponse)) {
+            return response()->json($cachedResponse);
+        }
+
+        if (!Cache::add($submissionKey, 'processing', now()->addMinutes(10))) {
+            $cachedResponse = Cache::get($responseKey);
+            if (is_array($cachedResponse)) {
+                return response()->json($cachedResponse);
+            }
+
+            return response()->json(['message' => 'This message is already being processed. Please wait.'], 409);
+        }
+
+        try {
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = $this->imageUploadService->store($request->file('image'), 'uploads/chat-images');
+            }
+
+            $message = ChatMessage::create([
+                'chat_thread_id' => $thread->id,
+                'sender_id' => $sender->id,
+                'body' => $validated['body'] ?? null,
+                'image_path' => $imagePath,
+            ]);
+
+            $thread->update(['last_message_at' => now()]);
+
+            $message->load('sender:id,first_name,middle_name,surname,role');
+
+            $response = [
+                'message' => $this->formatMessage($message, $sender->id),
+            ];
+
+            Cache::put($responseKey, $response, now()->addMinutes(10));
+
+            return response()->json($response);
+        } finally {
+            Cache::forget($submissionKey);
+        }
+    }
+
+    private function chatSubmissionKey(int $threadId, int $senderId, string $clientMessageId): string
+    {
+        return 'chat-message:' . $threadId . ':' . $senderId . ':' . $clientMessageId;
     }
 
     public function markMessagesAsRead(Request $request, ChatThread $thread): JsonResponse

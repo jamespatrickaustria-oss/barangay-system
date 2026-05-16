@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             OfficialSeeder::class,
             ContactSeeder::class,
+            \Database\Seeders\CarouselSettingsSeeder::class,
         ]);
     }
 }

@@ -1,6 +1,8 @@
 @extends('layouts.resident')
 
 @section('title', 'Chat with Official')
+@section('hide_chat_widget')
+@endsection
 
 @section('content')
 <div id="chat-container" style="display: none;">
@@ -74,6 +76,24 @@
     let pollInterval = null;
     let lastMessageId = 0;
     let previewImageObjectUrl = null;
+    let isSendingMessage = false;
+    let currentMessageToken = null;
+
+    function createMessageToken() {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+            return window.crypto.randomUUID();
+        }
+
+        return `msg_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+    }
+
+    function ensureMessageToken() {
+        if (!currentMessageToken) {
+            currentMessageToken = createMessageToken();
+        }
+
+        return currentMessageToken;
+    }
 
     // Initialize chat on page load
     document.addEventListener('DOMContentLoaded', function() {
@@ -195,7 +215,18 @@
         const hasImage = imageInput.files.length > 0;
         const hasContent = hasText || hasImage;
 
-        sendButton.disabled = !hasContent;
+        if (!hasContent) {
+            currentMessageToken = null;
+        } else {
+            ensureMessageToken();
+        }
+
+        sendButton.disabled = !hasContent || isSendingMessage;
+
+        if (isSendingMessage) {
+            sendLabel.textContent = 'Sending...';
+            return;
+        }
 
         if (hasText && hasImage) {
             sendLabel.textContent = 'Send text + image';
@@ -308,9 +339,14 @@
     }
 
     function sendMessage() {
+        if (isSendingMessage) {
+            return;
+        }
+
         const messageInput = document.getElementById('message-input');
         const imageInput = document.getElementById('image-input');
         const body = messageInput.value.trim();
+        const messageToken = ensureMessageToken();
 
         if (!body && !imageInput.files.length) {
             alert('Please type a message or select an image');
@@ -321,27 +357,48 @@
         const formData = new FormData();
         if (body) formData.append('body', body);
         if (imageInput.files.length) formData.append('image', imageInput.files[0]);
+        formData.append('client_message_id', messageToken);
 
-        fetch('{{ route("resident.chat.send") }}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                displayMessage(data.message);
-                lastMessageId = data.message.id;
-                messageInput.value = '';
-                clearSelectedImage();
+        isSendingMessage = true;
+        updateSendButtonState();
+
+        (async () => {
+            try {
+                const response = await fetch('{{ route("resident.chat.send") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    const firstValidationError = errorData?.errors
+                        ? Object.values(errorData.errors)[0]?.[0]
+                        : null;
+                    alert(firstValidationError || errorData?.message || 'Unable to send message. Please try again.');
+                    return;
+                }
+
+                const data = await response.json();
+                if (data.message) {
+                    displayMessage(data.message);
+                    lastMessageId = data.message.id;
+                    messageInput.value = '';
+                    clearSelectedImage();
+                    currentMessageToken = null;
+                    updateSendButtonState();
+                    document.getElementById('messages-container').scrollTop = document.getElementById('messages-container').scrollHeight;
+                    updateUnreadCount();
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+            } finally {
+                isSendingMessage = false;
                 updateSendButtonState();
-                document.getElementById('messages-container').scrollTop = document.getElementById('messages-container').scrollHeight;
-                updateUnreadCount();
             }
-        })
-        .catch(error => console.error('Error sending message:', error));
+        })();
     }
 
     function startPolling() {

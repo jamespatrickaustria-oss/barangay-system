@@ -542,32 +542,9 @@
                     <input 
 
 <script>
-    const residentEditForm = document.getElementById('residentEditForm');
-
-    function assembleResidentEmergencyContactNumber() {
-        const localInput = document.getElementById('emergency_contact_number_local');
-        const hiddenInput = document.getElementById('emergency_contact_number');
-
-        if (!localInput || !hiddenInput) {
-            return;
-        }
-
-        const local = (localInput.value || '').trim().replace(/\s/g, '');
-        hiddenInput.value = local ? '+63' + local : '';
-    }
-
-    if (residentEditForm) {
-        residentEditForm.addEventListener('submit', assembleResidentEmergencyContactNumber);
-    }
+  
 </script>
-                        type="tel" 
-                        id="phone" 
-                        name="phone"
-                        value="{{ old('phone', $resident->phone) }}"
-                        placeholder="+63 9XX XXX XXXX"
-                        pattern="[0-9\+\-\(\)\s\.]*"
-                        inputmode="numeric"
-                    >
+                      
                     @error('phone')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
