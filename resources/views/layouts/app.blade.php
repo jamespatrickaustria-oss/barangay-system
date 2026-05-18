@@ -277,6 +277,7 @@
             font-size: 18px;
             font-weight: 700;
             color: var(--text);
+            width: 100%;
         }
 
         .topbar-right {
@@ -522,8 +523,8 @@
             }
 
             .main-content {
-                margin-left: 0;
                 width: 100%;
+                margin-left: 0;
             }
 
             .topbar {
@@ -667,6 +668,11 @@
                 width: 28px;
                 height: 28px;
                 font-size: 11px;
+            }
+
+            .main-content {
+                width: 100%;
+                margin-left: 0;
             }
         }
 

@@ -346,7 +346,7 @@
       position: absolute;
       left: 20px;
       bottom: 20px;
-      width: min(520px, calc(100% - 40px));
+      width: min(450px, calc(100% - 40px));
       padding: 16px 18px;
       border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.22);
@@ -454,10 +454,13 @@
       }
 
       .hero-slide-caption {
-        left: 12px;
+        right: 12px;
         bottom: 58px;
-        width: calc(100% - 24px);
+        width: 230px;
+        max-height: 25%;
+        overflow-y: auto;
         padding: 12px 14px;
+        box-sizing: border-box;
       }
 
       .hero-carousel-controls {
@@ -1333,6 +1336,331 @@
 
       .announcement-card {
         grid-template-columns: 1fr;
+      }
+    }
+
+    /* ══════════════════════════════════════════════════════════════════
+       RESPONSIVE - SMALL MOBILE (479px and below)
+    ══════════════════════════════════════════════════════════════════ */
+    @media (max-width: 479px) {
+      .floatingPopup {
+        width: 90%;
+        padding: 20px;
+      }
+
+      .header-inner {
+        padding: 0 12px;
+      }
+
+      .hero {
+        padding: 40px 12px;
+      }
+
+      .hero-title {
+        font-size: 1.75rem;
+      }
+
+      .hero-subtitle {
+        font-size: 0.95rem;
+      }
+
+      .hero-welcome {
+        font-size: 0.85rem;
+      }
+
+      .hero-description {
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      .hero-ctas {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .hero-ctas a {
+        flex: 0 1 48%;
+        max-width: 220px;
+      }
+
+      .btn-white,
+      .btn-outline {
+        width: auto;
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        display: inline-flex;
+        justify-content: center;
+      }
+
+      .hero-carousel-controls {
+        right: 8px;
+        bottom: 8px;
+        gap: 4px;
+      }
+
+      .hero-carousel-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+      }
+
+      .stat-card {
+        width: 100%;
+        max-width: 280px;
+        padding: 16px 20px;
+      }
+
+      .stat-value {
+        font-size: 1.75rem;
+      }
+
+      .stat-label {
+        font-size: 0.85rem;
+      }
+
+      .about,
+      .services,
+      .announcements,
+      .contact {
+        padding: 40px 12px;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+      }
+
+      .about-grid {
+        gap: 16px;
+      }
+
+      .about-card {
+        padding: 16px;
+      }
+
+      .about-card h3 {
+        font-size: 1rem;
+      }
+
+      .about-card p {
+        font-size: 0.9rem;
+      }
+
+      .city-banner-heading h3 {
+        font-size: 1.4rem;
+      }
+
+      .city-banner-grid {
+        gap: 12px;
+      }
+
+      .city-card {
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .city-card-icon {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+      }
+
+      .city-card-title {
+        font-size: 0.9rem;
+      }
+
+      .city-card-text {
+        font-size: 0.8rem;
+      }
+
+      .service-card {
+        padding: 16px;
+      }
+
+      .service-icon {
+        font-size: 2rem;
+      }
+
+      .service-card h3 {
+        font-size: 1rem;
+      }
+
+      .service-card p {
+        font-size: 0.85rem;
+      }
+
+      .announcements-grid {
+        gap: 12px;
+      }
+
+      .announcement-card {
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .announcement-date {
+        padding: 8px;
+        min-width: 60px;
+      }
+
+      .announcement-day {
+        font-size: 1.5rem;
+      }
+
+      .announcement-month {
+        font-size: 0.7rem;
+      }
+
+      .announcement-content h3 {
+        font-size: 1rem;
+      }
+
+      .announcement-content p {
+        font-size: 0.85rem;
+      }
+
+      .quick-links {
+        padding: 40px 12px;
+      }
+
+      .quick-links h2 {
+        font-size: 1.5rem;
+        margin-bottom: 24px;
+      }
+
+      .links-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 12px;
+      }
+
+      .quick-link-card {
+        padding: 12px;
+      }
+
+      .quick-link-icon {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+      }
+
+      .quick-link-card span {
+        font-size: 0.85rem;
+      }
+
+      .contact-inner {
+        gap: 24px;
+      }
+
+      .contact-info h2 {
+        font-size: 1.6rem;
+      }
+
+      .contact-info p {
+        font-size: 0.95rem;
+      }
+
+      .contact-form {
+        padding: 20px 12px;
+      }
+
+      .contact-form h3 {
+        font-size: 1.3rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 10px 12px;
+        font-size: 1rem;
+      }
+
+      .form-row {
+        gap: 12px;
+      }
+
+      .btn-submit {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+      }
+
+      .footer-inner {
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .footer-brand h3 {
+        font-size: 1.2rem;
+      }
+
+      .footer-brand p {
+        font-size: 0.85rem;
+      }
+
+      .footer-section h4 {
+        font-size: 1rem;
+      }
+
+      .footer-section a {
+        font-size: 0.85rem;
+      }
+
+      .floatingPopup h4 {
+        font-size: 1rem;
+      }
+
+      .floatingPopup p {
+        font-size: 0.9rem;
+      }
+
+      .hero-layout {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .hero-copy {
+        order: 1;
+        text-align: center;
+      }
+
+      .hero-media {
+        order: 2;
+      }
+
+      .hero-ctas {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .hero-carousel-track {
+        height: clamp(160px, 50vw, 260px);
+      }
+
+      .hero-slide-caption {
+        font-size: 0.9rem;
+        right: 8px;
+        bottom: 10px;
+        width: 250px  ;
+        transform: none;
+        max-height: 25%;
+        overflow-y: auto;
+        padding: 10px 12px;
+        box-sizing: border-box;
+        z-index: 4;
+      }
+
+      .hero-carousel-controls {
+        right: 8px;
+        top: auto;
+        bottom: 12px;
+        transform: none;
+        gap: 6px;
+        z-index: 5;
+      }
+
+      .hero-carousel-progress {
+        bottom: 0;
+        height: 4px;
       }
     }
   </style>

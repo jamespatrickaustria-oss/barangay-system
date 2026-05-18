@@ -444,10 +444,7 @@
         <div class="form-group">
             <label>Options</label>
             <div class="checkbox-group">
-                <div class="checkbox-item">
-                    <input type="checkbox" id="enabled" name="enabled" value="1" {{ old('enabled', $slide?->enabled ?? true) ? 'checked' : '' }}>
-                    <label for="enabled">Enable this slide (display on carousel)</label>
-                </div>
+
                 <div class="checkbox-item">
                     <input type="checkbox" id="open_in_new_tab" name="open_in_new_tab" value="1" {{ old('open_in_new_tab', $slide?->open_in_new_tab ?? false) ? 'checked' : '' }}>
                     <label for="open_in_new_tab">Open link in new tab</label>

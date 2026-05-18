@@ -67,8 +67,20 @@ Route::get('/', function () {
                 }
 
                 $imageUrl = $fallbackSlide['image_url'];
-                if (!empty($slide->image_path) && Storage::disk('public')->exists($slide->image_path)) {
-                    $imageUrl = Storage::disk('public')->url($slide->image_path);
+                $imagePath = trim(str_replace('\\', '/', (string) $slide->image_path), '/');
+
+                if (empty($imagePath)) {
+                    $firstImage = $slide->images()->orderBy('sort_order')->first();
+                    $imagePath = trim(str_replace('\\', '/', (string) $firstImage?->image_path), '/');
+                }
+
+                if (!empty($imagePath)) {
+                    $imagePath = preg_replace('#^storage/#', '', $imagePath);
+                    $imagePath = trim($imagePath, '/');
+
+                    if (Storage::disk('public')->exists($imagePath)) {
+                        $imageUrl = asset('storage/' . $imagePath);
+                    }
                 }
 
                 return [

@@ -288,7 +288,7 @@
         gap: 6px;
         padding: 6px 12px;
         border-radius: 6px;
-        font-size: 12px;
+        font-size: 10px;
         font-weight: 600;
     }
 
@@ -305,17 +305,24 @@
     .actions {
         display: flex;
         gap: 8px;
+        align-items: center;
     }
 
     .action-btn {
-        padding: 8px 12px;
+        font-size: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 60px;
+        height: 40px;
+        padding: 6px 10px;
         border: none;
         border-radius: 6px;
-        font-size: 12px;
         font-weight: 600;
         cursor: pointer;
         text-decoration: none;
         transition: all 0.2s ease;
+        
     }
 
     .action-btn.edit {
@@ -368,6 +375,155 @@
         grid-template-columns: 1fr;
         gap: 20px;
     }
+
+    @media (max-width: 768px) {
+        .carousel-shell {
+            padding: 14px 0 28px;
+        }
+
+        .hero {
+            padding: 20px;
+            border-radius: 22px;
+        }
+
+        .hero-top {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 14px;
+        }
+
+        .hero-actions {
+            width: auto;
+            justify-content: flex-start;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hero-actions .button {
+            flex: 0 1 auto;
+            min-width: 140px;
+        }
+
+        .hero p {
+            max-width: 100%;
+        }
+
+        .card {
+            padding: 18px;
+        }
+
+        .card h2 {
+            font-size: 20px;
+        }
+
+        .card > .subtle {
+            font-size: 13px;
+        }
+
+        .settings-grid {
+            gap: 12px;
+        }
+
+        .field input,
+        .field select,
+        .field textarea {
+            font-size: 13px;
+        }
+
+        .slides-table {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 14px;
+            min-width: 0;
+        }
+
+        .slides-table thead,
+        .slides-table tbody,
+        .slides-table tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .action-btn {
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+
+        .pagination {
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .button {
+            padding: 12px 14px;
+            font-size: 13px;
+        }
+
+        .hero h1 {
+            font-size: clamp(26px, 6vw, 32px);
+        }
+
+        .hero p {
+            font-size: 14px;
+        }
+
+        .pill {
+            font-size: 12px;
+            padding: 8px 12px;
+        }
+
+        .hero-actions {
+            gap: 8px;
+        }
+
+        .slides-table th,
+        .slides-table td {
+            padding: 8px 10px;
+        }
+
+        .slide-preview {
+            max-width: 100%;
+            min-height: 60px;
+        }
+
+        .slide-title {
+            font-size: 13px;
+        }
+
+        .slide-desc {
+            font-size: 12px;
+        }
+
+        .hero-actions .button {
+            min-width: 0;
+                flex: 1;
+        }
+
+        /* Stack action buttons in slides table on small screens */
+        .actions {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+        }
+
+        .actions .action-btn {
+            display: block;
+            width: 100%;
+            height: 40px;
+            text-align: center;
+            justify-content: center;
+            margin-bottom: 4px;
+            font-size: 12px;
+            padding: 0 12px;
+            box-sizing: border-box;
+        }
+    }
 </style>
 
 <div class="carousel-shell">
@@ -375,18 +531,19 @@
         <div class="hero">
             <div class="hero-top">
                 <div>
+                    <div class="hero-actions">
+                        <a href="{{ route($dashboardRoute) }}" class="button secondary">Back to dashboard</a>
+                        <a href="{{ route($routePrefix . '.carousel-settings.create') }}" class="button primary">+ New Slide</a>
+                    </div>
+                    <br>
                     <h1>Carousel Management</h1>
                     <p>Manage your homepage carousel slides. Create new slides, edit existing ones, or delete slides you no longer need.</p>
                     <div class="pills">
                         <span class="pill accent">{{ ucfirst($routePrefix) }} panel</span>
                         <span class="pill">7 slide limit</span>
-                        <span class="pill">Individual CRUD</span>
                     </div>
                 </div>
-                <div class="hero-actions">
-                    <a href="{{ route($dashboardRoute) }}" class="button secondary">Back to dashboard</a>
-                    <a href="{{ route($routePrefix . '.carousel-settings.create') }}" class="button primary">+ New Slide</a>
-                </div>
+             
             </div>
         </div>
 
@@ -444,16 +601,16 @@
                 <p class="subtle">You have {{ $slides->total() }} slide(s). Maximum 7 slides allowed.</p>
 
                 @if ($slides->count() > 0)
-                    <table class="slides-table">
-                        <thead>
-                            <tr>
-                                <th>Preview</th>
-                                <th>Order</th>
-                                <th>Title</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
+                        <table class="slides-table">
+                            <thead>
+                                <tr>
+                                    <th>Preview</th>
+                                    <th>Order</th>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
                         <tbody>
                             @foreach ($slides as $slide)
                                 <tr>
